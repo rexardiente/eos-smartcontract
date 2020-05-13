@@ -31,16 +31,14 @@ public:
   };
   typedef eosio::multi_index<"ranks"_n, rank> rank_index;
 
-  [[eosio::action]] void create(name auth_user,
-                                name id,
+  // [[eosio::action]] void getbyid( name id);
+  [[eosio::action]] void erase(name id);
+  [[eosio::action]] void create(name id,
                                 std::string game,
                                 std::string platform,
                                 std::string info,
                                 uint32_t created_at);
-  // [[eosio::action]] void getbyid(name auth_user, name id);
-  [[eosio::action]] void erase(name auth_user, name id);
-  [[eosio::action]] void update(name auth_user,
-                                name id,
+  [[eosio::action]] void update(name id,
                                 std::string game,
                                 std::string platform,
                                 std::string info,

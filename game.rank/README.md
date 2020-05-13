@@ -2,7 +2,7 @@
 
 ### Create Action
 
-- cleos push action game.rank create '["eosgamestore", "eosgamestore", "PANEL GAME" , "EOS GAME STORE", "infomation", 1589312200]' -p eosgamestore@active
+- cleos push action game.rank create '["game.rank", "PANEL GAME" , "EOS GAME STORE", "infomation", 1589312200]' -p game.rank@active
 
 ### Check Database Table
 
@@ -10,7 +10,7 @@
 
 ### Update Action
 
-- cleos push action game.rank update '["game.rank", "RANK GAME"]' -p game.rank@active
+- cleos push action game.rank update '["game.rank", "PANEL GAME" , "EOS GAME STORE", "infomation", 1589312201]' -p game.rank@active
 
 ### Delete Action
 
