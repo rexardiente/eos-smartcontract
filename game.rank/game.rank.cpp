@@ -6,16 +6,15 @@ using namespace eosio;
 // If a record does not exist, a new record is created.
 // The data is stored in the multi index table.
 // The RAM costs are paid by the smart contract.
-void gamerank::create(name auth_user,
-                      name id,
+void gamerank::create(name id,
                       std::string game,
                       std::string platform,
                       std::string info,
                       uint32_t created_at)
 {
-  require_auth(auth_user);
+  require_auth(get_self());
   rank_index gamerank(get_first_receiver(), get_first_receiver().value);
-  gamerank.emplace(auth_user, [&](auto &row) {
+  gamerank.emplace(get_self(), [&](auto &row) {
     row.id = id;
     row.game = game;
     row.platform = platform;
@@ -26,9 +25,9 @@ void gamerank::create(name auth_user,
 
 // This action will remove an entry from the table game rank
 // if an entry in the multi index table exists with the specified name.
-void gamerank::erase(name auth_user, name id)
+void gamerank::erase(name id)
 {
-  require_auth(auth_user);
+  require_auth(get_self());
   rank_index gamerank(get_first_receiver(), get_first_receiver().value);
   auto iterator = gamerank.find(id.value);
   check(iterator != gamerank.end(), "Record does not exist");
@@ -36,17 +35,16 @@ void gamerank::erase(name auth_user, name id)
 };
 
 // This action will update an entry in the table game rank.
-void gamerank::update(name auth_user,
-                      name id,
+void gamerank::update(name id,
                       std::string game,
                       std::string platform,
                       std::string info,
                       uint32_t created_at)
 {
-  require_auth(auth_user);
+  require_auth(get_self());
   rank_index gamerank(get_self(), get_first_receiver().value);
   auto iterator = gamerank.find(id.value);
-  gamerank.modify(iterator, auth_user, [&](auto &row) {
+  gamerank.modify(iterator, get_self(), [&](auto &row) {
     row.id = id;
     row.game = game;
     row.platform = platform;
