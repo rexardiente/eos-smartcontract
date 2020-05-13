@@ -10,7 +10,7 @@
 
 ### Update Action
 
-- cleos push action game.rank update '["game.rank", "RANK GAME"]' -p game.rank@active
+- cleos push action game.rank update '["eosgamestore", "eosgamestore", "PANEL GAME" , "EOS GAME STORE", "infomation", 1589312201]' -p eosgamestore@active
 
 ### Delete Action
 
