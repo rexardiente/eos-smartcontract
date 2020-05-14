@@ -43,3 +43,17 @@ cleos set contract game.rank ../game.rank -p game.rank@active
 - cleos push action eosio.token transfer '[ "eosgamestore", "game.rank", "25.0000 SYS", "m" ]' -p eosgamestore@active
 
 cleos push action game.rank getbyid '["eosgamestore", "eosgamestor1"]' -p eosgamestore@active
+
+## Action wrapper
+
+> To define an action wrapper for the mod action, make use of the eosio::action_wrapper template.
+
+- using erase_action = action_wrapper<"erase"\_n, &gamerank::erase>;
+
+> Then instantiate the erase_action defined above, specifying the contract to send the action to as the first argument.
+
+- gamerank::erase_action eraseaction(\_self, {get_self(), "active"\_n});
+
+> And finally call the send method of the action wrapper and pass in the eraseaction's parameters as positional arguments
+
+- eraseaction.send(\_self);

@@ -12,8 +12,8 @@ void gamerank::create(name id,
                       std::string info,
                       uint32_t created_at)
 {
-  require_auth(get_self());
-  rank_index gamerank(get_first_receiver(), get_first_receiver().value);
+  require_auth(_self);
+  rank_index gamerank(get_self(), get_self().value);
   gamerank.emplace(get_self(), [&](auto &row) {
     row.id = id;
     row.game = game;
@@ -23,12 +23,17 @@ void gamerank::create(name id,
   });
 };
 
+void gamerank::byid(name id)
+{
+  require_auth(_self);
+};
+
 // This action will remove an entry from the table game rank
 // if an entry in the multi index table exists with the specified name.
 void gamerank::erase(name id)
 {
-  require_auth(get_self());
-  rank_index gamerank(get_first_receiver(), get_first_receiver().value);
+  require_auth(_self);
+  rank_index gamerank(get_self(), get_self().value);
   auto iterator = gamerank.find(id.value);
   check(iterator != gamerank.end(), "Record does not exist");
   gamerank.erase(iterator);
@@ -41,8 +46,8 @@ void gamerank::update(name id,
                       std::string info,
                       uint32_t created_at)
 {
-  require_auth(get_self());
-  rank_index gamerank(get_self(), get_first_receiver().value);
+  require_auth(_self);
+  rank_index gamerank(get_self(), get_self().value);
   auto iterator = gamerank.find(id.value);
   gamerank.modify(iterator, get_self(), [&](auto &row) {
     row.id = id;
