@@ -4,8 +4,7 @@ This repo contains smart contracts and guides to token creation for the Donut Fa
 Currently, there are 3 main folders that comprise the contract code and ABI files related to the donut factory platform development.
 
 
-1. smart_contract_mechanics - This folder contains contract code for **Withdrawing and depositing assets to
-the dApp.**
-2. game_files - This folder contains contract code and abi files related to **the game ranking system
+1. *smart_contract_mechanics* - This folder contains contract code for **depositing & withdrawing assets**
+2. *game_files* - This folder contains contract code and abi files related to **the game ranking system
 and the game table config integrated in the panel game.**
-3. token_files - This folder contains files related to **EOS Token creation.**
+3. *token_files* - This folder contains files related to **EOS Token creation.**
