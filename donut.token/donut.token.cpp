@@ -6,7 +6,7 @@ Purpose: A source file that contains methods and structs for Donut token.
 -------------------------------------------------------------------------------
 */
 
-#include "donut-token.hpp"
+#include "donut.token.hpp"
 
 namespace donutToken {
 
@@ -41,8 +41,7 @@ void token::issue( const name& receiver, const asset& amount, const string&
 
     stats statstable( get_self(), sym.code().raw() );
     auto existing = statstable.find( sym.code().raw() );
-    check( existing != statstable.end(), "token with symbol does not exist,
-    create token before issue" );
+    check( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
     const auto& st = *existing;
     check( receiver == st.issuer, "tokens can only be issued to issuer account" );
 
@@ -95,7 +94,7 @@ void token::sub_balance( const name& owner, const asset& value ) {
    "no balance object found" );
    check( sender.balance.amount >= value.amount, "overdrawn balance" );
 
-   from_acnts.modify( from, owner, [&]( auto& a ) {
+   from_acnts.modify( sender, owner, [&]( auto& a ) {
          a.balance -= value;
       });
 }
