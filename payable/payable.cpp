@@ -64,7 +64,7 @@ public:
     else
       balance.emplace(get_self(), [&](auto &row) {
         row.funds = quantity;
-        row.limit += withdrawal_limit;
+        row.limit = withdrawal_limit;
       });
   }
 
@@ -80,7 +80,6 @@ public:
     uint32_t to_withdraw;
     to_withdraw = itr->limit;
 
-    print(now() > to_withdraw);
     check(now() > to_withdraw, "Balance is not yet available for withdraw.");
     // Make sure amount is greater that 0.
     check(itr->funds.amount > 0, "Insufecient balance.");
