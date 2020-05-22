@@ -2,58 +2,52 @@
 
 using namespace eosio;
 
-// This action will insert an entry in the table game rank.
-// If a record does not exist, a new record is created.
-// The data is stored in the multi index table.
-// The RAM costs are paid by the smart contract.
-void gamerank::create(name id,
-                      std::string game,
-                      std::string platform,
-                      std::string info,
-                      uint32_t created_at)
+void gamerank::add(uint64_t id, std::vector<user> data, uint64_t created_at)
 {
-  require_auth(_self);
+  // Check if the user is authorized to action
+  check(has_auth(get_self()), "User with admin access only authorized.");
+  require_auth(get_self());
+
   rank_index gamerank(get_self(), get_self().value);
+  auto itr = gamerank.find(id);
+  check(itr == gamerank.end(), "Rank already exist.");
+
   gamerank.emplace(get_self(), [&](auto &row) {
     row.id = id;
-    row.game = game;
-    row.platform = platform;
-    row.info = info;
+    row.data = data;
     row.created_at = created_at;
   });
 };
 
-void gamerank::byid(name id)
+void gamerank::edit(uint64_t id, std::vector<user> data, uint64_t created_at)
 {
-  require_auth(_self);
-};
+  // Check if the user is authorized to action
+  check(has_auth(get_self()), "User with admin access only authorized.");
+  require_auth(get_self());
 
-// This action will remove an entry from the table game rank
-// if an entry in the multi index table exists with the specified name.
-void gamerank::erase(name id)
-{
-  require_auth(_self);
   rank_index gamerank(get_self(), get_self().value);
-  auto iterator = gamerank.find(id.value);
-  check(iterator != gamerank.end(), "Record does not exist");
-  gamerank.erase(iterator);
-};
+  auto itr = gamerank.find(id);
+  check(itr != gamerank.end(), "Rank doesn't exist.");
 
-// This action will update an entry in the table game rank.
-void gamerank::update(name id,
-                      std::string game,
-                      std::string platform,
-                      std::string info,
-                      uint32_t created_at)
-{
-  require_auth(_self);
-  rank_index gamerank(get_self(), get_self().value);
-  auto iterator = gamerank.find(id.value);
-  gamerank.modify(iterator, get_self(), [&](auto &row) {
+  gamerank.modify(itr, get_self(), [&](auto &row) {
     row.id = id;
-    row.game = game;
-    row.platform = platform;
-    row.info = info;
+    row.data = data;
     row.created_at = created_at;
   });
+};
+
+void gamerank::del(uint64_t id)
+{
+  // Auth Validation
+  check(has_auth(get_self()), "User with admin access only authorized.");
+  require_auth(get_self());
+
+  rank_index gamerank(get_self(), get_self().value);
+
+  // Check if game exits
+  auto itr = gamerank.find(id);
+  check(itr != gamerank.end(), "Rank doesn't exits.");
+
+  // If all validations successful, remove the game from the list
+  gamerank.erase(itr);
 };

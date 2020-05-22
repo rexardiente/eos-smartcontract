@@ -4,28 +4,36 @@ using namespace eosio;
 
 class [[eosio::contract("game.rank")]] gamerank : public contract
 {
-  /* Game Rank Table
+public:
+  /*
+  *  id - rank number
+  *  account - account ID
+  *  asset - total amount win
+  */
+  struct user
+  {
+    int id;
+    name account;
+    uint64_t total_reward;
+  };
+
+private:
+  /* Game Ranking Table
   *
-  *  ID - Primary Key hostname.
-  *  game - Secondary key Game title.
-  *  platform - String name of the Platform.
-  *  symbol - symbol is member of an asset instance.
-  *  info - JSON string for list of top users [{user: 'name type', total_reward: 'asset', symbol: 'asset.symbol.raw'}].
+  *  ID - Primary Key.
+  *  data - Struct `user`
   *  created_at - timestamp datetime execution.
   */
-private:
   struct [[eosio::table]] rank
   {
-    name id;
-    std::string game;
-    std::string platform;
-    std::string info;
-    uint32_t created_at;
+    uint64_t id;
+    std::vector<user> data;
+    uint64_t created_at;
 
-    auto primary_key() const { return id.value; }
-    uint32_t secondary_key() const { return created_at; }
+    uint64_t primary_key() const { return id; }
+    uint64_t secondary_key() const { return created_at; }
 
-    EOSLIB_SERIALIZE(rank, (id)(platform)(game)(info)(created_at))
+    EOSLIB_SERIALIZE(rank, (id)(data)(created_at))
   };
 
   typedef eosio::multi_index<"ranks"_n, rank> rank_index;
@@ -35,21 +43,15 @@ public:
 
   gamerank(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds) {}
 
-  // [[eosio::action]] void getbyid( name id);
-  [[eosio::action]] void erase(name id);
-  [[eosio::action]] void byid(name id);
-  [[eosio::action]] void create(name id,
-                                std::string game,
-                                std::string platform,
-                                std::string info,
-                                uint32_t created_at);
-  [[eosio::action]] void update(name id,
-                                std::string game,
-                                std::string platform,
-                                std::string info,
-                                uint32_t created_at);
+  [[eosio::action]] void del(uint64_t id);
+  [[eosio::action]] void add(uint64_t id,
+                             std::vector<user> data,
+                             uint64_t created_at);
+  [[eosio::action]] void edit(uint64_t id,
+                              std::vector<user> data,
+                              uint64_t created_at);
 
-  using create_action = action_wrapper<"create"_n, &gamerank::create>;
-  using update_action = action_wrapper<"update"_n, &gamerank::update>;
-  using erase_action = action_wrapper<"erase"_n, &gamerank::erase>;
+  using del_action = action_wrapper<"del"_n, &gamerank::del>;
+  using add_action = action_wrapper<"add"_n, &gamerank::add>;
+  using edit_action = action_wrapper<"edit"_n, &gamerank::edit>;
 };
