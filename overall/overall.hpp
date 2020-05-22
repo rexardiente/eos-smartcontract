@@ -1,6 +1,5 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
-// #include <to_json.hpp>
 
 using namespace eosio;
 
@@ -8,14 +7,14 @@ class [[eosio::contract("overall")]] overall : public contract
 {
 public:
   /*
-  *  rank - number
-  *  data - user ID
+  *  id - rank number
+  *  account - account ID
   *  asset - total amount win
   */
   struct user
   {
-    uint64_t rank_num;
-    name account_name;
+    int id;
+    name account;
     uint64_t total_reward;
   };
 
@@ -23,13 +22,13 @@ private:
   /* Game Overall Table
   *
   *  ID - Primary Key.
-  *  data - JSON string for list of top users [{user: 'name type', total_reward: 'uint64_t'}].
+  *  data - Struct `user`
   *  created_at - timestamp datetime execution.
   */
   struct [[eosio::table]] rank
   {
     uint64_t id;
-    std::vector<user> data; // List of JSON String format
+    std::vector<user> data;
     uint64_t created_at;
 
     uint64_t primary_key() const { return id; }
