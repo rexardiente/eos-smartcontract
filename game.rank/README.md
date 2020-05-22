@@ -1,59 +1,25 @@
-## Contract Actions
-
-### Create Action
-
-- cleos push action game.rank create '["game.rank", "PANEL GAME" , "EOS GAME STORE", "infomation", 1589312200]' -p game.rank@active
-
-### Check Database Table
-
-- cleos get table game.rank game.rank ranks --lower eosgamestor1 --limit 1
-
-### Update Action
-
-- cleos push action game.rank update '["game.rank", "PANEL GAME" , "EOS GAME STORE", "infomation", 1589312201]' -p game.rank@active
-
-### Delete Action
-
-- cleos push action game.rank erase '["game.rank", "eosgamestore"]' -p game.rank@active
-
-## Testing: Compile and Deploy
-
-Make sure wallets are unlock, default development key, and testing acccounts
-
-eosio-cpp game.rank.cpp -o game.rank.wasm
-cleos set contract game.rank ../game.rank -p game.rank@active
-
 ## Create Test Account
-
-- cleos create account eosio eosgamestore EOS8NfzQA3wfNHy844kqFcwMwdzaNEjQACRriDxb2QQnzqadBbPS5
 - cleos create account eosio game.rank EOS8NfzQA3wfNHy844kqFcwMwdzaNEjQACRriDxb2QQnzqadBbPS5
 
-## Create The Token
+## Contract Actions
 
-- cleos push action eosio.token create '[ "eosgamestore", "1000000000.0000 SYS"]' -p eosio.token@active
+Compile and deploy
 
-## Issue Tokens
+- eosio-cpp game.rank.cpp -o game.rank.wasm
+- cleos set contract game.rank ./ -p game.rank@active
 
-> To inspect the transaction, try using the -d -j options, which indicate "don't broadcast" and "return the transaction as json", which you may find useful during development. Now "eosgamestore is ready to transfer some of the tokens to other account.
+Add Action
 
-- cleos push action eosio.token issue '[ "eosgamestore", "100.0000 SYS", "game rank memo" ]' -p eosgamestore@active -d -j
+- cleos push action game.rank add '[12345, [{"id":1, "account":"user1","total_reward": 50}], 1590131419]' -p game.rank@active
 
-## Transfer Tokens
+Edit Action
 
-- cleos push action eosio.token transfer '[ "eosgamestore", "game.rank", "25.0000 SYS", "m" ]' -p eosgamestore@active
+- cleos push action game.rank edit '[12345, [{"id":1, "account":"user1","total_reward": 100}, {"id":2, "account":"user2","total_reward": 21}, {"id":3, "account":"user3","total_reward": 100}], 1590131419]' -p game.rank@active
 
-cleos push action game.rank getbyid '["eosgamestore", "eosgamestor1"]' -p eosgamestore@active
+- Check table using ID
 
-## Action wrapper
+- cleos get table game.rank game.rank ranks --lower 12345 --limit 1
 
-> To define an action wrapper for the mod action, make use of the eosio::action_wrapper template.
+Delete Action
 
-- using erase_action = action_wrapper<"erase"\_n, &gamerank::erase>;
-
-> Then instantiate the erase_action defined above, specifying the contract to send the action to as the first argument.
-
-- gamerank::erase_action eraseaction(\_self, {get_self(), "active"\_n});
-
-> And finally call the send method of the action wrapper and pass in the eraseaction's parameters as positional arguments
-
-- eraseaction.send(\_self);
+- cleos push action game.rank del '[12345]' -p game.rank@active

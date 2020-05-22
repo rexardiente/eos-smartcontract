@@ -6,7 +6,7 @@ class [[eosio::contract("games")]] games : public contract
 {
 private:
   struct [[eosio::table]] game
-  { 
+  {
     uint64_t id;
     std::string title;
     std::string description;
@@ -28,11 +28,11 @@ private:
 
   typedef eosio::multi_index<"games"_n, game> game_index;
   typedef eosio::multi_index<"configs"_n, config> config_index;
-  
+
 public:
   using contract::contract;
   games(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds) {}
-  
+
   // Configuration actions
   [[eosio::action]] void addconfig(const uint64_t id);
   [[eosio::action]] void editconfig(const uint64_t id);

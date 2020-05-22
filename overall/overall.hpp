@@ -1,5 +1,4 @@
 #include <eosio/eosio.hpp>
-#include <eosio/asset.hpp>
 
 using namespace eosio;
 

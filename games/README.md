@@ -1,5 +1,7 @@
 ## Games contract Contents:
+
 - Games table
+
   - Add
   - Edit
   - Delete
@@ -11,9 +13,14 @@
 
 ## Usage
 
-First create an accountf for game contract.
+First create an account for game contract.
 
 - cleos create account eosio games EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+
+Compile and deploy
+
+- eosio-cpp games.cpp -o games.wasm
+- cleos set contract games ./ -p games@active
 
 Add game and config table:
 
@@ -22,7 +29,7 @@ Add game and config table:
 
 Check games and configs table
 
-- cleos get table games games games 
-- cleos get table games games configs 
+- cleos get table games games games
+- cleos get table games games configs
 
 Try `Edit` and `Delete` action.
