@@ -47,10 +47,12 @@ namespace donutToken {
          and a set maximum token supply.
          ----------------------------------------------------------------------
          */
-         [[eosio::action]]
-         void create( const name&   issuer,
-                      const asset&  max_supply);
-
+         [[eosio::on_notify("eosio.token::create")]] void donutToken::create
+         (name issuer, const asset &amount) {
+                print(get_self()); // donutToken
+                print(get_first_receiver()); // eosio.token
+         }
+         
          /*
          ---------------------------------------------------------------------
          Type: issue function
@@ -62,9 +64,11 @@ namespace donutToken {
          address with a set amount of tokens, and  a specific memo address.
          ---------------------------------------------------------------------
          */
-         [[eosio::action]]
-         void issue( const name& receiver, const asset& amount,
-           const string& memo_add );
+         [[eosio::on_notify("eosio.token::issue")]] void donutToken::issue
+         (name sender, name receiver, const asset &amount,string memo_add) {
+                print(get_self()); // donutToken
+                print(get_first_receiver()); // eosio.token
+         }
 
          /*
          ---------------------------------------------------------------------
@@ -78,11 +82,13 @@ namespace donutToken {
          amount, and the specific memo address of the receiver.
          ---------------------------------------------------------------------
          */
-         [[eosio::action]]
-         void transfer( const name&    sender,
-                        const name&    receiver,
-                        const asset&   amount,
-                        const string&  memo_add );
+
+          [[eosio::on_notify("eosio.token::transfer")]] void donutToken::transfer
+          (name sender, name receiver, const asset &amount,
+            string memo_add) {
+                  print(get_self()); // donutToken
+                  print(get_first_receiver()); // eosio.token
+          }
 
          static asset get_balance( const name& token_contract_account, const
            name& owner, const symbol_code& sym_code )
