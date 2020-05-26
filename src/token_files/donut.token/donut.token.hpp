@@ -47,12 +47,10 @@ namespace donutToken {
          and a set maximum token supply.
          ----------------------------------------------------------------------
          */
-         [[eosio::on_notify("eosio.token::create")]] void donutToken::create
-         (name issuer, const asset &amount) {
-                print(get_self()); // donutToken
-                print(get_first_receiver()); // eosio.token
-         }
-         
+         [[eosio::action]]
+         void create( const name&   issuer,
+                      const asset&  max_supply);
+
          /*
          ---------------------------------------------------------------------
          Type: issue function
@@ -64,11 +62,9 @@ namespace donutToken {
          address with a set amount of tokens, and  a specific memo address.
          ---------------------------------------------------------------------
          */
-         [[eosio::on_notify("eosio.token::issue")]] void donutToken::issue
-         (name sender, name receiver, const asset &amount,string memo_add) {
-                print(get_self()); // donutToken
-                print(get_first_receiver()); // eosio.token
-         }
+         [[eosio::action]]
+         void issue( const name& receiver, const asset& amount,
+           const string& memo_add );
 
          /*
          ---------------------------------------------------------------------
@@ -82,13 +78,11 @@ namespace donutToken {
          amount, and the specific memo address of the receiver.
          ---------------------------------------------------------------------
          */
-
-          [[eosio::on_notify("eosio.token::transfer")]] void donutToken::transfer
-          (name sender, name receiver, const asset &amount,
-            string memo_add) {
-                  print(get_self()); // donutToken
-                  print(get_first_receiver()); // eosio.token
-          }
+         [[eosio::action]]
+         void transfer( const name&    sender,
+                        const name&    receiver,
+                        const asset&   amount,
+                        const string&  memo_add );
 
          static asset get_balance( const name& token_contract_account, const
            name& owner, const symbol_code& sym_code )
