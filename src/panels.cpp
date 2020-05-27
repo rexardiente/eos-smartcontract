@@ -35,21 +35,19 @@ public:
   overall_controller(self),
   payable_controller(self),
   donutToken_controller(self) {
-    
+    /* game-related actions */
+    /*-------------------------------------------------------------------------*/
+    /// @abi action
 
+    /* sc-mechanics-related actions */
+    /*-------------------------------------------------------------------------*/
+    /// @abi action
+
+    /* token-related actions */
+    /*-------------------------------------------------------------------------*/
+    /// @abi action
   }
 
-/* game-related actions */
-/*-------------------------------------------------------------------------*/
-/// @abi action
-
-/* sc-mechanics-related actions */
-/*-------------------------------------------------------------------------*/
-/// @abi action
-
-/* token-related actions */
-/*-------------------------------------------------------------------------*/
-/// @abi action
 
 
 
