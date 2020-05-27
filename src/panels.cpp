@@ -1,6 +1,6 @@
 /*
 -------------------------------------------------------------------------------
-File name: main.cpp
+File name: panels.cpp
 Creator: Brett A. Harvey
 Purpose: the main program for executing all of the contract code.
 -------------------------------------------------------------------------------
@@ -19,12 +19,57 @@ Purpose: the main program for executing all of the contract code.
 #include "token_files/donut.token/donut.token.hpp"
 #include "token_files/donut.token/donut.token.cpp"
 
-class main : public eosio::contract, public control_base {
+class panels : public eosio::contract {
 private:
+  gamerank gamerank_controller;
+  games games_controller;
+  overall overall_controller;
+  payable payable_controller;
+  donutToken  donutToken_controller;
 
 public:
-/* player-related actions */
+  panels(self)
+  :eosio::contract(self),
+  gamerank_controller(self),
+  games_controller(self),
+  overall_controller(self),
+  payable_controller(self),
+  donutToken_controller(self) {
+    
+
+  }
+
+/* game-related actions */
 /*-------------------------------------------------------------------------*/
 /// @abi action
+
+/* sc-mechanics-related actions */
+/*-------------------------------------------------------------------------*/
+/// @abi action
+
+/* token-related actions */
+/*-------------------------------------------------------------------------*/
+/// @abi action
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
