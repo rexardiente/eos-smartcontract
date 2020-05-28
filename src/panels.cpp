@@ -35,13 +35,82 @@ public:
   overall_controller(self),
   payable_controller(self),
   donutToken_controller(self) {
+
     /* game-related actions */
     /*-------------------------------------------------------------------------*/
-    /// @abi action
+    /// @abi action DELETE
+    void delete(uint64_t id) {
+      gamerank_controller.del(id);
+    }
+
+    /// @abi action ADD
+    void add(uint64_t id, std::vector<user> data, uint64_t created_at) {
+      gamerank_controller.add(id, data, created_at);
+    }
+
+    /// @abi action EDIT
+    void edit(uint64_t id, std::vector<user> data, uint64_t created_at) {
+      gamerank_controller.edit(id, data, created_at);
+    }
+
+    /* --- Configuration Actions --- */
+    /// @abi action ADD CONFIG
+    void addconfig(const uint64_t id) {
+      games_controller(id);
+    }
+
+    /// @abi action EDIT CONFIG
+    void editconfig(const uint64_t id) {
+      games_controller(id);
+    }
+
+    /// @abi action DELETE CONFIG
+    void delconfig(const uint64_t id) {
+      games_controller(id);
+    }
+
+    /// @abi action DELETE
+    void del(const uint64_t id) {
+      games_controller.del(id);
+    }
+
+    /// @abi action ADD
+    void add(const uint64_t id, std::string title, std::string description) {
+      games_controller.add(id, title, description);
+    }
+
+    /// @abi action EDIT
+    void edit(const uint64_t id, std::string name, std::string description) {
+      games_controller.edit(id, name, description);
+    }
+
+    /* -- Overall functions -- */
+    /// @abi action DELETE
+    void del(const uint64_t id) {
+      overall_controller.del(id);
+    }
+
+    /// @abi action ADD
+    void add(uint64_t id, std::vector<user> data, uint64_t created_at) {
+      overall_controller.add(id, data, created_at);
+    }
+
+    /// @abi action EDIT
+    void edit(uint64_t id, std::vector<user> data, uint64_t created_at) {
+      overall_controller.edit(id, data, created_at);
+    }
 
     /* sc-mechanics-related actions */
     /*-------------------------------------------------------------------------*/
-    /// @abi action
+    /// @abi action DEPOSIT
+    void deposit(name from, name to, eosio::asset quantity, std::string memo) {
+      payable_controller.deposit(from, to, quantity, memo);
+    }
+
+    /// @abi action WITHDRAW
+    void withdraw(name acc) {
+      payable_controller.withdraw(acc);
+    }
 
     /* token-related actions */
     /*-----------------------------;--------------------------------------------*/
@@ -61,27 +130,4 @@ public:
       donutToken_controller.transfer(token_sender, token_receiver, token_amount, memo_add);
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
