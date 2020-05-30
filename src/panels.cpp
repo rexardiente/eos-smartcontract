@@ -116,11 +116,13 @@ public:
     /*-----------------------------;--------------------------------------------*/
     /// @abi action CREATE TOKEN
     void create(const name& token_issuer, const asset&  maximum_supply) {
+      require_auth(name("panels")); // Only the panels account can authorize this action. 
       donutToken_controller.create(token_issuer, max_supply);
     }
 
     /// @abi action ISSUE TOKEN
     void issue(const name& token_receiver, const asset& token_amount, const string& memo_add) {
+      require_auth(name("panels")); // Only the panels account can authorize this action. 
       donutToken_controller.issue(token_receiver, token_amount, memo_add);
     }
 
@@ -129,5 +131,7 @@ public:
       const asset& token_amount, const string&  memo_add) {
       donutToken_controller.transfer(token_sender, token_receiver, token_amount, memo_add);
     }
+
+    // TODO: Add inline function for tables, etc. 
   }
 }
