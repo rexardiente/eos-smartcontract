@@ -131,7 +131,5 @@ public:
       const asset& token_amount, const string&  memo_add) {
       donutToken_controller.transfer(token_sender, token_receiver, token_amount, memo_add);
     }
-
-    // TODO: Add inline function for tables, etc. 
   }
 }
