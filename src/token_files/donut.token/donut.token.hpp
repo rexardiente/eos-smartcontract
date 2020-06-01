@@ -21,7 +21,7 @@ namespace eosiosystem {
    class system_contract;
 }
 
-namespace donutToken {
+namespace donuttoken {
 
    using std::string;
 

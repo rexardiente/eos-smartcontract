@@ -6,18 +6,15 @@ Purpose: the main program for executing all of the contract code.
 -------------------------------------------------------------------------------
 */
 
+
 #include <eosio/eosio.hpp>
 
 /* Including external files for execution. */
-#include "game_files/game.rank/game.rank.hpp"
 #include "game_files/game.rank/game.rank.cpp"
-#include "game_files/games/games.hpp"
 #include "game_files/games/games.cpp"
-#include "game_files/overall/overall.hpp"
 #include "game_files/overall/overall.cpp"
 #include "smart_contract_mechanics/payable/payable.cpp"
-#include "token_files/donut.token/donuttoken.hpp"
-#include "token_files/donut.token/donuttoken.cpp"
+// #include "token_files/donut.token/donut.token.cpp"
 
 class panels : public eosio::contract {
 private:
@@ -25,21 +22,21 @@ private:
   games games_controller;
   overall overall_controller;
   payable payable_controller;
-  donuttoken donutToken_controller;
+ // donuttoken donutToken_controller;
 
 public:
-  panels(self)
-  :eosio::contract(self),
-  gamerank_controller(self),
-  games_controller(self),
-  overall_controller(self),
-  payable_controller(self),
-  donutToken_controller(self) {
+  panels(_self)
+  :eosio::contract(_self),
+  gamerank_controller(_self),
+  games_controller(_self),
+  overall_controller(_self),
+  payable_controller(_self) {
+  // donutToken_controller(self) {
 
     /* game-related actions */
     /*-------------------------------------------------------------------------*/
     /// @abi action DELETE
-    void delete(uint64_t id) {
+    void del(uint64_t id) {
       gamerank_controller.del(id);
     }
 
@@ -115,6 +112,7 @@ public:
     /* token-related actions */
     /*-----------------------------;--------------------------------------------*/
     /// @abi action CREATE TOKEN
+    /*
     void create(const name& token_issuer, const asset&  maximum_supply) {
       require_auth(name("panels")); // Only the panels account can authorize this action. 
       donutToken_controller.create(token_issuer, max_supply);
@@ -131,6 +129,7 @@ public:
       const asset& token_amount, const string&  memo_add) {
       donutToken_controller.transfer(token_sender, token_receiver, token_amount, memo_add);
     }
+    */
 
     // TODO: Add inline function for tables, etc. 
   }
