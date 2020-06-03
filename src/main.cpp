@@ -7,7 +7,7 @@
 class [[eosio::contract("main")]] main : public eosio::contract
 {
 private:
-  gamerank gamerank_controller();
+  gamerank gamerank_controller(name receiver, name code, datastream<const char *> ds);
 
 public:
   using contract::contract;
