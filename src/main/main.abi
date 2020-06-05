@@ -1,0 +1,99 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [],
+    "structs": [
+        {
+            "name": "add",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "data",
+                    "type": "user[]"
+                },
+                {
+                    "name": "createdAt",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "del",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "data",
+                    "type": "user[]"
+                },
+                {
+                    "name": "createdAt",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "edit",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "data",
+                    "type": "user[]"
+                },
+                {
+                    "name": "createdAt",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "user",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "int32"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "total_reward",
+                    "type": "uint64"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "add",
+            "type": "add",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "del",
+            "type": "del",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "edit",
+            "type": "edit",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [],
+    "ricardian_clauses": [],
+    "variants": []
+}
