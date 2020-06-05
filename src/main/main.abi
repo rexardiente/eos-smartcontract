@@ -12,11 +12,21 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "data",
-                    "type": "user[]"
+                    "name": "title",
+                    "type": "string"
                 },
                 {
-                    "name": "createdAt",
+                    "name": "description",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "addconfig",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
                     "type": "uint64"
                 }
             ]
@@ -28,13 +38,15 @@
                 {
                     "name": "id",
                     "type": "uint64"
-                },
+                }
+            ]
+        },
+        {
+            "name": "delconfig",
+            "base": "",
+            "fields": [
                 {
-                    "name": "data",
-                    "type": "user[]"
-                },
-                {
-                    "name": "createdAt",
+                    "name": "id",
                     "type": "uint64"
                 }
             ]
@@ -48,29 +60,21 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "data",
-                    "type": "user[]"
+                    "name": "title",
+                    "type": "string"
                 },
                 {
-                    "name": "createdAt",
-                    "type": "uint64"
+                    "name": "description",
+                    "type": "string"
                 }
             ]
         },
         {
-            "name": "user",
+            "name": "editconfig",
             "base": "",
             "fields": [
                 {
                     "name": "id",
-                    "type": "int32"
-                },
-                {
-                    "name": "account",
-                    "type": "name"
-                },
-                {
-                    "name": "total_reward",
                     "type": "uint64"
                 }
             ]
@@ -83,13 +87,28 @@
             "ricardian_contract": ""
         },
         {
+            "name": "addconfig",
+            "type": "addconfig",
+            "ricardian_contract": ""
+        },
+        {
             "name": "del",
             "type": "del",
             "ricardian_contract": ""
         },
         {
+            "name": "delconfig",
+            "type": "delconfig",
+            "ricardian_contract": ""
+        },
+        {
             "name": "edit",
             "type": "edit",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "editconfig",
+            "type": "editconfig",
             "ricardian_contract": ""
         }
     ],
