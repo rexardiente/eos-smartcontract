@@ -42,4 +42,14 @@ public:
   [[eosio::action]] void add(const uint64_t id, std::string title, std::string description);
   [[eosio::action]] void edit(const uint64_t id, std::string name, std::string description);
   [[eosio::action]] void del(const uint64_t id);
+
+  // Action wrappers for config actions
+  using add_config = action_wrapper<"addconfig"_n, &games::addconfig>;
+  using edit_config = action_wrapper<"editconfig"_n, &games::editconfig>;
+  using del_config = action_wrapper<"delconfig"_n, &games::delconfig>;
+
+  // Action wrappers for game actions. 
+  using add_action = action_wrapper<"addconfig"_n, &games::add>;
+  using edit_action = action_wrapper<"edit"_n, &games::edit>;
+  using del_action = action_wrapper<"del"_n, &games::del>;
 };
