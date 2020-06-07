@@ -136,7 +136,7 @@ public:
     overall::edit_action edit_overall("overall"_n, {get_self(), "active"_n});
     edit_overall.send(id, data, createdAt);
   };
-ss
+
   /* -- Edit Action (Overall)  -- */
   [[eosio::action]] void del_overall(uint64_t id)
   {
