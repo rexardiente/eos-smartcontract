@@ -12,7 +12,7 @@ public:
   using contract::contract;
   main(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds) {}
 
-  /* ----- GAME-RELATED FUNCTIONS AND ACTIONS ----- */ 
+  /* ----- GAME-RELATED FUNCTIONS AND ACTIONS ----- */
   // GAMES.CPP
   /* -- Add Configuration  -- */
   [[eosio::action]] void addconfig(uint64_t id)
@@ -80,7 +80,7 @@ public:
     delaction.send(id);
   };
 
-  // GAME RANK 
+  // GAME RANK
   /* -- Add Action -- */
   [[eosio::action]] void add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
@@ -146,5 +146,17 @@ public:
 
     overall::del_action del_overall("overall"_n, {get_self(), "active"_n});
     del_overall.send(id);
+  };
+
+  // TOKEN CONTRACT
+  /* -- Add Action -- */
+  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
+  {
+    // Check if the user is authorized to action
+    check(has_auth(get_self()), "User with admin access only authorized.");
+    require_auth(get_self());
+
+    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
+    addaction.send(id, data, createdAt);
   };
 };
