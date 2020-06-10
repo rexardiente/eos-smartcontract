@@ -122,11 +122,12 @@ public:
     check(has_auth(get_self()), "User with admin access only authorized.");
     require_auth(get_self());
 
-    overall::add_action add_overall("overall"_n, {get_self(), "active"_n});
-    add_overall.send(id, data, createdAt);
+    overall::add_action addaction("overall"_n, {get_self(), "active"_n});
+    addaction.send(id, data, createdAt);
   };
 
   /* -- Edit Action(Overall)   -- */
+  /*
   [[eosio::action]] void edit_overall(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
@@ -136,8 +137,9 @@ public:
     overall::edit_action edit_overall("overall"_n, {get_self(), "active"_n});
     edit_overall.send(id, data, createdAt);
   };
-
+*/
   /* -- Edit Action (Overall)  -- */
+  /*
   [[eosio::action]] void del_overall(uint64_t id)
   {
     // Check if the user is authorized to action
@@ -147,9 +149,11 @@ public:
     overall::del_action del_overall("overall"_n, {get_self(), "active"_n});
     del_overall.send(id);
   };
+  */
 
   // TOKEN CONTRACT
   /* -- Add Action -- */
+  /*
   [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
   {
     // Check if the user is authorized to action
@@ -159,4 +163,5 @@ public:
     donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
     addaction.send(id, data, createdAt);
   };
+  */
 };
