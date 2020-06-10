@@ -52,7 +52,7 @@ public:
 
   // @abi action
   /* -- Add Action -- */
-  [[eosio::action]] void add(uint64_t id, std::string title, std::string description)
+  [[eosio::action]] void addgame(uint64_t id, std::string title, std::string description)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -64,7 +64,7 @@ public:
 
   // @abi action
   /* -- Edit Action  -- */
-  [[eosio::action]] void edit(uint64_t id, std::string title, std::string description)
+  [[eosio::action]] void editgame(uint64_t id, std::string title, std::string description)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -76,7 +76,7 @@ public:
 
   // @abi action
   /* -- Delete Action  -- */
-  [[eosio::action]] void del(uint64_t id)
+  [[eosio::action]] void delgame(uint64_t id)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -89,7 +89,7 @@ public:
   // GAME RANK
   // @abi action
   /* -- Add Action -- */
-  [[eosio::action]] void add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void addgamerank(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -101,7 +101,7 @@ public:
 
   // @abi action
   /* -- Edit Action -- */
-  [[eosio::action]] void edit(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void editgamerank(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -113,7 +113,7 @@ public:
 
   // @abi action
   /* -- Delete Action -- */
-  [[eosio::action]] void del(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void delgamerank(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -126,8 +126,7 @@ public:
   // OVERALL.CPP
   // @abi action
   /* -- Add Action(Overall)  -- */
-  /*
-  [[eosio::action]] void overall_add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void addoverall(uint64_t id, std::vector<overall::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -136,10 +135,10 @@ public:
     overall::add_action addaction("overall"_n, {get_self(), "active"_n});
     addaction.send(id, data, createdAt);
   };
-*/
+
   /* -- Edit Action(Overall)   -- */
-  /*
-  [[eosio::action]] void edit_overall(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  
+  [[eosio::action]] void editoverall(uint64_t id, std::vector<overall::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -148,10 +147,10 @@ public:
     overall::edit_action edit_overall("overall"_n, {get_self(), "active"_n});
     edit_overall.send(id, data, createdAt);
   };
-*/
+
   /* -- Edit Action (Overall)  -- */
-  /*
-  [[eosio::action]] void del_overall(uint64_t id)
+  
+  [[eosio::action]] void deloverall(uint64_t id)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -160,7 +159,7 @@ public:
     overall::del_action del_overall("overall"_n, {get_self(), "active"_n});
     del_overall.send(id);
   };
-  */
+  
 
   // TOKEN CONTRACT
   /* -- Add Action -- */
