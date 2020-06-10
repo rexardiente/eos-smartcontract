@@ -19,7 +19,7 @@ public:
   [[eosio::action]] void addconfig(uint64_t id)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     games::add_config addconfig("games"_n, {get_self(), "active"_n});
@@ -31,7 +31,7 @@ public:
   [[eosio::action]] void editconfig(uint64_t id)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     games::edit_config editconfig("games"_n, {get_self(), "active"_n});
@@ -43,7 +43,7 @@ public:
   [[eosio::action]] void delconfig(uint64_t id)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     games::del_config delconfig("games"_n, {get_self(), "active"_n});
@@ -55,7 +55,7 @@ public:
   [[eosio::action]] void add(uint64_t id, std::string title, std::string description)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     games::add_action addaction("games"_n, {get_self(), "active"_n});
@@ -67,7 +67,7 @@ public:
   [[eosio::action]] void edit(uint64_t id, std::string title, std::string description)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     games::edit_action editaction("games"_n, {get_self(), "active"_n});
@@ -79,7 +79,7 @@ public:
   [[eosio::action]] void del(uint64_t id)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     games::del_action delaction("games"_n, {get_self(), "active"_n});
@@ -92,7 +92,7 @@ public:
   [[eosio::action]] void add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     gamerank::add_action addaction("game.rank"_n, {get_self(), "active"_n});
@@ -104,7 +104,7 @@ public:
   [[eosio::action]] void edit(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     gamerank::edit_action editaction("game.rank"_n, {get_self(), "active"_n});
@@ -116,7 +116,7 @@ public:
   [[eosio::action]] void del(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     gamerank::del_action delaction("game.rank"_n, {get_self(), "active"_n});
@@ -130,7 +130,7 @@ public:
   [[eosio::action]] void overall_add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     overall::add_action addaction("overall"_n, {get_self(), "active"_n});
@@ -142,7 +142,7 @@ public:
   [[eosio::action]] void edit_overall(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     overall::edit_action edit_overall("overall"_n, {get_self(), "active"_n});
@@ -154,7 +154,7 @@ public:
   [[eosio::action]] void del_overall(uint64_t id)
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     overall::del_action del_overall("overall"_n, {get_self(), "active"_n});
@@ -168,7 +168,7 @@ public:
   [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
   {
     // Check if the user is authorized to action
-    check(has_auth(get_self()), "User with admin access only authorized.");
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
     donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
