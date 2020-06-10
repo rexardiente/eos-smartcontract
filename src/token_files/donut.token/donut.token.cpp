@@ -8,8 +8,6 @@ Purpose: A source file that contains methods and structs for Donut token.
 
 #include "donut.token.hpp"
 
-namespace donuttoken {
-
 void token::create( const name&   issuer,
                     const asset&  max_supply )
 {
@@ -114,4 +112,3 @@ void token::add_balance( const name& owner, const asset& value,
       });
    }
 }
-} /// namespace donutToken

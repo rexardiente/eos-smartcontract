@@ -48,8 +48,8 @@ public:
   using edit_config = action_wrapper<"editconfig"_n, &games::editconfig>;
   using del_config = action_wrapper<"delconfig"_n, &games::delconfig>;
 
-  // Action wrappers for game actions. 
-  using add_action = action_wrapper<"addconfig"_n, &games::add>;
+  // Action wrappers for game actions.
+  using add_action = action_wrapper<"add"_n, &games::add>;
   using edit_action = action_wrapper<"edit"_n, &games::edit>;
   using del_action = action_wrapper<"del"_n, &games::del>;
 };
