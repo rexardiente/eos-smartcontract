@@ -14,6 +14,7 @@ public:
 
   /* ----- GAME-RELATED FUNCTIONS AND ACTIONS ----- */
   // GAMES.CPP
+  // @abi action
   /* -- Add Configuration  -- */
   [[eosio::action]] void addconfig(uint64_t id)
   {
@@ -25,6 +26,7 @@ public:
     addconfig.send(id);
   };
 
+  // @abi action
   /* -- Edit Configuration  -- */
   [[eosio::action]] void editconfig(uint64_t id)
   {
@@ -36,6 +38,7 @@ public:
     editconfig.send(id);
   };
 
+  // @abi action
   /* -- Delete Configuration  -- */
   [[eosio::action]] void delconfig(uint64_t id)
   {
@@ -47,6 +50,7 @@ public:
     delconfig.send(id);
   };
 
+  // @abi action
   /* -- Add Action -- */
   [[eosio::action]] void add(uint64_t id, std::string title, std::string description)
   {
@@ -58,6 +62,7 @@ public:
     addaction.send(id, title, description);
   };
 
+  // @abi action
   /* -- Edit Action  -- */
   [[eosio::action]] void edit(uint64_t id, std::string title, std::string description)
   {
@@ -69,6 +74,7 @@ public:
     editaction.send(id, title, description);
   };
 
+  // @abi action
   /* -- Delete Action  -- */
   [[eosio::action]] void del(uint64_t id)
   {
@@ -81,8 +87,9 @@ public:
   };
 
   // GAME RANK
+  // @abi action
   /* -- Add Action -- */
-  [[eosio::action]] void add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void gamerank_add(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "User with admin access only authorized.");
@@ -92,8 +99,9 @@ public:
     addaction.send(id, data, createdAt);
   };
 
+  // @abi action
   /* -- Edit Action -- */
-  [[eosio::action]] void edit(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void gamerank_edit(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "User with admin access only authorized.");
@@ -103,8 +111,9 @@ public:
     editaction.send(id, data, createdAt);
   };
 
+  // @abi action
   /* -- Delete Action -- */
-  [[eosio::action]] void del(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
+  [[eosio::action]] void gamerank_del(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "User with admin access only authorized.");
@@ -115,6 +124,7 @@ public:
   };
 
   // OVERALL.CPP
+  // @abi action
   /* -- Add Action(Overall)  -- */
   [[eosio::action]] void add_overall(uint64_t id, std::vector<gamerank::user> data, uint64_t createdAt)
   {
