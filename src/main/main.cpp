@@ -149,7 +149,6 @@ public:
   };
 
   /* -- Edit Action (Overall)  -- */
-  
   [[eosio::action]] void deloverall(uint64_t id)
   {
     // Check if the user is authorized to action
