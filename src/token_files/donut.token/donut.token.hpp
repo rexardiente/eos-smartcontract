@@ -44,7 +44,7 @@ public:
     const string& memo_add);
 
   [[eosio::action]] void transfer(onst name& sender, const name& receiver,
-    const asset& amount, const string&  memo_add );
+    const asset& amount, const string&  memo_add);
 
     static asset get_balance( const name& token_contract_account, const
       name& owner, const symbol_code& sym_code);
