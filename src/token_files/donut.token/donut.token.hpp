@@ -13,6 +13,7 @@ using namespace eosio;
 
 class [[eosio::contract("donut.token")]] donuttoken : public contract
 {
+  /*
 private:
   struct [[eosio::table]] account {
      asset    balance;
@@ -32,14 +33,14 @@ private:
   void sub_balance( const name& owner, const asset& value );
   void add_balance( const name& owner, const asset& value, const name&
     ram_payer );
-
+*/
 public:
   using contract::contract;
 
   donuttoken(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds) {}
 
   [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
-
+/*
   [[eosio::action]] void issue(const name& receiver, const asset& amount,
     const string& memo_add);
 
@@ -51,9 +52,11 @@ public:
 
     static asset get_supply( const name& token_contract_account, const
       symbol_code& sym_code );
-
+*/
   // Action Wrappers
   using create_action = action_wrapper<"create"_n, &donuttoken::create>;
+  /*
   using issue_action = action_wrapper<"issue"_n, &donuttoken::issue>;
   using transfer_action = action_wrapper<"transfer"_n, &donuttoken::transfer>;
+  */
 };
