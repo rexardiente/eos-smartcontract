@@ -8,8 +8,7 @@ Purpose: A source file that contains methods and structs for Donut token.
 
 #include "donut.token.hpp"
 
-ACTION donuttoken::create( name issuer, asset maximum_supply ) {
-
+void donuttoken::create( name issuer, asset maximum_supply ) {
     require_auth( _self );
 
     auto sym = maximum_supply.symbol;
@@ -28,7 +27,7 @@ ACTION donuttoken::create( name issuer, asset maximum_supply ) {
     });
 }
 
-ACTION stablecoooin::issue( name to, asset quantity, string memo ) {
+void donuttoken::issue( name to, asset quantity, string memo ) {
     auto sym = quantity.symbol;
     eosio_assert( sym.is_valid(), "invalid symbol name" );
     eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
@@ -58,7 +57,7 @@ ACTION stablecoooin::issue( name to, asset quantity, string memo ) {
     }
 }
 
-ACTION stablecoooin::transfer( name from, name to, asset quantity, string memo ) {
+void donuttoken::transfer( name from, name to, asset quantity, string memo ) {
     eosio_assert( is_paused(), "contract is paused." );
 
     blacklists blacklistt(_self, _self.value);
@@ -88,7 +87,7 @@ ACTION stablecoooin::transfer( name from, name to, asset quantity, string memo )
     add_balance( to, quantity, payer );
 }
 
-ACTION stablecoooin::burn(asset quantity, string memo ) {
+void donuttoken::burn(asset quantity, string memo ) {
     auto sym = quantity.symbol;
     eosio_assert( sym.is_valid(), "invalid symbol name" );
     eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
@@ -115,7 +114,7 @@ ACTION stablecoooin::burn(asset quantity, string memo ) {
     sub_balance( st.issuer, quantity );
 }
 
-ACTION stablecoooin::pause() {
+void donuttoken::pause() {
     require_auth( _self );
 
     pausetable pauset(_self, _self.value);
@@ -132,7 +131,7 @@ ACTION stablecoooin::pause() {
     }
 }
 
-ACTION stablecoooin::unpause() {
+void donuttoken::unpause() {
     require_auth( _self );
     pausetable pauset(_self, _self.value);
     while (pauset.begin() != pauset.end()) {
@@ -143,30 +142,7 @@ ACTION stablecoooin::unpause() {
     }
 }
 
-ACTION stablecoooin::blacklist( name account, string memo ) {
-    require_auth( _self );
-    eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
-    
-    blacklists blacklistt(_self, _self.value);
-    auto existing = blacklistt.find( account.value );
-    eosio_assert( existing == blacklistt.end(), "blacklist account already exists" );
-
-    blacklistt.emplace( _self, [&]( auto& b ) {
-       b.account = account;
-    });
-}
-
-ACTION stablecoooin::unblacklist( name account) {
-    require_auth( _self );
-
-    blacklists blacklistt(_self, _self.value);
-    auto existing = blacklistt.find( account.value );
-    eosio_assert( existing != blacklistt.end(), "blacklist account not exists" );
-
-    blacklistt.erase(existing);
-}
-
-void stablecoooin::sub_balance( name owner, asset value ) {
+void donuttoken::sub_balance( name owner, asset value ) {
    accounts from_acnts( _self, owner.value );
 
    const auto& from = from_acnts.get( value.symbol.code().raw(), "no balance object found" );
@@ -182,7 +158,7 @@ void stablecoooin::sub_balance( name owner, asset value ) {
    }
 }
 
-void stablecoooin::add_balance( name owner, asset value, name ram_payer ) {
+void donuttoken::add_balance( name owner, asset value, name ram_payer ) {
    accounts to_acnts( _self, owner.value );
    auto to = to_acnts.find( value.symbol.code().raw() );
    if( to == to_acnts.end() ) {
@@ -196,10 +172,10 @@ void stablecoooin::add_balance( name owner, asset value, name ram_payer ) {
    }
 }
 
-bool stablecoooin::is_paused() {
+bool donuttoken::is_paused() {
       pausetable pauset(_self, _self.value);
       bool existing = ( pauset.find( 1 ) == pauset.end() );
       return existing;
 }
 
-EOSIO_DISPATCH( stablecoooin, (create)(issue)(transfer)(burn)(pause)(unpause)(blacklist)(unblacklist) )
+EOSIO_DISPATCH(donuttoken, (create)(issue)(transfer)(burn)(pause)(unpause)(blacklist)(unblacklist) )
