@@ -19,14 +19,12 @@ using std::string;
 CONTRACT donuttoken : public contract {
 public:
       using contract::contract;
-      ACTION create(name issuer, asset maximum_supply);
-      ACTION issue(name to, asset quantity, string memo);
-      ACTION transfer(name from, name to, asset quantity, string memo);
-      ACTION burn(asset quantity, string memo);
-      ACTION pause();
-      ACTION unpause();
-      ACTION blacklist(name account, string memo);
-      ACTION unblacklist(name account);
+      [[eosio::action]] void create(name issuer, asset maximum_supply);
+      [[eosio::action]] void issue(name to, asset quantity, string memo);
+      [[eosio::action]] void transfer(name from, name to, asset quantity, string memo);
+      [[eosio::action]] void burn(asset quantity, string memo);
+      [[eosio::action]] void pause();
+      [[eosio::action]] void unpause();
 
       static asset get_supply(name token_contract_account, symbol_code sym) {
             stats statstable(token_contract_account, sym.raw());
