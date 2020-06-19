@@ -7,56 +7,69 @@ EOS token contract "donut-token.cpp"
 -------------------------------------------------------------------------------
 */
 
-#include <eosio/eosio.hpp>
+#pragma once
+
+#include <eosiolib/asset.hpp>
+#include <eosiolib/eosio.hpp>
+#include <string>
 
 using namespace eosio;
+using std::string;
 
-class [[eosio::contract("donut.token")]] donuttoken : public contract
-{
-  /*
-private:
-  struct [[eosio::table]] account {
-     asset    balance;
-     uint64_t primary_key()const { return balance.symbol.code().raw(); }
-  };
-
-  struct [[eosio::table]] currency_stats {
-     asset    supply;
-     asset    max_supply;
-     name     issuer;
-     uint64_t primary_key()const { return supply.symbol.code().raw(); }
-  };
-
-  typedef eosio::multi_index< "accounts"_n, account > accounts;
-  typedef eosio::multi_index< "stat"_n, currency_stats > stats;
-
-  void sub_balance( const name& owner, const asset& value );
-  void add_balance( const name& owner, const asset& value, const name&
-    ram_payer );
-*/
+CONTRACT donuttoken : public contract {
 public:
-  using contract::contract;
+      using contract::contract;
+      ACTION create(name issuer, asset maximum_supply);
+      ACTION issue(name to, asset quantity, string memo);
+      ACTION transfer(name from, name to, asset quantity, string memo);
+      ACTION burn(asset quantity, string memo);
+      ACTION pause();
+      ACTION unpause();
+      ACTION blacklist(name account, string memo);
+      ACTION unblacklist(name account);
 
-  donuttoken(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds) {}
+      static asset get_supply(name token_contract_account, symbol_code sym) {
+            stats statstable(token_contract_account, sym.raw());
+            const auto& st = statstable.get(sym.raw());
+            return st.supply;
+      }
 
-  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
-/*
-  [[eosio::action]] void issue(const name& receiver, const asset& amount,
-    const string& memo_add);
+      static asset get_balance(name token_contract_account,  name owner, symbol_code sym) {
+            accounts accountstable(token_contract_account, owner.value);
+            const auto& ac = accountstable.get(sym.raw());
+            return ac.balance;
+      }
 
-  [[eosio::action]] void transfer(onst name& sender, const name& receiver,
-    const asset& amount, const string&  memo_add);
+private:
+      TABLE account {
+            asset       balance;
+            uint64_t primary_key()const { return balance.symbol.code().raw(); }
+      };
 
-    static asset get_balance( const name& token_contract_account, const
-      name& owner, const symbol_code& sym_code);
+      TABLE currency_stats {
+            asset       supply;
+            asset       max_supply;
+            name        issuer;
+            uint64_t primary_key()const { return supply.symbol.code().raw(); }
+      };
 
-    static asset get_supply( const name& token_contract_account, const
-      symbol_code& sym_code );
-*/
-  // Action Wrappers
-  using create_action = action_wrapper<"create"_n, &donuttoken::create>;
-  /*
-  using issue_action = action_wrapper<"issue"_n, &donuttoken::issue>;
-  using transfer_action = action_wrapper<"transfer"_n, &donuttoken::transfer>;
-  */
+      TABLE blacklist_table {
+            name      account;
+            auto primary_key() const {  return account.value;  }
+      };
+
+      TABLE pause_table {
+            uint64_t            id;
+            bool                paused;
+            auto primary_key() const {  return id;  }
+      };
+
+      typedef eosio::multi_index< "accounts"_n, account > accounts;
+      typedef eosio::multi_index< "stat"_n, currency_stats > stats;
+      typedef eosio::multi_index< "blacklists"_n, blacklist_table > blacklists;
+      typedef eosio::multi_index< "pausetable"_n, pause_table > pausetable;
+
+      void sub_balance( name owner, asset value );
+      void add_balance( name owner, asset value, name ram_payer );
+      bool is_paused();
 };

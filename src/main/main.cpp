@@ -3,6 +3,9 @@
 #include "../game_files/games/games.hpp"
 #include "../game_files/overall/overall.hpp"
 
+#include <eosiolib/asset.hpp>
+#include <eosiolib/eosio.hpp>
+
 using namespace eosio;
 
 class [[eosio::contract("main")]] main : public contract
@@ -161,8 +164,7 @@ public:
   
 
   // TOKEN CONTRACT
-  /* -- Add Action -- */
-  /*
+  /* -- Create Action -- */
   [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
   {
     // Check if the user is authorized to action
@@ -172,5 +174,27 @@ public:
     donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
     addaction.send(id, data, createdAt);
   };
-  */
+
+  /* -- Issue Action -- */
+  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
+  {
+    // Check if the user is authorized to action
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
+    require_auth(get_self());
+
+    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
+    addaction.send(id, data, createdAt);
+  };
+
+  /* -- Transfer Action -- */
+  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
+  {
+    // Check if the user is authorized to action
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
+    require_auth(get_self());
+
+    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
+    addaction.send(id, data, createdAt);
+  };
+
 };
