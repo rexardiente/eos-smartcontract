@@ -25,6 +25,8 @@ public:
       [[eosio::action]] void burn(asset quantity, string memo);
       [[eosio::action]] void pause();
       [[eosio::action]] void unpause();
+      [[eosio::action]] void blacklist(name account, string memo);
+      [[eosio::action]] void unblacklist(name account);
 
       static asset get_supply(name token_contract_account, symbol_code sym) {
             stats statstable(token_contract_account, sym.raw());
@@ -64,8 +66,8 @@ private:
 
       typedef eosio::multi_index< "accounts"_n, account > accounts;
       typedef eosio::multi_index< "stat"_n, currency_stats > stats;
-      typedef eosio::multi_index< "blacklists"_n, blacklist_table > blacklists;
       typedef eosio::multi_index< "pausetable"_n, pause_table > pausetable;
+      typedef eosio::multi_index< "blacklists"_n, blacklist_table > blacklists;
 
       void sub_balance( name owner, asset value );
       void add_balance( name owner, asset value, name ram_payer );
