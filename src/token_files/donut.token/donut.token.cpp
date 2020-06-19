@@ -142,7 +142,7 @@ void donuttoken::unpause() {
     }
 }
 
-ACTION donuttoken::blacklist(name account, string memo) {
+void donuttoken::blacklist(name account, string memo) {
     require_auth( _self );
     eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
     
@@ -155,7 +155,7 @@ ACTION donuttoken::blacklist(name account, string memo) {
     });
 }
 
-ACTION donuttoken::unblacklist(name account) {
+void donuttoken::unblacklist(name account) {
     require_auth(_self);
 
     blacklists blacklistt(_self, _self.value);
