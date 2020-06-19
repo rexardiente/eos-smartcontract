@@ -8,7 +8,7 @@ Purpose: A source file that contains methods and structs for Donut token.
 
 #include "donut.token.hpp"
 
-void donuttoken::create( name issuer, asset maximum_supply ) {
+void donuttoken::create(name issuer, asset maximum_supply) {
     require_auth( _self );
 
     auto sym = maximum_supply.symbol;
@@ -27,7 +27,7 @@ void donuttoken::create( name issuer, asset maximum_supply ) {
     });
 }
 
-void donuttoken::issue( name to, asset quantity, string memo ) {
+void donuttoken::issue(name to, asset quantity, string memo) {
     auto sym = quantity.symbol;
     eosio_assert( sym.is_valid(), "invalid symbol name" );
     eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
@@ -57,7 +57,7 @@ void donuttoken::issue( name to, asset quantity, string memo ) {
     }
 }
 
-void donuttoken::transfer( name from, name to, asset quantity, string memo ) {
+void donuttoken::transfer(name from, name to, asset quantity, string memo) {
     eosio_assert( is_paused(), "contract is paused." );
 
     blacklists blacklistt(_self, _self.value);
@@ -142,8 +142,31 @@ void donuttoken::unpause() {
     }
 }
 
-void donuttoken::sub_balance( name owner, asset value ) {
-   accounts from_acnts( _self, owner.value );
+ACTION donuttoken::blacklist(name account, string memo) {
+    require_auth( _self );
+    eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
+    
+    blacklists blacklistt(_self, _self.value);
+    auto existing = blacklistt.find( account.value );
+    eosio_assert( existing == blacklistt.end(), "blacklist account already exists" );
+
+    blacklistt.emplace(_self, [&](auto& b) {
+       b.account = account;
+    });
+}
+
+ACTION donuttoken::unblacklist(name account) {
+    require_auth(_self);
+
+    blacklists blacklistt(_self, _self.value);
+    auto existing = blacklistt.find( account.value );
+    eosio_assert( existing != blacklistt.end(), "blacklist account not exists" );
+
+    blacklistt.erase(existing);
+}
+
+void donuttoken::sub_balance(name owner, asset value) {
+   accounts from_acnts(_self, owner.value);
 
    const auto& from = from_acnts.get( value.symbol.code().raw(), "no balance object found" );
    eosio_assert( from.balance.amount >= value.amount, "overdrawn balance" );
