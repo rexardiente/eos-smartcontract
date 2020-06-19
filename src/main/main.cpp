@@ -196,5 +196,4 @@ public:
     donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
     addaction.send(id, data, createdAt);
   };
-
 };

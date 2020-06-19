@@ -19,14 +19,14 @@ using std::string;
 CONTRACT donuttoken : public contract {
 public:
       using contract::contract;
-      ACTION create(name issuer, asset maximum_supply);
-      ACTION issue(name to, asset quantity, string memo);
-      ACTION transfer(name from, name to, asset quantity, string memo);
-      ACTION burn(asset quantity, string memo);
-      ACTION pause();
-      ACTION unpause();
-      ACTION blacklist(name account, string memo);
-      ACTION unblacklist(name account);
+      [[eosio::action]] void create(name issuer, asset maximum_supply);
+      [[eosio::action]] void issue(name to, asset quantity, string memo);
+      [[eosio::action]] void transfer(name from, name to, asset quantity, string memo);
+      [[eosio::action]] void burn(asset quantity, string memo);
+      [[eosio::action]] void pause();
+      [[eosio::action]] void unpause();
+      [[eosio::action]] void blacklist(name account, string memo);
+      [[eosio::action]] void unblacklist(name account);
 
       static asset get_supply(name token_contract_account, symbol_code sym) {
             stats statstable(token_contract_account, sym.raw());
@@ -34,7 +34,7 @@ public:
             return st.supply;
       }
 
-      static asset get_balance(name token_contract_account,  name owner, symbol_code sym) {
+      static asset get_balance(name token_contract_account, name owner, symbol_code sym) {
             accounts accountstable(token_contract_account, owner.value);
             const auto& ac = accountstable.get(sym.raw());
             return ac.balance;
@@ -66,10 +66,10 @@ private:
 
       typedef eosio::multi_index< "accounts"_n, account > accounts;
       typedef eosio::multi_index< "stat"_n, currency_stats > stats;
-      typedef eosio::multi_index< "blacklists"_n, blacklist_table > blacklists;
       typedef eosio::multi_index< "pausetable"_n, pause_table > pausetable;
+      typedef eosio::multi_index< "blacklists"_n, blacklist_table > blacklists;
 
-      void sub_balance( name owner, asset value );
-      void add_balance( name owner, asset value, name ram_payer );
+      void sub_balance(name owner, asset value);
+      void add_balance(name owner, asset value, name ram_payer);
       bool is_paused();
 };
