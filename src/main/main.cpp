@@ -165,7 +165,7 @@ public:
 
   // TOKEN CONTRACT
   /* -- Create Action -- */
-  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
+  [[eosio::action]] void create(const name& issuer, const asset&  max_supply)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -176,7 +176,7 @@ public:
   };
 
   /* -- Issue Action -- */
-  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
+  [[eosio::action]] void issue(name to, asset quantity, string memo)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
@@ -187,7 +187,18 @@ public:
   };
 
   /* -- Transfer Action -- */
-  [[eosio::action]] void create(const name& issuer, const asset&  max_supply);
+  [[eosio::action]] void transfer(name from, name to, asset quantity, string memo)
+  {
+    // Check if the user is authorized to action
+    check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
+    require_auth(get_self());
+
+    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
+    addaction.send(id, data, createdAt);
+  };
+
+  /* -- Burn Action -- */
+  [[eosio::action]] void burn(asset quantity, string memo)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
