@@ -34,7 +34,11 @@ public:
             return st.supply;
       }
 
+<<<<<<< HEAD
       static asset get_balance(name token_contract_account, name owner, symbol_code sym) {
+=======
+      static asset get_balance(name token_contract_account,  name owner, symbol_code sym) {
+>>>>>>> ed4ae00d150eeb941f852bb69d443905433f91ce
             accounts accountstable(token_contract_account, owner.value);
             const auto& ac = accountstable.get(sym.raw());
             return ac.balance;
@@ -69,7 +73,12 @@ private:
       typedef eosio::multi_index< "pausetable"_n, pause_table > pausetable;
       typedef eosio::multi_index< "blacklists"_n, blacklist_table > blacklists;
 
+<<<<<<< HEAD
       void sub_balance(name owner, asset value);
       void add_balance(name owner, asset value, name ram_payer);
+=======
+      void sub_balance( name owner, asset value );
+      void add_balance( name owner, asset value, name ram_payer );
+>>>>>>> ed4ae00d150eeb941f852bb69d443905433f91ce
       bool is_paused();
 };
