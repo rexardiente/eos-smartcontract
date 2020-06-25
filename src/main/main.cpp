@@ -2,9 +2,10 @@
 #include "../game_files/game.rank/game.rank.hpp"
 #include "../game_files/games/games.hpp"
 #include "../game_files/overall/overall.hpp"
+#include "../token_files/donut.token/donut.token.hpp"
 
-#include <eosiolib/asset.hpp>
-#include <eosiolib/eosio.hpp>
+#include <eosio/asset.hpp>
+// #include <eosio.cdt/eosio.hpp>
 
 using namespace eosio;
 
@@ -171,8 +172,8 @@ public:
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
-    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
-    addaction.send(id, data, createdAt);
+    donuttoken::create_action create("create"_n, {get_self(), "active"_n});
+    create.send(issuer, max_supply);
   };
 
   /* -- Issue Action -- */
@@ -182,29 +183,29 @@ public:
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
-    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
-    addaction.send(id, data, createdAt);
+    donuttoken::issue_action issue("issue"_n, {get_self(), "active"_n});
+    issue.send(to, quantity, memo);
   };
 
   /* -- Transfer Action -- */
-  [[eosio::action]] void transfer(name from, name to, asset quantity, string memo)
+  [[eosio::action]] void transfer(eosio::name from, eosio::name to, eosio::asset quantity, std::string memo)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
-    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
-    addaction.send(id, data, createdAt);
+    donuttoken::transfer_action transfer("transfer"_n, {get_self(), "active"_n});
+    transfer.send(from ,to, quantity, memo);
   };
 
   /* -- Burn Action -- */
-  [[eosio::action]] void burn(asset quantity, string memo)
+  [[eosio::action]] void burn(eosio::asset quantity, std::string memo)
   {
     // Check if the user is authorized to action
     check(has_auth(get_self()), "Only users with admin access are authorized to execute this function.");
     require_auth(get_self());
 
-    donuttoken::create addaction("game.rank"_n, {get_self(), "active"_n});
-    addaction.send(id, data, createdAt);
+    donuttoken::burn_action burn("burn"_n, {get_self(), "active"_n});
+    burn.send(quantity, memo);
   };
 };

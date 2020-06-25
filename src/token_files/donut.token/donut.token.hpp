@@ -9,8 +9,7 @@ EOS token contract "donut-token.cpp"
 
 #pragma once
 
-#include <eosiolib/asset.hpp>
-#include <eosiolib/eosio.hpp>
+#include <eosio/asset.hpp>
 #include <string>
 
 using namespace eosio;
@@ -39,6 +38,16 @@ public:
             const auto& ac = accountstable.get(sym.raw());
             return ac.balance;
       }
+      
+      // Action wrappers for token-related actions.
+      using create_action = action_wrapper<"create"_n, &donuttoken::create>;
+      using issue_action = action_wrapper<"issue"_n, &donuttoken::issue>;
+      using transfer_action = action_wrapper<"transfer"_n, &donuttoken::transfer>;
+      using burn_action = action_wrapper<"burn"_n, &donuttoken::burn>;
+      using pause_action = action_wrapper<"pause"_n, &donuttoken::pause>;
+      using unpause_action = action_wrapper<"unpause"_n, &donuttoken::unpause>;
+      using blacklist_action = action_wrapper<"blacklist"_n, &donuttoken::blacklist>;
+      using unblacklist_action = action_wrapper<"unblacklist"_n, &donuttoken::unblacklist>;
 
 private:
       TABLE account {
