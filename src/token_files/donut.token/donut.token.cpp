@@ -8,107 +8,196 @@ Purpose: A source file that contains methods and structs for Donut token.
 
 #include "donut.token.hpp"
 
-void token::create( const name&   issuer,
-                    const asset&  max_supply )
-{
-    require_auth( get_self() );
+void donuttoken::create(name issuer, asset maximum_supply) {
+    require_auth( _self );
 
-    auto sym = max_supply.symbol;
-    check( sym.is_valid(), "invalid symbol name" );
-    check( max_supply.is_valid(), "invalid supply");
-    check( max_supply.amount > 0, "max-supply must be positive");
+    auto sym = maximum_supply.symbol;
+    eosio_assert( sym.is_valid(), "invalid symbol name" );
+    eosio_assert( maximum_supply.is_valid(), "invalid supply");
+    eosio_assert( maximum_supply.amount > 0, "max-supply must be positive");
 
-    stats statstable( get_self(), sym.code().raw() );
+    stats statstable( _self, sym.code().raw() );
     auto existing = statstable.find( sym.code().raw() );
-    check( existing == statstable.end(), "token with symbol already exists" );
+    eosio_assert( existing == statstable.end(), "token with symbol already exists" );
 
-    statstable.emplace( get_self(), [&]( auto& s ) {
-       s.supply.symbol = max_supply.symbol;
-       s.max_supply    = max_supply;
+    statstable.emplace( _self, [&]( auto& s ) {
+       s.supply.symbol = maximum_supply.symbol;
+       s.max_supply    = maximum_supply;
        s.issuer        = issuer;
     });
 }
 
+void donuttoken::issue(name to, asset quantity, string memo) {
+    auto sym = quantity.symbol;
+    eosio_assert(sym.is_valid(), "invalid symbol name" );
+    eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
 
-void token::issue( const name& receiver, const asset& amount, const string&
-  memo_add )
-{
-    auto sym = amount.symbol;
-    check( sym.is_valid(), "invalid symbol name" );
-    check( memo_add.size() <= 256, "memo address has more than 256 bytes" );
-
-    stats statstable( get_self(), sym.code().raw() );
+    stats statstable( _self, sym.code().raw() );
     auto existing = statstable.find( sym.code().raw() );
-    check( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
+    eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
     const auto& st = *existing;
-    check( receiver == st.issuer, "tokens can only be issued to issuer account" );
 
     require_auth( st.issuer );
-    check( amount.is_valid(), "invalid amount" );
-    check( amount.amount > 0, "must issue positive amount" );
+    eosio_assert( quantity.is_valid(), "invalid quantity" );
+    eosio_assert( quantity.amount > 0, "must issue positive quantity" );
 
-    check( amount.symbol == st.supply.symbol, "symbol precision mismatch" );
-    check( amount.amount <= st.max_supply.amount - st.supply.amount,
-      "amount exceeds available supply");
+    eosio_assert( quantity.symbol == st.supply.symbol, "symbol precision mismatch" );
 
     statstable.modify( st, same_payer, [&]( auto& s ) {
-       s.supply += amount;
+       s.supply += quantity;
+       if ( s.supply > s.max_supply ) {
+           s.max_supply = s.supply;
+       }
     });
 
-    add_balance( st.issuer, amount, st.issuer );
+    add_balance( st.issuer, quantity, st.issuer );
+
+    if( to != st.issuer ) {
+       SEND_INLINE_ACTION( *this, transfer, {st.issuer, "active"_n}, {st.issuer, to, quantity, memo} );
+    }
 }
 
+void donuttoken::transfer(name from, name to, asset quantity, string memo) {
+    eosio_assert(is_paused(), "contract is paused.");
 
-void token::transfer( const name&    sender,
-                      const name&    receiver,
-                      const asset&   amount,
-                      const string&  memo_add )
-{
-    check( sender != receiver, "cannot transfer to self" );
-    require_auth( sender );
-    check( is_account( receiver ), "to account does not exist");
-    auto sym = amount.symbol.code();
-    stats statstable( get_self(), sym.raw() );
-    const auto& st = statstable.get( sym.raw() );
+    blacklists blacklistt(_self, _self.value);
+    auto fromexisting = blacklistt.find( from.value );
+    eosio_assert( fromexisting == blacklistt.end(), "account blacklisted(from)");
+    auto toexisting = blacklistt.find( to.value );
+    eosio_assert( toexisting == blacklistt.end(), "account blacklisted(to)");
 
-    require_recipient( sender );
-    require_recipient( receiver );
+    eosio_assert(from != to, "cannot transfer to self");
+    require_auth(from);
+    eosio_assert( is_account(to), "to account does not exist");
+    auto sym = quantity.symbol.code();
+    stats statstable( _self, sym.raw());
+    const auto& st = statstable.get(sym.raw());
 
-    check( amount.is_valid(), "invalid amount" );
-    check( amount.amount > 0, "must transfer positive quantity" );
-    check( amount.symbol == st.supply.symbol, "symbol precision mismatch" );
-    check( memo_add.size() <= 256, "memo address has more than 256 bytes" );
+    require_recipient(from);
+    require_recipient(to);
 
-    auto payer = has_auth( receiver ) ? receiver : sender;
+    eosio_assert( quantity.is_valid(), "invalid quantity");
+    eosio_assert( quantity.amount > 0, "must transfer positive quantity");
+    eosio_assert( quantity.symbol == st.supply.symbol, "symbol precision mismatch");
+    eosio_assert( memo.size() <= 256, "memo has more than 256 bytes");
 
-    sub_balance( sender, amount );
-    add_balance( receiver, amount, payer );
+    auto payer = has_auth( to ) ? to : from;
+
+    sub_balance(from, quantity);
+    add_balance(to, quantity, payer);
 }
 
-void token::sub_balance( const name& owner, const asset& value ) {
-   accounts from_acnts( get_self(), owner.value );
+void donuttoken::burn(asset quantity, string memo) {
+    auto sym = quantity.symbol;
+    eosio_assert(sym.is_valid(), "invalid symbol name");
+    eosio_assert(memo.size() <= 256, "memo has more than 256 bytes");
 
-   const auto& sender = from_acnts.get( value.symbol.code().raw(),
-   "no balance object found" );
-   check( sender.balance.amount >= value.amount, "overdrawn balance" );
+    auto sym_name = sym.code();
+    stats statstable( _self, sym_name.raw() );
+    auto existing = statstable.find( sym_name.raw() );
+    eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before burn" );
+    const auto& st = *existing;
 
-   from_acnts.modify( sender, owner, [&]( auto& a ) {
-         a.balance -= value;
+    require_auth( st.issuer );
+    //require_recipient( st.issuer );
+    eosio_assert( quantity.is_valid(), "invalid quantity" );
+    eosio_assert( quantity.amount > 0, "must burn positive or zero quantity" );
+
+    eosio_assert( quantity.symbol == st.supply.symbol, "symbol precision mismatch" );
+    eosio_assert( quantity.amount <= st.supply.amount, "quantity exceeds available supply");
+
+    statstable.modify( st, same_payer, [&]( auto& s ) {
+       s.supply -= quantity;
+       s.max_supply -= quantity;
+    });
+
+    sub_balance( st.issuer, quantity );
+}
+
+void donuttoken::pause() {
+    require_auth( _self );
+
+    pausetable pauset(_self, _self.value);
+    auto itr = pauset.find(1);
+    if (itr != pauset.end()) {
+      pauset.modify(itr, _self, [&](auto& p) {
+        p.paused = true;
       });
+    } else {
+      pauset.emplace(_self, [&](auto& p) {
+        p.id = 1;
+        p.paused = true;
+      });
+    }
 }
 
-void token::add_balance( const name& owner, const asset& value,
-  const name& ram_payer )
-{
-   accounts to_acnts( get_self(), owner.value );
-   auto sender = to_acnts.find( value.symbol.code().raw() );
-   if( sender == to_acnts.end() ) {
+void donuttoken::unpause() {
+    require_auth( _self );
+    pausetable pauset(_self, _self.value);
+    while (pauset.begin() != pauset.end()) {
+      auto itr = pauset.end();
+      itr--;
+      pauset.erase(itr);
+      pausetable pauset(_self, _self.value);
+    }
+}
+
+void donuttoken::blacklist(name account, string memo) {
+    require_auth( _self );
+    eosio_assert( memo.size() <= 256, "memo has more than 256 bytes" );
+    
+    blacklists blacklistt(_self, _self.value);
+    auto existing = blacklistt.find( account.value );
+    eosio_assert( existing == blacklistt.end(), "blacklist account already exists" );
+
+    blacklistt.emplace(_self, [&](auto& b) {
+       b.account = account;
+    });
+}
+
+void donuttoken::unblacklist(name account) {
+    require_auth(_self);
+
+    blacklists blacklistt(_self, _self.value);
+    auto existing = blacklistt.find( account.value );
+    eosio_assert( existing != blacklistt.end(), "blacklist account not exists" );
+
+    blacklistt.erase(existing);
+}
+
+void donuttoken::sub_balance(name owner, asset value) {
+   accounts from_acnts(_self, owner.value);
+
+   const auto& from = from_acnts.get( value.symbol.code().raw(), "no balance object found" );
+   eosio_assert( from.balance.amount >= value.amount, "overdrawn balance" );
+
+   if( from.balance.amount == value.amount ) {
+      from_acnts.erase( from );
+   } else {
+      from_acnts.modify( from, owner, [&]( auto& a ) {
+          a.balance -= value;
+      });
+   }
+}
+
+void donuttoken::add_balance( name owner, asset value, name ram_payer ) {
+   accounts to_acnts( _self, owner.value );
+   auto to = to_acnts.find( value.symbol.code().raw() );
+   if( to == to_acnts.end() ) {
       to_acnts.emplace( ram_payer, [&]( auto& a ){
         a.balance = value;
       });
    } else {
-      to_acnts.modify( sender, same_payer, [&]( auto& a ) {
+      to_acnts.modify( to, same_payer, [&]( auto& a ) {
         a.balance += value;
       });
    }
 }
+
+bool donuttoken::is_paused() {
+      pausetable pauset(_self, _self.value);
+      bool existing = ( pauset.find( 1 ) == pauset.end() );
+      return existing;
+}
+
+EOSIO_DISPATCH(donuttoken, (create)(issue)(transfer)(burn)(pause)(unpause)(blacklist)(unblacklist) )
