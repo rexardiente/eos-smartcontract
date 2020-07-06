@@ -7,22 +7,20 @@ Purpose: this file acts as the intro contract to the EOS Game store game room.
 
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
-// #include <eosio.cdt/eosio.hpp>
 
 using namespace eosio;
 
 class [[eosio::contract("game.room")]] gameroom : public contract {
   private:
   struct [[eosio::table]] user_info {
-    uint16_t eos_identifier;
-    name username;
-    asset user_balance;
+    eosio::uint16_t eos_identifier;
+    eosio::name username;
+    eosio::asset user_balance;
   };
 
-  struct [[eosio::table]] game_info {
-    uint16_t map_identifier;
-    name game_name;
-    asset destinaton_cost;
+  struct [[eosio::table]] games_info {
+    eosio::uint16_t map_identifier;
+    eosio::name game_name;
   };
 
   public:
@@ -45,7 +43,6 @@ class [[eosio::contract("game.room")]] gameroom : public contract {
          row.userid = userid;
          row.password = result;
          row.auth_level = auth_level;
-
         });
 
       }
@@ -55,9 +52,7 @@ class [[eosio::contract("game.room")]] gameroom : public contract {
           row.userid = userid;
           row.password = result;
            row.auth_level = auth_level;
-
         });
-
       }
     }
     struct [[eosio::table]] loginformation {
@@ -67,6 +62,5 @@ class [[eosio::contract("game.room")]] gameroom : public contract {
     uint64_t auth_level;
 
     uint64_t primary_key() const { return key.value; }
-
   };
 }
