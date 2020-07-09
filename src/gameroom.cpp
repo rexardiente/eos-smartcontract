@@ -7,6 +7,7 @@ Purpose: this file acts as the intro contract to the EOS Game store game room.
 
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include <eosio/dispatcher.hpp>
 
 
 using namespace eosio;
@@ -15,28 +16,15 @@ class [[eosio::contract("gameroom")]] gameroom : public contract {
   private:
   // Configure the Multi-Index Table
    struct [[eosio::table]] user_info {
+   
+   name key;
    uint16_t user_identifier;
    name username;
    asset user_balance;
-    uint64_t primary_key() const { return user_identifier; }
+    uint64_t primary_key() const { return key.value; }
   };
   typedef eosio::multi_index<"userinfo"_n, user_info> userinfo_index;
  
-  struct [[eosio::table]] games_info {
-     uint16_t game_identifier;
-    name game_title;
-    asset game_balance;
-    uint64_t primary_key() const { return game_identifier; }
-  };
-  
-  struct [[eosio::table]] game_room {
-    
-    uint16_t id;
-    
-    name username;
-    asset user_balance;
-     uint16_t primary_key() const { return id; }
-  };
   
   
 
@@ -77,6 +65,16 @@ class [[eosio::contract("gameroom")]] gameroom : public contract {
        
       }
 
-      
-  
+    [[eosio::action]]
+  void eraseuser(name user) {
+    require_auth(user);
+
+    log_index login(get_first_receiver(), get_first_receiver().value);
+
+    auto itr = login.find(user.value);
+    check(itr != login.end(), "Record does not exist");
+    login.erase(itr);
+    
+  }  
+  using log_index = eosio::multi_index<"people"_n, user_info>;
 };
