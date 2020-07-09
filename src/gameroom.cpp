@@ -7,7 +7,7 @@ Purpose: this file acts as the intro contract to the EOS Game store game room.
 
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
-#include <eosio/dispatcher.hpp>
+
 
 
 using namespace eosio;
@@ -37,14 +37,14 @@ class [[eosio::contract("gameroom")]] gameroom : public contract {
         require_auth(user);
 
         userinfo_index userinfo(get_self(), get_self().value);
-        auto itr = userinfo.find(user_identifier);
+        auto itr = userinfo.find(user.value);
         if(itr==userinfo.end())
-            {
+           {
                 
                userinfo.emplace(user, [&]( auto& row ) {
                row.user_identifier =user_identifier;
                 row.username = username;
-                row.user_balance = user_balance;
+               row.user_balance = user_balance;
        
              });
             
@@ -53,7 +53,7 @@ class [[eosio::contract("gameroom")]] gameroom : public contract {
              
             }
             else
-            {
+           {
               userinfo.modify(itr, get_self(), [&](auto &row) {
                
                 row.user_balance += user_balance;
