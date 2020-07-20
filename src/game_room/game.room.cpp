@@ -7,10 +7,6 @@ Purpose: this file acts as the intro contract to the EOS Game store game room.
 
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
-#include "../game_files/game.rank/game.rank.hpp"
-#include "../game_files/games/games.hpp"
-#include "../game_files/overall/overall.hpp"
-#include "../token_files/donut.token/donut.token.hpp"
 
 using namespace eosio;
 
