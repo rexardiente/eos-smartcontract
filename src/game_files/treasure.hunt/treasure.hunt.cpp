@@ -5,6 +5,7 @@ Purpose: this file contains tables and functions for the TH game.
 --------------------------------------------------------------
 */
 
+
 #include "treasurehunt.hpp"
 
 using namespace eosio;
@@ -32,7 +33,10 @@ void treasurehunt::startgame(name username) {
   _users.modify(user, username, [&](auto& modified_user) {
     // Create a new game
     game game_data;
-    
+    for (uint8_t i = 0; i < 4; i++) {
+      draw_one_map(game_data.map_player, game_data.hand_player);
+      draw_one_map(game_data.map_ai, game_data.hand_ai);
+    }
     // Assign the newly created game to the player
     modified_user.game_data = game_data;
   });
@@ -122,3 +126,184 @@ void treasurehunt::draw_one_map(vector<uint8_t>& island, vector<uint8_t>& hand) 
   island.erase(island.begin() + deck_map_idx);
 
 }
+void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
+  // Ensure this action is authorized by the player
+  require_auth(username);
+
+  // Checks that selected card is valid
+  check(player_map_idx < 4, "playcard: Invalid hand index");
+
+  auto& user = _users.get(username.value, "User doesn't exist");
+
+  // Verify game status is suitable for the player to play a card
+  check(user.game_data.status == ONGOING,
+               "playmap: This game has ended. Please start a new one");
+  check(user.game_data.selected_map_player == 0,
+               "playmap: The player has played his Island this turn!");
+
+  _users.modify(user, username, [&](auto& modified_user) {
+    game& game_data = modified_user.game_data;
+
+    // Assign the selected card from the player's hand
+    game_data.selected_map_player = game_data.hand_player[player_map_idx];
+    game_data.hand_player[player_map_idx] = 0;
+
+    // AI picks a card
+    int ai_map_idx = ai_choose_map(game_data);
+    game_data.selected_map_ai = game_data.hand_ai[ai_map_idx];
+    game_data.hand_ai[ai_map_idx] = 0;
+
+    resolve_selected_maps(game_data);
+
+    update_game_status(modified_user);
+  });
+}
+int treasurehunt::ai_choose_map(const game& game_data) {
+  // The 4th strategy is only chosen in the dire situation
+  int available_strategies = 4; 
+  if (game_data.life_ai > 2) available_strategies--; 
+  int strategy_idx = random(available_strategies);
+ 
+  // Calculate the score of each card in the AI hand 
+  int chosen_map_idx = -1;
+  int chosen_map_score = std::numeric_limits<int>::min(); 
+
+  for (int i = 0; i < game_data.hand_ai.size(); i++) {
+    const auto ai_map_id = game_data.hand_ai[i];
+    const auto ai_map = map_dict.at(ai_map_id);
+
+    
+    if (ai_map.type == EMPTY) continue;
+
+       auto map_score = calculate_ai_map_score(strategy_idx, game_data.life_ai, ai_map, game_data.hand_player);
+
+    if (map_score > chosen_map_score) {
+      chosen_map_score = map_score;
+      chosen_map_idx = i;
+    }
+    
+  }
+  return chosen_map_idx;
+}
+int treasurehunt::ai_best_map_win_strategy(const int ai_attack_point, const int player_attack_point) {
+  eosio::print("Best Island Wins");
+  if (ai_attack_point > player_attack_point) return 3;
+  if (ai_attack_point < player_attack_point) return -2;
+  return -1;
+}
+
+int treasurehunt::calculate_ai_map_score(const int strategy_idx, 
+                                      const int8_t life_ai,
+                                      const island& ai_map, 
+                                      const vector<uint8_t> hand_player) {
+   int map_score = 0;
+   
+   for (int i = 0; i < hand_player.size(); i++) {
+      const auto player_map_id = hand_player[i];
+      const auto player_map = map_dict.at(player_map_id);
+
+      int ai_attack_point = calculate_attack_point(ai_map, player_map);
+      int player_attack_point = calculate_attack_point(player_map, ai_map);
+
+      // Accumulate the card score based on the given strategy
+      switch (strategy_idx) {
+        case 0: {
+          map_score += ai_best_map_win_strategy(ai_attack_point, player_attack_point);
+          break;
+        }
+        case 1: {
+          map_score += ai_min_loss_strategy(ai_attack_point, player_attack_point);
+          break;
+        }
+        case 2: {
+          map_score += ai_points_tally_strategy(ai_attack_point, player_attack_point);
+          break;
+        }
+        default: {
+          map_score += ai_loss_prevention_strategy(life_ai, ai_attack_point, player_attack_point);
+          break;
+        }
+      }
+    }
+    
+    return map_score;
+
+}
+
+void treasurehunt::update_game_status(user_info& user) {
+  game& game_data = user.game_data;
+
+  if (game_data.life_ai <= 0) {
+    
+    game_data.status = PLAYER_WON;
+  } else if (game_data.life_player <= 0) {
+    // Check the player's HP
+    game_data.status = PLAYER_LOST;
+  } else {
+     const auto is_empty_slot = [&](const auto& id) { return map_dict.at(id).type == EMPTY; };
+    bool player_finished = std::all_of(game_data.hand_player.begin(), game_data.hand_player.end(), is_empty_slot);
+    bool ai_finished = std::all_of(game_data.hand_ai.begin(), game_data.hand_ai.end(), is_empty_slot);
+if (player_finished || ai_finished) {
+      if (game_data.life_player > game_data.life_ai) {
+        game_data.status = PLAYER_WON;
+      } else {
+        game_data.status = PLAYER_LOST;
+      }
+    }
+  }
+}
+
+void treasurehunt::resolve_selected_maps(game& game_data) {
+  const auto player_map = map_dict.at(game_data.selected_map_player);
+  const auto ai_map = map_dict.at(game_data.selected_map_ai);
+
+  if (player_map.type == VOID || ai_map.type == VOID) return;
+
+  int player_attack_point = calculate_attack_point(player_map, ai_map);
+  int ai_attack_point =  calculate_attack_point(ai_map, player_map);
+
+  if (player_attack_point > ai_attack_point) {
+    int diff = player_attack_point - ai_attack_point;
+    game_data.life_lost_ai = diff;
+    game_data.life_ai -= diff;
+  } else if (ai_attack_point > player_attack_point) {
+    int diff = ai_attack_point - player_attack_point;
+    game_data.life_lost_player = diff;
+    game_data.life_player -= diff;
+  }
+  
+  }
+  
+  int treasurehunt::calculate_attack_point(const island& island1, const island& island2) {
+  int result = island1.attack_point;
+
+  //Add elemental compatibility bonus of 1
+  if ((island1.type == MAP_A && island2.type == MAP_A) ||
+      (island1.type == MAP_B && island2.type == MAP_B) ||
+      (island1.type == MAP_C && island2.type == MAP_B)) {
+    result++;
+  }
+ 
+  return result;
+}
+int treasurehunt::ai_min_loss_strategy(const int ai_attack_point, const int player_attack_point) {
+  //eosio::print("Minimum Losses");
+  if (ai_attack_point > player_attack_point) return 1;
+  if (ai_attack_point < player_attack_point) return -4;
+  return -1;
+}
+
+// AI Points Tally Strategy
+int treasurehunt::ai_points_tally_strategy(const int ai_attack_point, const int player_attack_point) {
+  //eosio::print("Points Tally");
+  return ai_attack_point - player_attack_point;
+}
+
+// AI Loss Prevention Strategy
+int treasurehunt::ai_loss_prevention_strategy(const int8_t life_ai, const int ai_attack_point, const int player_attack_point) {
+  //eosio::print("Loss Prevention");
+  if (life_ai + ai_attack_point - player_attack_point > 0) return 1;
+  return 0;
+}
+
+
