@@ -70,8 +70,8 @@ void treasurehunt::nextround(name username) {
     // Reset selected card and damage dealt
     game_data.selected_map_player = 0;
     game_data.selected_map_ai = 0;
-    game_data.life_lost_player = 0;
-    game_data.life_lost_ai = 0;
+    game_data.ticket_lost_player = 0;
+    game_data.ticket_lost_ai = 0;
 
     // Draw card for the player and the AI
     
@@ -161,7 +161,7 @@ void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
 int treasurehunt::ai_choose_map(const game& game_data) {
   // The 4th strategy is only chosen in the dire situation
   int available_strategies = 4; 
-  if (game_data.life_ai > 2) available_strategies--; 
+  if (game_data.ticket_ai > 2) available_strategies--; 
   int strategy_idx = random(available_strategies);
  
   // Calculate the score of each card in the AI hand 
@@ -175,7 +175,7 @@ int treasurehunt::ai_choose_map(const game& game_data) {
     
     if (ai_map.type == EMPTY) continue;
 
-       auto map_score = calculate_ai_map_score(strategy_idx, game_data.life_ai, ai_map, game_data.hand_player);
+       auto map_score = calculate_ai_map_score(strategy_idx, game_data.ticket_ai, ai_map, game_data.hand_player);
 
     if (map_score > chosen_map_score) {
       chosen_map_score = map_score;
@@ -193,7 +193,7 @@ int treasurehunt::ai_best_map_win_strategy(const int ai_attack_point, const int 
 }
 
 int treasurehunt::calculate_ai_map_score(const int strategy_idx, 
-                                      const int8_t life_ai,
+                                      const int8_t ticket_ai,
                                       const island& ai_map, 
                                       const vector<uint8_t> hand_player) {
    int map_score = 0;
@@ -220,7 +220,7 @@ int treasurehunt::calculate_ai_map_score(const int strategy_idx,
           break;
         }
         default: {
-          map_score += ai_loss_prevention_strategy(life_ai, ai_attack_point, player_attack_point);
+          map_score += ai_loss_prevention_strategy(ticket_ai, ai_attack_point, player_attack_point);
           break;
         }
       }
@@ -233,10 +233,10 @@ int treasurehunt::calculate_ai_map_score(const int strategy_idx,
 void treasurehunt::update_game_status(user_info& user) {
   game& game_data = user.game_data;
 
-  if (game_data.life_ai <= 0) {
+  if (game_data.ticket_ai <= 0) {
     
     game_data.status = PLAYER_WON;
-  } else if (game_data.life_player <= 0) {
+  } else if (game_data.ticket_player <= 0) {
     // Check the player's HP
     game_data.status = PLAYER_LOST;
   } else {
@@ -244,7 +244,7 @@ void treasurehunt::update_game_status(user_info& user) {
     bool player_finished = std::all_of(game_data.hand_player.begin(), game_data.hand_player.end(), is_empty_slot);
     bool ai_finished = std::all_of(game_data.hand_ai.begin(), game_data.hand_ai.end(), is_empty_slot);
 if (player_finished || ai_finished) {
-      if (game_data.life_player > game_data.life_ai) {
+      if (game_data.ticket_player > game_data.ticket_ai) {
         game_data.status = PLAYER_WON;
       } else {
         game_data.status = PLAYER_LOST;
@@ -264,12 +264,12 @@ void treasurehunt::resolve_selected_maps(game& game_data) {
 
   if (player_attack_point > ai_attack_point) {
     int diff = player_attack_point - ai_attack_point;
-    game_data.life_lost_ai = diff;
-    game_data.life_ai -= diff;
+    game_data.ticket_lost_ai = diff;
+    game_data.ticket_ai -= diff;
   } else if (ai_attack_point > player_attack_point) {
     int diff = ai_attack_point - player_attack_point;
-    game_data.life_lost_player = diff;
-    game_data.life_player -= diff;
+    game_data.ticket_lost_player = diff;
+    game_data.ticket_player -= diff;
   }
   
   }
@@ -300,9 +300,9 @@ int treasurehunt::ai_points_tally_strategy(const int ai_attack_point, const int 
 }
 
 // AI Loss Prevention Strategy
-int treasurehunt::ai_loss_prevention_strategy(const int8_t life_ai, const int ai_attack_point, const int player_attack_point) {
+int treasurehunt::ai_loss_prevention_strategy(const int8_t ticket_ai, const int ai_attack_point, const int player_attack_point) {
   //eosio::print("Loss Prevention");
-  if (life_ai + ai_attack_point - player_attack_point > 0) return 1;
+  if (ticket_ai + ai_attack_point - player_attack_point > 0) return 1;
   return 0;
 }
 
