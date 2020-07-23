@@ -1,10 +1,9 @@
 /*
 --------------------------------------------------------------
 Filename: treasurehunt.cpp
-Purpose: this file contains tables and functions for the TH game.
+Purpose: this is the source file for the TH game contract.
 --------------------------------------------------------------
 */
-
 
 #include "treasurehunt.hpp"
 
@@ -13,7 +12,7 @@ using namespace eosio;
 void treasurehunt::loguser(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
- // usr_index usrs(get_first_receiver(), get_first_receiver().value);
+  // usr_index usrs(get_first_receiver(), get_first_receiver().value);
   //log_index login(get_first_receiver(), get_first_receiver().value);
   // Create a record in the table if the player doesn't exist in our app yet
   auto itr = _users.find(username.value);
@@ -52,6 +51,7 @@ void treasurehunt::endgame(name username) {
     modified_user.game_data = game();
   });
 }
+
 void treasurehunt::nextround(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
@@ -59,7 +59,7 @@ void treasurehunt::nextround(name username) {
   auto& user = _users.get(username.value, "User doesn't exist");
 
   // Verify game status
-  check(user.game_data.status == ONGOING, 
+  check(user.game_data.status == ONGOING,
               "nextround: This game has ended. Please start a new one.");
   check(user.game_data.selected_map_player != 0 && user.game_data.selected_map_ai != 0,
                "nextround: Please play a card first.");
@@ -74,12 +74,12 @@ void treasurehunt::nextround(name username) {
     game_data.ticket_lost_ai = 0;
 
     // Draw card for the player and the AI
-    
     if (game_data.map_player.size() > 0) draw_one_map(game_data.map_player, game_data.hand_player);
     if (game_data.map_ai.size() > 0) draw_one_map(game_data.map_ai, game_data.hand_ai);
-      
+
   });
 }
+
 int treasurehunt::random(const int range) {
   // Find the existing seed
   auto seed_iterator = _seed.begin();
@@ -92,22 +92,22 @@ int treasurehunt::random(const int range) {
   // Generate new seed value using the existing seed value
   int prime = 65537;
   auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
-  
+
   // Store the updated seed value in the table
   _seed.modify( seed_iterator, _self, [&]( auto& s ) {
     s.value = new_seed_value;
   });
-  
+
   // Get the random result in desired range
   int random_result = new_seed_value % range;
   return random_result;
 }
+
 void treasurehunt::draw_one_map(vector<uint8_t>& island, vector<uint8_t>& hand) {
   // Pick a random card from the deck
   int deck_map_idx = random(island.size());
 
   // Find the first empty slot in the hand
-  
   int first_empty_slot = -1;
   for (int i = 0; i <= hand.size(); i++) {
     auto id = hand[i];
@@ -116,16 +116,17 @@ void treasurehunt::draw_one_map(vector<uint8_t>& island, vector<uint8_t>& hand) 
       break;
     }
   }
-  
+
   check(first_empty_slot != -1, "No empty slot in the player's hand");
 
   // Assign the card to the first empty slot in the hand
   hand[first_empty_slot] = island[deck_map_idx];
-  
+
   // Remove the card from the deck
   island.erase(island.begin() + deck_map_idx);
 
 }
+
 void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
   // Ensure this action is authorized by the player
   require_auth(username);
@@ -158,21 +159,21 @@ void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
     update_game_status(modified_user);
   });
 }
+
 int treasurehunt::ai_choose_map(const game& game_data) {
   // The 4th strategy is only chosen in the dire situation
-  int available_strategies = 4; 
-  if (game_data.ticket_ai > 2) available_strategies--; 
+  int available_strategies = 4;
+  if (game_data.ticket_ai > 2) available_strategies--;
   int strategy_idx = random(available_strategies);
- 
-  // Calculate the score of each card in the AI hand 
+
+  // Calculate the score of each card in the AI hand
   int chosen_map_idx = -1;
-  int chosen_map_score = std::numeric_limits<int>::min(); 
+  int chosen_map_score = std::numeric_limits<int>::min();
 
   for (int i = 0; i < game_data.hand_ai.size(); i++) {
     const auto ai_map_id = game_data.hand_ai[i];
     const auto ai_map = map_dict.at(ai_map_id);
 
-    
     if (ai_map.type == EMPTY) continue;
 
        auto map_score = calculate_ai_map_score(strategy_idx, game_data.ticket_ai, ai_map, game_data.hand_player);
@@ -181,10 +182,11 @@ int treasurehunt::ai_choose_map(const game& game_data) {
       chosen_map_score = map_score;
       chosen_map_idx = i;
     }
-    
+
   }
   return chosen_map_idx;
 }
+
 int treasurehunt::ai_best_map_win_strategy(const int ai_attack_point, const int player_attack_point) {
   eosio::print("Best Island Wins");
   if (ai_attack_point > player_attack_point) return 3;
@@ -192,12 +194,12 @@ int treasurehunt::ai_best_map_win_strategy(const int ai_attack_point, const int 
   return -1;
 }
 
-int treasurehunt::calculate_ai_map_score(const int strategy_idx, 
-                                      const int8_t ticket_ai,
-                                      const island& ai_map, 
-                                      const vector<uint8_t> hand_player) {
+int treasurehunt::calculate_ai_map_score(
+  const int strategy_idx, const int8_t ticket_ai, const island& ai_map,
+  const vector<uint8_t> hand_player) {
+
    int map_score = 0;
-   
+
    for (int i = 0; i < hand_player.size(); i++) {
       const auto player_map_id = hand_player[i];
       const auto player_map = map_dict.at(player_map_id);
@@ -225,16 +227,15 @@ int treasurehunt::calculate_ai_map_score(const int strategy_idx,
         }
       }
     }
-    
-    return map_score;
 
+    return map_score;
 }
 
 void treasurehunt::update_game_status(user_info& user) {
   game& game_data = user.game_data;
 
   if (game_data.ticket_ai <= 0) {
-    
+
     game_data.status = PLAYER_WON;
   } else if (game_data.ticket_player <= 0) {
     // Check the player's HP
@@ -271,9 +272,9 @@ void treasurehunt::resolve_selected_maps(game& game_data) {
     game_data.ticket_lost_player = diff;
     game_data.ticket_player -= diff;
   }
-  
+
   }
-  
+
   int treasurehunt::calculate_attack_point(const island& island1, const island& island2) {
   int result = island1.attack_point;
 
@@ -283,9 +284,10 @@ void treasurehunt::resolve_selected_maps(game& game_data) {
       (island1.type == MAP_C && island2.type == MAP_B)) {
     result++;
   }
- 
+
   return result;
 }
+
 int treasurehunt::ai_min_loss_strategy(const int ai_attack_point, const int player_attack_point) {
   //eosio::print("Minimum Losses");
   if (ai_attack_point > player_attack_point) return 1;
@@ -305,5 +307,3 @@ int treasurehunt::ai_loss_prevention_strategy(const int8_t ticket_ai, const int 
   if (ticket_ai + ai_attack_point - player_attack_point > 0) return 1;
   return 0;
 }
-
-
