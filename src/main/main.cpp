@@ -141,7 +141,6 @@ public:
   };
 
   /* -- Edit Action(Overall)   -- */
-  
   [[eosio::action]] void editoverall(uint64_t id, std::vector<overall::user> data, uint64_t createdAt)
   {
     // Check if the user is authorized to action
@@ -152,7 +151,7 @@ public:
     edit_overall.send(id, data, createdAt);
   };
 
-  /* -- Edit Action (Overall)  -- */
+  /* -- Delete Action (Overall)  -- */
   [[eosio::action]] void deloverall(uint64_t id)
   {
     // Check if the user is authorized to action
@@ -162,7 +161,7 @@ public:
     overall::del_action del_overall("overall"_n, {get_self(), "active"_n});
     del_overall.send(id);
   };
-  
+
 
   // TOKEN CONTRACT
   /* -- Create Action -- */
