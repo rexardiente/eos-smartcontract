@@ -1,19 +1,18 @@
 /*
 --------------------------------------------------------------
 Filename: treasurehunt.cpp
-Purpose: this is the source file for the TH game contract.
+Purpose: This is the source file for the TH game contract.
 --------------------------------------------------------------
 */
 
 #include "treasurehunt.hpp"
-
 using namespace eosio;
 
-void treasurehunt::loguser(name username) {
+void treasurehunt::login(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
   // usr_index usrs(get_first_receiver(), get_first_receiver().value);
-  //log_index login(get_first_receiver(), get_first_receiver().value);
+  // log_index login(get_first_receiver(), get_first_receiver().value);
   // Create a record in the table if the player doesn't exist in our app yet
   auto itr = _users.find(username.value);
   if (itr == _users.end()) {
@@ -76,7 +75,6 @@ void treasurehunt::nextround(name username) {
     // Draw card for the player and the AI
     if (game_data.map_player.size() > 0) draw_one_map(game_data.map_player, game_data.hand_player);
     if (game_data.map_ai.size() > 0) draw_one_map(game_data.map_ai, game_data.hand_ai);
-
   });
 }
 
@@ -124,7 +122,6 @@ void treasurehunt::draw_one_map(vector<uint8_t>& island, vector<uint8_t>& hand) 
 
   // Remove the card from the deck
   island.erase(island.begin() + deck_map_idx);
-
 }
 
 void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
@@ -175,14 +172,12 @@ int treasurehunt::ai_choose_map(const game& game_data) {
     const auto ai_map = map_dict.at(ai_map_id);
 
     if (ai_map.type == EMPTY) continue;
-
-       auto map_score = calculate_ai_map_score(strategy_idx, game_data.ticket_ai, ai_map, game_data.hand_player);
+    auto map_score = calculate_ai_map_score(strategy_idx, game_data.ticket_ai, ai_map, game_data.hand_player);
 
     if (map_score > chosen_map_score) {
       chosen_map_score = map_score;
       chosen_map_idx = i;
     }
-
   }
   return chosen_map_idx;
 }
@@ -197,10 +192,9 @@ int treasurehunt::ai_best_map_win_strategy(const int ai_attack_point, const int 
 int treasurehunt::calculate_ai_map_score(
   const int strategy_idx, const int8_t ticket_ai, const island& ai_map,
   const vector<uint8_t> hand_player) {
+    int map_score = 0;
 
-   int map_score = 0;
-
-   for (int i = 0; i < hand_player.size(); i++) {
+    for (int i = 0; i < hand_player.size(); i++) {
       const auto player_map_id = hand_player[i];
       const auto player_map = map_dict.at(player_map_id);
 
@@ -227,30 +221,22 @@ int treasurehunt::calculate_ai_map_score(
         }
       }
     }
-
     return map_score;
 }
 
 void treasurehunt::update_game_status(user_info& user) {
   game& game_data = user.game_data;
 
-  if (game_data.ticket_ai <= 0) {
+  if (game_data.ticket_ai <= 0) game_data.status = PLAYER_WON;
+  else if (game_data.ticket_player <= 0) game_data.status = PLAYER_LOST; // Check the player's HP
+  else const auto is_empty_slot = [&](const auto& id) return map_dict.at(id).type == EMPTY;
 
-    game_data.status = PLAYER_WON;
-  } else if (game_data.ticket_player <= 0) {
-    // Check the player's HP
-    game_data.status = PLAYER_LOST;
-  } else {
-     const auto is_empty_slot = [&](const auto& id) { return map_dict.at(id).type == EMPTY; };
-    bool player_finished = std::all_of(game_data.hand_player.begin(), game_data.hand_player.end(), is_empty_slot);
-    bool ai_finished = std::all_of(game_data.hand_ai.begin(), game_data.hand_ai.end(), is_empty_slot);
-if (player_finished || ai_finished) {
-      if (game_data.ticket_player > game_data.ticket_ai) {
-        game_data.status = PLAYER_WON;
-      } else {
-        game_data.status = PLAYER_LOST;
-      }
-    }
+  bool player_finished = std::all_of(game_data.hand_player.begin(), game_data.hand_player.end(), is_empty_slot);
+  bool ai_finished = std::all_of(game_data.hand_ai.begin(), game_data.hand_ai.end(), is_empty_slot);
+
+  if (player_finished || ai_finished) {
+    if (game_data.ticket_player > game_data.ticket_ai) game_data.status = PLAYER_WON;
+    else game_data.status = PLAYER_LOST;
   }
 }
 
@@ -272,10 +258,9 @@ void treasurehunt::resolve_selected_maps(game& game_data) {
     game_data.ticket_lost_player = diff;
     game_data.ticket_player -= diff;
   }
+}
 
-  }
-
-  int treasurehunt::calculate_attack_point(const island& island1, const island& island2) {
+int treasurehunt::calculate_attack_point(const island& island1, const island& island2) {
   int result = island1.attack_point;
 
   //Add elemental compatibility bonus of 1
@@ -284,7 +269,6 @@ void treasurehunt::resolve_selected_maps(game& game_data) {
       (island1.type == MAP_C && island2.type == MAP_B)) {
     result++;
   }
-
   return result;
 }
 
