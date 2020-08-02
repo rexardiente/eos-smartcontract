@@ -121,31 +121,6 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   void update_game_status(user_info& user);
 
-  /* -- System fairness strategy functions -- */
-  int ai_best_map_win_strategy(const int ai_attack_point, const int player_attack_point);
-
-  int ai_min_loss_strategy(const int ai_attack_point, const int player_attack_point);
-
-  int ai_points_tally_strategy(const int ai_attack_point, const int player_attack_point);
-
-  int ai_loss_prevention_strategy(const int8_t ticket_ai, const int ai_attack_point, const int player_attack_point);
-
-  /* -- Map functions -- */
-  void draw_one_map(vector<uint8_t>& mapl, vector<uint8_t>& hand);
-
-  int ai_choose_map(const game& game_data);
-
-  int calculate_ai_map_score(const int strategy_idx, const int8_t ticket_ai,
-                                const island& ai_map, const vector<uint8_t> hand_player);
-
-  int ai_best_map_win_strategy(const int ai_attack_point, const int player_attack_point);
-
-  int ai_min_loss_strategy(const int ai_attack_point, const int player_attack_point);
-
-  int ai_points_tally_strategy(const int ai_attack_point, const int player_attack_point);
-
-  int ai_loss_prevention_strategy(const int8_t ticket_ai, const int ai_attack_point, const int player_attack_point);
-
   /* RNG function */
   int random(const int range);
 
