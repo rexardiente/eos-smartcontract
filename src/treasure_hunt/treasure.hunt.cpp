@@ -82,28 +82,6 @@ void treasurehunt:: generate_panel() {
 
 }
 
-int treasurehunt::random(const int range) {
-  // Find the existing seed
-  auto seed_iterator = _seed.begin();
-
-  // Initialize the seed with default value if it is not found
-  if (seed_iterator == _seed.end()) {
-    seed_iterator = _seed.emplace( _self, [&]( auto& seed ) { });
-  }
-
-  // Generate new seed value using the existing seed value
-  int prime = 65537;
-  auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
-
-  // Store the updated seed value in the table
-  _seed.modify( seed_iterator, _self, [&]( auto& s ) {
-    s.value = new_seed_value;
-  });
-
-  // Get the random result in desired range
-  int random_result = new_seed_value % range;
-  return random_result;
-}
 
 void treasurehunt::draw_one_map(vector<uint8_t>& island, vector<uint8_t>& hand) {
   // Pick a random card from the deck
@@ -294,4 +272,27 @@ int treasurehunt::ai_loss_prevention_strategy(const int8_t ticket_ai, const int 
   //eosio::print("Loss Prevention");
   if (ticket_ai + ai_attack_point - player_attack_point > 0) return 1;
   return 0;
+}
+//RNG Library..
+int treasurehunt::random(const int range) {
+  // Find the existing seed
+  auto seed_iterator = _seed.begin();
+
+  // Initialize the seed with default value if it is not found
+  if (seed_iterator == _seed.end()) {
+    seed_iterator = _seed.emplace( _self, [&]( auto& seed ) { });
+  }
+
+  // Generate new seed value using the existing seed value
+  int prime = 65537;
+  auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
+
+  // Store the updated seed value in the table
+  _seed.modify( seed_iterator, _self, [&]( auto& s ) {
+    s.value = new_seed_value;
+  });
+
+  // Get the random result in desired range
+  int random_result = new_seed_value % range;
+  return random_result;
 }
