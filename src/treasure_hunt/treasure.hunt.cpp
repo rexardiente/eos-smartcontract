@@ -82,7 +82,6 @@ void treasurehunt:: generate_panel() {
 
 }
 
-
 void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
   // Ensure this action is authorized by the player
   require_auth(username);
