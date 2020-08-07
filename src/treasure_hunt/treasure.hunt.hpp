@@ -56,10 +56,10 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   struct game {
     int8_t          ticket_player = 1;
     int8_t          ticket_ai = 1;
-    vector<uint8_t> map_player = {1, 2, 3,4,7,8,9,10,11,12,13,14,15,16};
-    vector<uint8_t> map_ai = {1, 2, 3,4,7,8,9,10,11,12,13,14,15,16};
-    vector<uint8_t> hand_player = {0, 0, 0,0};
-    vector<uint8_t> hand_ai = {0, 0, 0,0};
+    vector<uint8_t> map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
+    vector<uint8_t> map_ai = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
+    vector<uint8_t> hand_player = {0,0,0,0};
+    vector<uint8_t> hand_ai = {0,0,0,0};
     uint8_t         selected_map_player = 0;
     uint8_t         selected_map_ai = 0;
     uint8_t         ticket_lost_player = 0;
@@ -103,9 +103,9 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   typedef eosio::multi_index<name("ticket"), ticket> ticket_table;
   typedef eosio::multi_index<name("history"), history> history_table;
 
-  users_table _user;
-  seed_table _seed;
-  ticket_table _ticket;
+  users_table _users;
+  seed_table _seeds;
+  ticket_table _tickets;
 
   /* --- Common Actions --- */
   void generate_panel();

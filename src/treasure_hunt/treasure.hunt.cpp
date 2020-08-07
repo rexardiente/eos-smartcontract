@@ -51,14 +51,24 @@ void treasurehunt::setsail(name username) {
 void treasurehunt::reset(name username, vector<uint8_t> panel_set) {
   // Ensure this action is authorized by the player
   require_auth(username);
+
   // Get the user and reset the game
   auto& user = _users.get(username.value, "User doesn't exist");
   _users.modify(user, username, [&](auto& modified_user) {
     modified_user.game_data = game();
-    // update game_data details..
-    modified_user.game_data.ticket_player = ???;
-    modified_user.game_data.ticket_ai = ???;
-    modified_user.game_data.map_player = ???;
+    // revert all game details to default. 
+    modified_user.ticket_player = 1;
+    modified_user.ticket_ai = 1;
+    modified_user.map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
+    modified_user.map_ai = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
+    modified_user.hand_player = {0,0,0,0};
+    modified_user.hand_ai = {0,0,0,0};
+    modified_user.selected_map_player = 0;
+    modified_user.selected_map_ai = 0;
+    modified_user.ticket_lost_player = 0;
+    modified_user.ticket_lost_ai = 0;
+    modified_user.status = ONGOING;
+
     // add game_data into user table..
     modified_user.game_data = game_data;
   });
@@ -73,7 +83,7 @@ void treasurehunt::generateprize(name username, uint64_t selected_panel) {
   // If all the validations success, then modify users_info..
   _users.modify(user, username, [&](auto& user) {
     user.set_sail = ONHOLD;
-    calculatePrize(user, selected_panel);
+    calculateprize(user, selected_panel);
   }
 }
 
@@ -93,10 +103,27 @@ void treasurehunt::calculateprize(user user_data, uint64_t selected_panel) {
 }
 
 // Game status will update prizes that already won and some other
-void treasurehunt::gamestatus(user user_data) {
+void treasurehunt::gamestatus(name username, user user_data) {
+  // Ensure this action is authorized by the player
+  require_auth(username);
+
+  auto& user = _users.get(username.value, "User doesn't exist");
+
   game& game_data = user.game_data;
   // Now update all other details of the game
+
+  _users.modify(user, username, [&](auto& modified_user) {
+    modified_user.game_data = game();
+    // update game_data details..
+    modified_user.game_data.status = ONGOING;
+    modified_user.game_data.ticket_ai = ???;
+    modified_user.game_data.map_player = ???;
+    // add game_data into user table..
+    modified_user.game_data = game_data;
+  });
+
   // won prizes, available prizes, available tickets and etc..
+
 }
 
 void treasurehunt::endgame(name username) {
