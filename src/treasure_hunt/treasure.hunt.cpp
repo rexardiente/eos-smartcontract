@@ -11,8 +11,6 @@ using namespace eosio;
 void treasurehunt::login(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
-  // usr_index usrs(get_first_receiver(), get_first_receiver().value);
-  // log_index login(get_first_receiver(), get_first_receiver().value);
   // Create a record in the table if the player doesn't exist in our app yet
   auto itr = _users.find(username.value);
   if (itr == _users.end()) {
@@ -22,96 +20,92 @@ void treasurehunt::login(name username) {
   }
 }
 
-void treasurehunt::startgame(name username) {
+void treasurehunt::startgame(name username, vector<uint8_t> panel_set) {
   // Ensure this action is authorized by the player
   require_auth(username);
-
   auto& user = _users.get(username.value, "User doesn't exist");
+  // check if user has already login or exist in the game
+  if (user.game_data.status != ONGOING) {
+    _users.modify(user, username, [&](auto& user) {
+      // Initialize game table
+      game game;
+      // update game_data details..
+      game.game_data.ticket_player = ???;
+      game.game_data.ticket_ai = ???;
+      game.game_data.map_player = ???;
+      // add game_data into user table..
+      user.game_data = game_data;
+    });
+  } else endgame(username);
+}
 
+void treasurehunt::setsail(name username) {
+  require_auth(username);
+  auto& user = _users.get(username.value, "User doesn't exist");
+  _users.modify(user, username, [&](auto& user) {
+    // option oother codes here...
+    user.set_sail = READY;
+  });
+}
+
+void treasurehunt::reset(name username, vector<uint8_t> panel_set) {
+  // Ensure this action is authorized by the player
+  require_auth(username);
+  // Get the user and reset the game
+  auto& user = _users.get(username.value, "User doesn't exist");
   _users.modify(user, username, [&](auto& modified_user) {
-    // Create a new game
-    game game_data;
-    for (uint8_t i = 0; i < 4; i++) {
-      draw_one_map(game_data.map_player, game_data.hand_player);
-      draw_one_map(game_data.map_ai, game_data.hand_ai);
-    }
-    // Assign the newly created game to the player
+    modified_user.game_data = game();
+    // update game_data details..
+    modified_user.game_data.ticket_player = ???;
+    modified_user.game_data.ticket_ai = ???;
+    modified_user.game_data.map_player = ???;
+    // add game_data into user table..
     modified_user.game_data = game_data;
   });
+}
+
+void treasurehunt::generateprize(name username, uint64_t selected_panel) {
+   // Ensure this action is authorized by the player
+  require_auth(username);
+  // Initialize user_info table (which has the game data and user information).
+  auto& user = _users.get(username.value, "User doesn't exist");
+  // verify game status if player is suitable to take the action.
+  // If all the validations success, then modify users_info..
+  _users.modify(user, username, [&](auto& user) {
+    user.set_sail = ONHOLD;
+    calculatePrize(user, selected_panel);
+  }
+}
+
+// Generate Prize based on RNG and occurence rate..
+void treasurehunt::calculateprize(user user_data, uint64_t selected_panel) {
+  // How can we generate the fairness of the game?
+  // So, we need two things which is `Prize set and Tier Set` table for tracking..
+  auto& prize_tracker = _prize.get(user_data.username, "User has no existing game.");
+  auto& tier_tracker = _tier.get(user_data.username, "User has no existing game.");
+  // to calculate prize tracker use the sample Table of calculation on Telegram..
+  // use the same idea for calculating Tier set..
+  // update the current_data object based on prize and tier set calculations
+  //result based on prize_tracker and tier_tracker//
+  uint64_t final_prize = ???;
+  user_data.game_data; // add new the final_prize..
+  gameStatus(user_data);
+}
+
+// Game status will update prizes that already won and some other
+void treasurehunt::gamestatus(user user_data) {
+  game& game_data = user.game_data;
+  // Now update all other details of the game
+  // won prizes, available prizes, available tickets and etc..
 }
 
 void treasurehunt::endgame(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
-
   // Get the user and reset the game
   auto& user = _users.get(username.value, "User doesn't exist");
   _users.modify(user, username, [&](auto& modified_user) {
     modified_user.game_data = game();
-  });
-}
-
-void treasurehunt::nextround(name username) {
-  // Ensure this action is authorized by the player
-  require_auth(username);
-
-  auto& user = _users.get(username.value, "User doesn't exist");
-
-  // Verify game status
-  check(user.game_data.status == ONGOING,
-              "nextround: This game has ended. Please start a new one.");
-  check(user.game_data.selected_map_player != 0 && user.game_data.selected_map_ai != 0,
-               "nextround: Please play a card first.");
-
-  _users.modify(user, username, [&](auto& modified_user) {
-    game& game_data = modified_user.game_data;
-
-    // Reset selected card and damage dealt
-    game_data.selected_map_player = 0;
-    game_data.selected_map_ai = 0;
-    game_data.ticket_lost_player = 0;
-    game_data.ticket_lost_ai = 0;
-
-    // Draw card for the player and the AI
-    if (game_data.map_player.size() > 0) draw_one_map(game_data.map_player, game_data.hand_player);
-    if (game_data.map_ai.size() > 0) draw_one_map(game_data.map_ai, game_data.hand_ai);
-  });
-}
-
-void treasurehunt:: generate_panel() {
-
-}
-
-void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
-  // Ensure this action is authorized by the player
-  require_auth(username);
-
-  // Checks that selected card is valid
-  check(player_map_idx < 4, "playcard: Invalid hand index");
-
-  auto& user = _users.get(username.value, "User doesn't exist");
-
-  // Verify game status is suitable for the player to play a card
-  check(user.game_data.status == ONGOING,
-               "playmap: This game has ended. Please start a new one");
-  check(user.game_data.selected_map_player == 0,
-               "playmap: The player has played his Island this turn!");
-
-  _users.modify(user, username, [&](auto& modified_user) {
-    game& game_data = modified_user.game_data;
-
-    // Assign the selected card from the player's hand
-    game_data.selected_map_player = game_data.hand_player[player_map_idx];
-    game_data.hand_player[player_map_idx] = 0;
-
-    // AI picks a card
-    int ai_map_idx = ai_choose_map(game_data);
-    game_data.selected_map_ai = game_data.hand_ai[ai_map_idx];
-    game_data.hand_ai[ai_map_idx] = 0;
-
-    resolve_selected_maps(game_data);
-
-    update_game_status(modified_user);
   });
 }
 

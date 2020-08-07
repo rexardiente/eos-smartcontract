@@ -69,11 +69,10 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   struct [[eosio::table]] user {
     uint16_t user_ID;
-    name username;
     asset user_balance;
     game game_data;
 
-    auto primary_key() const { return username.value; }
+    auto primary_key() const { return username.user_ID; }
   };
 
   struct [[eosio::table]] ticket {
@@ -159,4 +158,16 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   [[eosio::action]]
   void playhunt(name username, uint8_t player_map_idx);
+
+  [[eosio::action]]
+  void gamestatus(user user_data);
+
+  [[eosio::action]]
+  calculateprize(user user_data, uint64_t selected_panel);
+
+  [[eosio::action]]
+  generateprize(name username, uint64_t selected_panel);
+
+  [[eosio::action]]
+  setsail(name username);
 };
