@@ -8,6 +8,7 @@ Purpose: This is the source file for the TH game contract.
 #include "treasurehunt.hpp"
 using namespace eosio;
 
+/*
 void treasurehunt::login(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
@@ -19,6 +20,7 @@ void treasurehunt::login(name username) {
     });
   }
 }
+*/
 
 void treasurehunt::startgame(name username, vector<uint8_t> panel_set) {
   // Ensure this action is authorized by the player
@@ -52,11 +54,11 @@ void treasurehunt::reset(name username, vector<uint8_t> panel_set) {
   // Ensure this action is authorized by the player
   require_auth(username);
 
-  // Get the user and reset the game
+  // Get the user and modify game data to reset the game.
   auto& user = _users.get(username.value, "User doesn't exist");
   _users.modify(user, username, [&](auto& modified_user) {
     modified_user.game_data = game();
-    // revert all game details to default. 
+    // revert all game details to default values.
     modified_user.ticket_player = 1;
     modified_user.ticket_ai = 1;
     modified_user.map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
@@ -67,7 +69,7 @@ void treasurehunt::reset(name username, vector<uint8_t> panel_set) {
     modified_user.selected_map_ai = 0;
     modified_user.ticket_lost_player = 0;
     modified_user.ticket_lost_ai = 0;
-    modified_user.status = ONGOING;
+    modified_user.status = ONGOING; 
 
     // add game_data into user table..
     modified_user.game_data = game_data;
