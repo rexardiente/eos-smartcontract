@@ -83,12 +83,10 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   };
 
   struct [[eosio::table]] history {
-    uint16_t ticket_ID;
-    name ticket_name;
-    asset user_balance;
+    uint16_t game_ID;
     game game_data;
 
-    auto primary_key() const { return ticket_ID.value; }
+    auto primary_key() const { return game_ID.value; }
   };
 
   struct [[eosio::table]] seed {
@@ -107,6 +105,9 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   seed_table _seeds;
   ticket_table _tickets;
 
+  /* RNG function */
+  int random(const int range);
+
   /* --- Common Actions --- */
   void generate_panel();
 
@@ -120,9 +121,6 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   void update_game_status(user_info& user);
 
-  /* RNG function */
-  int random(const int range);
-
   public:
   treasurehunt( name receiver, name code, datastream<const char*> ds ):contract(receiver, code, ds),
                        _users(receiver, receiver.value),
@@ -133,41 +131,41 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void login(name username);
 
   [[eosio::action]]
-  void new_destination(name username);
-
-  [[eosio::action]]
-  bool has_existing_game(name username);
-
-  [[eosio::action]]
-  void new_explorers(name username, uint16_t number_of_explorers);
-
-  [[eosio::action]]
   void startgame(name username);
 
   [[eosio::action]]
   void endgame(name username);
 
   [[eosio::action]]
+  bool has_existing_game(name username);
+
+  [[eosio::action]]
   void reset_game(name username);
 
   [[eosio::action]]
-  void nextround(name username);
+  void new_destination(name username);
 
   [[eosio::action]]
   void game_history(name username);
 
   [[eosio::action]]
+  void gamestatus(name username, user user_data);
+
+  [[eosio::action]]
+  void setsail(name username);
+
+  [[eosio::action]]
+  void new_explorers(name username, uint16_t number_of_explorers);
+
+  [[eosio::action]]
+  void nextround(name username);
+
+  [[eosio::action]]
   void playhunt(name username, uint8_t player_map_idx);
 
   [[eosio::action]]
-  void gamestatus(user user_data);
+  void calculateprize(user user_data, uint64_t selected_panel);
 
   [[eosio::action]]
-  calculateprize(user user_data, uint64_t selected_panel);
-
-  [[eosio::action]]
-  generateprize(name username, uint64_t selected_panel);
-
-  [[eosio::action]]
-  setsail(name username);
+  void generateprize(name username, uint64_t selected_panel);
 };
