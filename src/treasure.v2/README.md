@@ -12,3 +12,6 @@
 
 ##### Test: 
 > cleos push action treasurev2 hello '["treasurev2"]' -p treasurev2@active
+
+#### Get Table Info
+> cleos get table treasurev2 treasurev2 user

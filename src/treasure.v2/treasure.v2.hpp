@@ -4,30 +4,96 @@ using namespace std;
 using namespace eosio;
 
 class [[eosio::contract("treasure.v2")]] treasurev2 : public contract {
+public:
+    struct opened_panel
+    {
+        uint16_t panel_number;
+        uint16_t isopen;
+    };
+
 private:
+    // Basics Operation
+    // Table for current opened and available tile..
+    //     * (1 - 16) in bool data type which be represented by (1 or 2)
+    // game_id as secondary ID for history
+    // auto play mode will be added once manual gameplay is done!
+    // Useer will provide 16, panel set.
+    // update first the table before calling `game_status` function
 
-    struct game {
+    enum prize_value : int8_t
+    {
+        PRIZE_DEFAULT = 0,
+        OPENED = 2,
+        UNOPENED = 1,
+    };
+    enum game_status : int8_t
+    {
+        DONE = 0,
+        ONGOING = 1
+    };
+    enum game_destination : int8_t
+    {
+        EXPLORE_DEFAULT = 0,
+        EXPLORE_1 = 1,
+        EXPLORE_2 = 5,
+        EXPLORE_3 = 10,
+        MAP_DEFAULT = 0,
+        MAP_1 = 1,
+        MAP_2 = 10,
+        MAP_3 = 50
+    };
 
+    struct win_prize
+    {
+        uint16_t key;
+        uint16_t value = PRIZE_DEFAULT;
+    };
+
+    struct game
+    {
+        vector<opened_panel> panels ={
+            { 0, UNOPENED },
+            { 1, UNOPENED },
+            { 2, UNOPENED },
+            { 3, UNOPENED },
+            { 4, UNOPENED },
+            { 5, UNOPENED },
+            { 6, UNOPENED },
+            { 7, UNOPENED },
+            { 8, UNOPENED },
+            { 9, UNOPENED },
+            { 10, UNOPENED },
+            { 11, UNOPENED },
+            { 12, UNOPENED },
+            { 13, UNOPENED },
+            { 14, UNOPENED },
+            { 15, UNOPENED } };
+        vector<win_prize> win_prizes ={};
+        uint8_t map_selected = MAP_DEFAULT;
+        uint16_t panels_to_explore = EXPLORE_DEFAULT;
+        int8_t status = ONGOING;
     };
 
     struct [[eosio::table]] user
     {
         name username;
+        string game_id;
         game game_data;
-        uint16_t tickets; // remaining ticket
-        uint16_t total_win; // total win in points (1 ticket):(1 EOS)
+        uint64_t tickets; // remaining ticket
+        uint64_t total_win; // total win in points (1 ticket):(1 EOS)
 
         auto primary_key() const {
             return username.value;
         }
     };
 
-
-    struct [[eosio::table]] seed {
+    struct [[eosio::table]] seed
+    {
         uint64_t key   = 1; // default key of 1
         uint32_t value = 1; // default value of 1
 
-        auto primary_key() const {
+        auto primary_key() const
+        {
             return key;
         }
     };
@@ -53,8 +119,8 @@ public:
     using contract::contract; // not sure what is the use of this..
 
     [[eosio::action]] void hello(name username);
-    [[eosio::action]] void login(name username);
-    [[eosio::action]] void startgame(name username);
+    [[eosio::action]] void authorized(name username);
+    [[eosio::action]] void startgame(name username, uint8_t map_selected, uint16_t panels_to_explore, vector<treasurev2::opened_panel> panel_set);
     [[eosio::action]] void end(name username);
     [[eosio::action]] void reset(name username);
 };
