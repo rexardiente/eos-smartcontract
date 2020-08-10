@@ -71,28 +71,23 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     uint16_t user_ID;
     asset user_balance;
     game game_data;
-
     auto primary_key() const { return username.user_ID; }
   };
 
   struct [[eosio::table]] ticket {
     uint16_t ticket_ID;
     name ticket_name;
-
     auto primary_key() const { return ticket_ID.value; }
   };
 
   struct [[eosio::table]] history {
     uint16_t game_ID;
-    game game_data;
-
     auto primary_key() const { return game_ID.value; }
   };
 
   struct [[eosio::table]] seed {
     uint64_t        key = 1;
     uint32_t        value = 1;
-
     auto primary_key() const { return key; }
   };
 

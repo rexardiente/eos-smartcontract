@@ -1,26 +1,12 @@
 /*
 --------------------------------------------------------------
 Filename: treasurehunt.cpp
-Purpose: This is the source file for the TH game contract.
+Purpose: This is the source file containing functions for the TH game contract.
 --------------------------------------------------------------
 */
 
 #include "treasurehunt.hpp"
 using namespace eosio;
-
-/*
-void treasurehunt::login(name username) {
-  // Ensure this action is authorized by the player
-  require_auth(username);
-  // Create a record in the table if the player doesn't exist in our app yet
-  auto itr = _users.find(username.value);
-  if (itr == _users.end()) {
-    itr = _users.emplace(username,  [&](auto& new_user) {
-      new_user.username = username;
-    });
-  }
-}
-*/
 
 /* --------------------------------------------------------------------
 Function name: Start game
@@ -182,7 +168,7 @@ void treasurehunt::setsail(name username) {
   require_auth(username);
   auto& user = _users.get(username.value, "User doesn't exist");
   _users.modify(user, username, [&](auto& user) {
-    // option oother codes here...
+    // option other codes here...
     user.set_sail = READY;
   });
 }
