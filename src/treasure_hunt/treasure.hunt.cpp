@@ -230,17 +230,18 @@ Function name: Generate panel
 Parameters: name username, uint64_t selected_panel
 Purpose: Generates the user's prize.
 -------------------------------------------------------------------- */
-void treasurehunt::generateprize(name username, uint64_t selected_panel) {
+void treasurehunt::generatePrize(name username, uint8_t selected_map_player) {
    // Ensure this action is authorized by the player
   require_auth(username);
   // Initialize user_info table (which has the game data and user information).
   auto& user = _users.get(username.value, "User doesn't exist");
   // verify game status if player is suitable to take the action.
   // If all the validations success, then modify users_info..
+    int results = random(selected_map_player);
   _users.modify(user, username, [&](auto& user) {
-    user.set_sail = ONHOLD;
-    calculateprize(user, selected_panel);
-  }
+    //user.set_sail = ONHOLD;
+    calculatePrize(username,results);
+  });
 }
 
 /* --------------------------------------------------------------------

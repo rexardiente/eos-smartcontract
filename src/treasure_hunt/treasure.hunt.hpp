@@ -162,5 +162,5 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void calculateprize(user user_data, uint64_t selected_panel);
 
   [[eosio::action]]
-  void generateprize(name username, uint64_t selected_panel);
+  void generatePrize(name username, uint8_t selected_map_player);
 };
