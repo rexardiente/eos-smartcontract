@@ -13,7 +13,7 @@ Function name: Start game
 Parameters: name username, vector<uint8_t> panel_set
 Purpose: Starts the game for a specific user and panel set.
 -------------------------------------------------------------------- */
-void treasurehunt::startgame(name username, vector<uint8_t> panel_set) {
+void treasurehunt::startgame(name username,uint8_t  selected_map_player) {
   // Ensure this action is authorized by the player
   require_auth(username);
   auto& user = _users.get(username.value, "User doesn't exist");
@@ -21,15 +21,21 @@ void treasurehunt::startgame(name username, vector<uint8_t> panel_set) {
   if (user.game_data.status != ONGOING) {
     _users.modify(user, username, [&](auto& user) {
       // Initialize game table
-      game game;
+      game game_data;
       // update game_data details..
-      game.game_data.ticket_player = ???;
-      game.game_data.ticket_ai = ???;
-      game.game_data.map_player = ???;
+      generatePrize(username, 3);
+      user.game_data.hand_player = {0, 0, 0,0,0};
+      user.game_data.status = ONGOING;
+      user.game_data.ticket_lost_player = 0;
+      user.game_data.ticket_player = 1;
+      user.game_data.selected_map_player = selected_map_player;
+      user.game_data.map_player[1] = 1;
       // add game_data into user table..
       user.game_data = game_data;
     });
-  } else endgame(username);
+  } else {
+    endgame(username);
+  }
 }
 
 /* --------------------------------------------------------------------
@@ -102,7 +108,7 @@ Parameters: name username
 Purpose: Generates a new destination for a given user.
 -------------------------------------------------------------------- */
 void treasurehunt::new_destination(name username) {
-  
+
 }
 
 /* --------------------------------------------------------------------

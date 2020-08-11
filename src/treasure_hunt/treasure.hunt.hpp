@@ -126,7 +126,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void login(name username);
 
   [[eosio::action]]
-  void startgame(name username);
+  void startgame(name username,uint8_t  selected_map_player);
 
   [[eosio::action]]
   void endgame(name username);
