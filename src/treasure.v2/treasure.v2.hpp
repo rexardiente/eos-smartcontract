@@ -69,10 +69,15 @@ private:
             { 14, UNOPENED },
             { 15, UNOPENED } };
         vector<win_prize> win_prizes ={};
-        uint8_t map_selected = MAP_DEFAULT;
-        uint16_t panels_to_explore = EXPLORE_DEFAULT;
+        uint8_t destination = MAP_DEFAULT;
+        uint16_t explore_count = EXPLORE_DEFAULT;
         int8_t status = ONGOING;
     };
+
+    // Tickets Table
+    // struct [[eosio::table]] ticket {
+
+    // }
 
     struct [[eosio::table]] user
     {
@@ -98,11 +103,11 @@ private:
         }
     };
 
-    using user_table = eosio::multi_index<"user"_n, user>;
-    using seed_table = eosio::multi_index<"seed"_n, seed>;
+    using users_table = eosio::multi_index<"user"_n, user>;
+    using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
-    user_table _user;
-    seed_table _seed;
+    users_table _users;
+    seeds_table _seeds;
 
     int rng(const int range);
     int calculate_prize(); // triggered inside panel_prize
@@ -113,14 +118,15 @@ private:
 public:
     treasurev2(name receiver, name code, datastream<const char*> ds) :
         contract(receiver, code, ds),
-        _user(receiver, receiver.value),
-        _seed(receiver, receiver.value) {}
+        _users(receiver, receiver.value),
+        _seeds(receiver, receiver.value) {}
 
     using contract::contract; // not sure what is the use of this..
 
     [[eosio::action]] void hello(name username);
     [[eosio::action]] void authorized(name username);
-    [[eosio::action]] void startgame(name username, uint8_t map_selected, uint16_t panels_to_explore, vector<treasurev2::opened_panel> panel_set);
+    [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<treasurev2::opened_panel> panel_set);
     [[eosio::action]] void end(name username);
-    [[eosio::action]] void reset(name username);
+    [[eosio::action]] void removeuser(name user);
+    [[eosio::action]] void renew(name username, bool isreset);
 };

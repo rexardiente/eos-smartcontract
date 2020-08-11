@@ -3,11 +3,11 @@
 
 int treasurev2::rng(const int range) {
     // Find the existing seed
-    auto seed_iterator = _seed.begin();
+    auto seed_iterator = _seeds.begin();
 
     // Initialize the seed with default value if it is not found
-    if (seed_iterator == _seed.end()) {
-        seed_iterator = _seed.emplace(_self, [&](auto& seed) {});
+    if (seed_iterator == _seeds.end()) {
+        seed_iterator = _seeds.emplace(_self, [&](auto& seed) {});
     }
 
     // Generate new seed value using the existing seed value
@@ -15,7 +15,7 @@ int treasurev2::rng(const int range) {
     auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
 
     // Store the updated seed value in the table
-    _seed.modify(seed_iterator, _self, [&](auto& s) {
+    _seeds.modify(seed_iterator, _self, [&](auto& s) {
         s.value = new_seed_value;
         });
 
