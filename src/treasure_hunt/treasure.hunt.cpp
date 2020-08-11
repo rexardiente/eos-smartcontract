@@ -211,18 +211,55 @@ Function name: Calculate prize
 Parameters: user user_data, uint64_t selected_panel
 Purpose: Calculates the user's prize based upon the RNG function & occurance rate.
 -------------------------------------------------------------------- */
-void treasurehunt::calculateprize(user user_data, uint64_t selected_panel) {
-  // How can we generate the fairness of the game?
-  // So, we need two things which is `Prize set and Tier Set` table for tracking..
-  auto& prize_tracker = _prize.get(user_data.username, "User has no existing game.");
-  auto& tier_tracker = _tier.get(user_data.username, "User has no existing game.");
-  // to calculate prize tracker use the sample Table of calculation on Telegram..
-  // use the same idea for calculating Tier set..
-  // update the current_data object based on prize and tier set calculations
-  //result based on prize_tracker and tier_tracker//
-  uint64_t final_prize = ???;
-  user_data.game_data; // add new the final_prize..
-  gameStatus(user_data);
+void treasurehunt::calculatePrize(name username,uint64_t results) {
+  double finalprize = 0.00;
+
+  //ramdom tier_results
+  int tier_results = random(results);
+
+  //results is random prize results from generate Prize
+  if (results <= 350) {
+     //gameid=7;
+     if (tier_results <= 70) finalprize = tier_results * 01.00;
+     else finalprize = tier_results * 0.20;
+
+  } else if (results <= 700) {
+    if (tier_results <= 70) finalprize = tier_results * 01.00;
+    else finalprize = tier_results * 0.20;
+
+  } else if (results <= 850) {
+    if (tier_results <= 30) finalprize = tier_results * 1.00;
+    else if (tier_results <= 50) finalprize = tier_results * 0.75;
+    else if (tier_results < 80) finalprize = tier_results * 0.20;
+    else finalprize = tier_results * 0.15;
+
+  } else if (results <= 950) {
+    if (tier_results <= 30) finalprize = tier_results * 1.00;
+    else if (tier_results <= 50) finalprize=tier_results * 0.65;
+    else if (tier_results < 80) finalprize=tier_results * 0.15;
+    else finalprize = tier_results * 0.12;
+
+  } else if (results <= 990) {
+    if (tier_results <= 30) finalprize = tier_results * 1.00;
+    else if (tier_results <= 50) finalprize = tier_results * 0.60;
+    else if (tier_results < 80) finalprize = tier_results * 0.12;
+    else finalprize = tier_results * 0.10;
+
+  } else if (results <= 999) {
+    if (tier_results <= 30) finalprize = tier_results * 1.00;
+    else if (tier_results <= 50) finalprize = tier_results * 0.50;
+    else if (tier_results < 80) finalprize = tier_results * 0.30;
+    else finalprize = tier_results * 0.05;
+
+  } else {
+    if (tier_results <= 30) finalprize = tier_results * 1.00;
+    else if (tier_results <= 50) finalprize = tier_results * 0.40;
+    else if (tier_results < 80) finalprize = tier_results * 0.25;
+    else finalprize = tier_results * 0.01;
+  }
+
+  game game_data; // add new the final_prize..
+ // gameStatus(username);
 }
 
 /* --------------------------------------------------------------------
