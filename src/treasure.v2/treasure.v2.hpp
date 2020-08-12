@@ -1,4 +1,9 @@
 #include <eosio/eosio.hpp>
+#include <vector>
+#include <algorithm>
+
+// #include <boost/version.hpp>
+// #include <boost/config.hpp>
 
 using namespace std;
 using namespace eosio;
@@ -7,8 +12,8 @@ class [[eosio::contract("treasure.v2")]] treasurev2 : public contract {
 public:
     struct opened_panel
     {
-        uint16_t panel_idx;
-        uint16_t isopen;
+        uint8_t panel_idx;
+        uint8_t isopen;
     };
 
 private:
@@ -19,6 +24,7 @@ private:
     // auto play mode will be added once manual gameplay is done!
     // Useer will provide 16, panel set.
     // update first the table before calling `game_status` function
+    // user win_tracker will be table with username and array for win details..
 
     enum prize_value : int8_t
     {
@@ -77,7 +83,7 @@ private:
     // Tickets Table
     struct [[eosio::table]] ticket {
         name username;
-        int64_t size;
+        int64_t balance;
 
         auto primary_key() const {
             return username.value;
@@ -87,7 +93,7 @@ private:
     struct [[eosio::table]] user
     {
         name username;
-        string game_id;
+        uint64_t game_id;
         game game_data;
         uint64_t tickets; // remaining ticket
         uint64_t total_win; // total win in points (1 ticket):(1 EOS)
@@ -108,31 +114,52 @@ private:
         }
     };
 
+    struct [[eosio::table]] history
+    {
+        uint64_t game_id = 1; // default key of 1
+        name username;
+        game game_data;
+
+        auto primary_key() const
+        {
+            return game_id;
+        }
+    };
+
     using users_table = eosio::multi_index<"user"_n, user>;
+    using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
+    using history_table = eosio::multi_index<"history"_n, history>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
+    tickets_table _tickets;
     seeds_table _seeds;
+    history_table _history;
 
     int rng(const int range);
     int calculate_prize(); // triggered inside panel_prize
 
-    vector<results> prizeresults(game game_data, user modified_users);
-    void panel_prize();
-    void update_game();
+    // vector<results> prizeresults(game game_data, user modified_users);
+    // void panel_prize();
+    // void update_game();
+
+    uint64_t gen_gameid();
+    void addhistory(user user_data);
+
+    int64_t ticket_balance(name username);
+    void purchase(name username, uint64_t amount);
 
 public:
     treasurev2(name receiver, name code, datastream<const char*> ds) :
         contract(receiver, code, ds),
         _users(receiver, receiver.value),
+        _tickets(receiver, receiver.value),
+        _history(receiver, receiver.value),
         _seeds(receiver, receiver.value) {}
 
-    using contract::contract; // not sure what is the use of this..
-
-    [[eosio::action]] void hello(name username);
     [[eosio::action]] void authorized(name username);
     [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<opened_panel> panel_set);
-    [[eosio::action]] void showprize(name username, uint8_t panel_idx);
+    [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
     [[eosio::action]] void renew(name username, bool isreset);
 };
