@@ -2,6 +2,32 @@
 
 using namespace eosio;
 
+void treasurev2::hello(name username) {
+    vector<treasurev2::Tile> panel_set ={
+        { 1, UNOPENED },
+        { 0, UNOPENED },
+        { 2, OPENED },
+        { 3, OPENED },
+        { 4, OPENED },
+        { 5, UNOPENED },
+        { 6, UNOPENED },
+        { 7, UNOPENED },
+        { 8, UNOPENED },
+        { 9, UNOPENED },
+        { 10, UNOPENED },
+        { 11, UNOPENED },
+        { 12, UNOPENED },
+        { 13, UNOPENED },
+        { 14, UNOPENED },
+        { 15, UNOPENED } };
+
+    // authorized(username);
+    // purchase(username, 200);
+    startgame(username, MAP_1, EXPLORE_1, panel_set);
+
+    // end(username);
+};
+
 void treasurev2::genprize(name username, uint8_t panel_idx) {
     require_auth(username);
     auto itr = _users.find(username.value);
@@ -18,8 +44,8 @@ void treasurev2::genprize(name username, uint8_t panel_idx) {
         // game_data.panels.begin();
         // treasurev2::contains(game_data.panels, panel_idx);
 
-        // vector<opened_panel> panels = game_data.panels;
-        // opened_panel opp ={ 1, UNOPENED };
+        // vector<Tile> panels = game_data.panels;
+        // Tile opp ={ 1, UNOPENED };
 
         for (auto gdp : game_data.panels) {
             //  Check the current index and update once found..
@@ -28,7 +54,7 @@ void treasurev2::genprize(name username, uint8_t panel_idx) {
                 game_data.panels[panel_idx].isopen = OPENED;
 
                 // Add to prize results
-                game_data.prize_results.insert(game_data.prize_results.begin(), {
+                game_data.tile_prizes.insert(game_data.tile_prizes.begin(), {
                     panel_idx, prize
                     });
             }
@@ -49,7 +75,7 @@ void treasurev2::end(name username) {
 };
 
 // Initialized the game components
-void treasurev2::startgame(name username, uint8_t destination, uint16_t explore_count, vector<treasurev2::opened_panel> panel_set) {
+void treasurev2::startgame(name username, uint8_t destination, uint16_t explore_count, vector<treasurev2::Tile> panel_set) {
     require_auth(username);
 
     auto& user = _users.get(username.value, "User doesn't exist");
@@ -92,8 +118,7 @@ void treasurev2::renew(name username, bool isreset) {
 
             if (!isreset) {
                 // load default values
-                game game_data;
-                modified_user.game_data = game_data;
+                modified_user.game_data = game();
             }
             else {
                 // initialized using the current data

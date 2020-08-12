@@ -10,7 +10,7 @@ using namespace eosio;
 
 class [[eosio::contract("treasure.v2")]] treasurev2 : public contract {
 public:
-    struct opened_panel
+    struct Tile
     {
         uint8_t panel_idx;
         uint8_t isopen;
@@ -29,8 +29,9 @@ private:
     enum prize_value : int8_t
     {
         PRIZE_DEFAULT = 0,
-        OPENED = 2,
-        UNOPENED = 1,
+        OPENED = 1,
+        UNOPENED = 2,
+        WIN_LIMIT = 4
     };
     enum game_status : int8_t
     {
@@ -49,7 +50,7 @@ private:
         MAP_3 = 50
     };
 
-    struct results
+    struct TilePrize
     {
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
@@ -57,7 +58,7 @@ private:
 
     struct game
     {
-        vector<opened_panel> panels ={
+        vector<Tile> panels ={
             { 0, UNOPENED },
             { 1, UNOPENED },
             { 2, UNOPENED },
@@ -74,7 +75,8 @@ private:
             { 13, UNOPENED },
             { 14, UNOPENED },
             { 15, UNOPENED } };
-        vector<results> prize_results ={};
+        vector<TilePrize> tile_prizes ={};
+        uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = MAP_DEFAULT;
         uint16_t explore_count = EXPLORE_DEFAULT;
         int8_t status = ONGOING;
@@ -157,8 +159,9 @@ public:
         _history(receiver, receiver.value),
         _seeds(receiver, receiver.value) {}
 
+    [[eosio::action]] void hello(name username);
     [[eosio::action]] void authorized(name username);
-    [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<opened_panel> panel_set);
+    [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<Tile> panel_set);
     [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
     [[eosio::action]] void renew(name username, bool isreset);
