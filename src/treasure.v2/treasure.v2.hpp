@@ -159,7 +159,6 @@ public:
         _history(receiver, receiver.value),
         _seeds(receiver, receiver.value) {}
 
-    [[eosio::action]] void hello(name username);
     [[eosio::action]] void authorized(name username);
     [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<Tile> panel_set);
     [[eosio::action]] void genprize(name username, uint8_t panel_idx);

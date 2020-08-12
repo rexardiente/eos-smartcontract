@@ -2,33 +2,6 @@
 
 using namespace eosio;
 
-void treasurev2::hello(name username) {
-    vector<treasurev2::Tile> panel_set ={
-        { 1, UNOPENED },
-        { 0, UNOPENED },
-        { 2, UNOPENED },
-        { 3, UNOPENED },
-        { 4, UNOPENED },
-        { 5, UNOPENED },
-        { 6, UNOPENED },
-        { 7, UNOPENED },
-        { 8, UNOPENED },
-        { 12, UNOPENED },
-        { 10, UNOPENED },
-        { 11, UNOPENED },
-        { 9, UNOPENED },
-        { 14, UNOPENED },
-        { 15, UNOPENED },
-        { 13, UNOPENED } };
-
-    // authorized(username);
-    // purchase(username, 200);
-    // startgame(username, MAP_1, EXPLORE_1, panel_set);
-    end(username);
-    // genprize(username, 1);
-    // renew(username, true);
-}
-
 // panel_idx is based on the index of vector panel_set  
 // Example: [2,4,1,6,10]
 // where tile = 4 is on index/panel_idx = 1
@@ -70,6 +43,7 @@ void treasurev2::end(name username) {
     require_auth(username);
     auto& user = _users.get(username.value, "User doesn't exist");
     auto iterator = _users.find(username.value);
+
     _users.erase(iterator);
     // _users.modify(user, username, [&](auto& modified_user) {
     //     modified_user.game_data = game();
@@ -143,7 +117,6 @@ void treasurev2::renew(name username, bool isreset) {
             // generate new game ID
             modified_user.game_id = gen_gameid();
             modified_user.game_data = game_data;
-            // print("Panel Successfully Renewed or Reset!\n");
         });
 }
 

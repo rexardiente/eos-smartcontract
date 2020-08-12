@@ -1,18 +1,8 @@
 #include "treasure.v2.hpp"
 #include <eosio/system.hpp>
-#include <eosio/time.hpp>
-
-// template <typename T>
-// const bool contains(vector<T> vec, T element) {
-//     if (std::find(vec.begin(), vec.end(), element) != vec.end())
-//         return true;
-//     return false;
-// }
 
 // random users win with based on win limit = 4
 uint16_t treasurev2::calculate_prize(vector<TilePrize>& tile_prizes, uint8_t& win_count) {
-    // uint8_t wincount = game_data.win_count;
-    // check(wincount < 5, "No more available prizes.");
     const uint8_t unopened = 16 - tile_prizes.size();
 
     // has equal or less 4 wins and has available panel equal to win limit
@@ -22,21 +12,6 @@ uint16_t treasurev2::calculate_prize(vector<TilePrize>& tile_prizes, uint8_t& wi
     if (unopened == win_count) return rng(20);
     if (win_rate > 7) return rng(20);
     else return 0;
-    // for (auto gdp : game_data.panels) {
-    //     //  Check the current index and update once found..
-    //     if (gdp.panel_idx == panel_idx) {
-    //         // change to opened tile
-    //         // game_data.panels[panel_idx].isopen = OPENED;
-    //         // Add to prize results
-    //         // game_data.tile_prizes.insert(game_data.tile_prizes.begin(), {
-    //         //     panel_idx, prize
-    //         //     });
-
-    //         game_data.tile_prizes.insert(game_data.tile_prizes.begin(), {
-    //             panel_idx, prize
-    //             });
-    //     }
-    // }
 }
 
 uint64_t treasurev2::gen_gameid() {
