@@ -7,7 +7,7 @@ class [[eosio::contract("treasure.v2")]] treasurev2 : public contract {
 public:
     struct opened_panel
     {
-        uint16_t panel_number;
+        uint16_t panel_idx;
         uint16_t isopen;
     };
 
@@ -43,7 +43,7 @@ private:
         MAP_3 = 50
     };
 
-    struct win_prize
+    struct results
     {
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
@@ -68,16 +68,21 @@ private:
             { 13, UNOPENED },
             { 14, UNOPENED },
             { 15, UNOPENED } };
-        vector<win_prize> win_prizes ={};
+        vector<results> prize_results ={};
         uint8_t destination = MAP_DEFAULT;
         uint16_t explore_count = EXPLORE_DEFAULT;
         int8_t status = ONGOING;
     };
 
     // Tickets Table
-    // struct [[eosio::table]] ticket {
+    struct [[eosio::table]] ticket {
+        name username;
+        int64_t size;
 
-    // }
+        auto primary_key() const {
+            return username.value;
+        }
+    };
 
     struct [[eosio::table]] user
     {
@@ -112,6 +117,7 @@ private:
     int rng(const int range);
     int calculate_prize(); // triggered inside panel_prize
 
+    vector<results> prizeresults(game game_data, user modified_users);
     void panel_prize();
     void update_game();
 
@@ -125,8 +131,8 @@ public:
 
     [[eosio::action]] void hello(name username);
     [[eosio::action]] void authorized(name username);
-    [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<treasurev2::opened_panel> panel_set);
+    [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<opened_panel> panel_set);
+    [[eosio::action]] void showprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
-    [[eosio::action]] void removeuser(name user);
     [[eosio::action]] void renew(name username, bool isreset);
 };
