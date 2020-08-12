@@ -26,6 +26,8 @@ private:
     // update first the table before calling `game_status` function
     // user win_tracker will be table with username and array for win details..
 
+    // remove ticket on user value and use update function to update ticket..
+
     enum prize_value : int8_t
     {
         PRIZE_DEFAULT = 0,
@@ -35,8 +37,9 @@ private:
     };
     enum game_status : int8_t
     {
-        DONE = 0,
-        ONGOING = 1
+        INITIALIZED = 0,
+        ONGOING = 1,
+        DONE = 2
     };
     enum game_destination : int8_t
     {
@@ -79,7 +82,7 @@ private:
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = MAP_DEFAULT;
         uint16_t explore_count = EXPLORE_DEFAULT;
-        int8_t status = ONGOING;
+        int8_t status = INITIALIZED;
     };
 
     // Tickets Table
@@ -97,7 +100,6 @@ private:
         name username;
         uint64_t game_id;
         game game_data;
-        uint64_t tickets; // remaining ticket
         uint64_t total_win; // total win in points (1 ticket):(1 EOS)
 
         auto primary_key() const {
@@ -138,18 +140,16 @@ private:
     seeds_table _seeds;
     history_table _history;
 
-    int rng(const int range);
-    int calculate_prize(); // triggered inside panel_prize
-
     // vector<results> prizeresults(game game_data, user modified_users);
     // void panel_prize();
     // void update_game();
-
+    int rng(const int range);
+    uint16_t calculate_prize(vector<TilePrize>& tile_prizes, uint8_t& win_count);
     uint64_t gen_gameid();
     void addhistory(user user_data);
-
-    int64_t ticket_balance(name username);
     void purchase(name username, uint64_t amount);
+    void ticket_update(name username, bool isdeduction, uint64_t amount);
+    int64_t ticket_balance(name username);
 
 public:
     treasurev2(name receiver, name code, datastream<const char*> ds) :
