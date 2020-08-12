@@ -5,7 +5,7 @@ Purpose: This is the source file containing functions for the TH game contract.
 --------------------------------------------------------------
 */
 
-#include "treasurehunt.hpp"
+#include "treasure.hunt.hpp"
 using namespace eosio;
 
 /* --------------------------------------------------------------------
@@ -59,6 +59,7 @@ Parameters: user username
 Purpose: Checks to see if a given user has an existing game.
 -------------------------------------------------------------------- */
 bool treasurehunt::has_existing_game(user username) {
+  /*
   // Ensure this action is authorized by the player
   require_auth(username);
 
@@ -67,6 +68,7 @@ bool treasurehunt::has_existing_game(user username) {
 
   if (user.game_data.status == ONGOING) return true;
   return false;
+  */
 }
 
 /* --------------------------------------------------------------------
@@ -74,7 +76,7 @@ Function name: Reset game
 Parameters: name username, vector<uint8_t> panel_set
 Purpose: Resets the game to the default game settings.
 -------------------------------------------------------------------- */
-void treasurehunt::reset_game(name username, vector<uint8_t> panel_set) {
+void treasurehunt::reset_game(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
 
@@ -82,20 +84,21 @@ void treasurehunt::reset_game(name username, vector<uint8_t> panel_set) {
   auto& user = _users.get(username.value, "User doesn't exist");
 
   _users.modify(user, username, [&](auto& modified_user) {
-    modified_user.game_data = game();
+    // Initialize game table
+    game game_data;
 
     // revert all game details to default values.
-    modified_user.ticket_player = 1;
-    modified_user.ticket_ai = 1;
-    modified_user.map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
-    modified_user.map_ai = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
-    modified_user.hand_player = {0,0,0,0};
-    modified_user.hand_ai = {0,0,0,0};
-    modified_user.selected_map_player = 0;
-    modified_user.selected_map_ai = 0;
-    modified_user.ticket_lost_player = 0;
-    modified_user.ticket_lost_ai = 0;
-    modified_user.status = ONGOING;
+    user.game_data.ticket_player = 1;
+    user.game_data.ticket_ai = 1;
+    user.game_data.map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
+    user.game_data.map_ai = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
+    user.game_data.hand_player = {0,0,0,0};
+    user.game_data.hand_ai = {0,0,0,0};
+    user.game_data.selected_map_player = 0;
+    user.game_data.selected_map_ai = 0;
+    user.game_data.ticket_lost_player = 0;
+    user.game_data.ticket_lost_ai = 0;
+    user.game_data.status = ONGOING;
 
     // add game_data into user table..
     modified_user.game_data = game_data;
@@ -117,25 +120,16 @@ Parameters: name username
 Purpose: Returns the game history for a given user.
 -------------------------------------------------------------------- */
 void treasurehunt::game_history(name username) {
-  // Ensure this action is authorized by the player
   require_auth(username);
-
   auto& user = _users.get(username.value, "User doesn't exist");
-  game& game_data = user.game_data;
+  game game_data = user.game_data;
 
   // Now update all other details of the game
   _users.modify(user, username, [&](auto& modified_user) {
     modified_user.game_data = game();
-    // update game_data details..
     modified_user.game_data.status = ONGOING;
-    modified_user.game_data.ticket_ai = ???;
-    modified_user.game_data.map_player = ???;
-    // add game_data into user table..
     modified_user.game_data = game_data;
   });
-
-  // won prizes, available prizes, available tickets and etc..
-
 }
 
 /* --------------------------------------------------------------------
@@ -143,26 +137,20 @@ Function name: Game status
 Parameters: name username, user user_data
 Purpose: Game status will update prizes that already won and some other.
 -------------------------------------------------------------------- */
-void treasurehunt::gamestatus(name username, user user_data) {
+void treasurehunt::gamestatus(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
-
   auto& user = _users.get(username.value, "User doesn't exist");
-  game& game_data = user.game_data;
-
+  game game_data = user.game_data;
   // Now update all other details of the game
   _users.modify(user, username, [&](auto& modified_user) {
     modified_user.game_data = game();
     // update game_data details..
     modified_user.game_data.status = ONGOING;
-    modified_user.game_data.ticket_ai = ???;
-    modified_user.game_data.map_player = ???;
     // add game_data into user table..
     modified_user.game_data = game_data;
   });
-
   // won prizes, available prizes, available tickets and etc..
-
 }
 
 /* --------------------------------------------------------------------
@@ -174,8 +162,10 @@ void treasurehunt::setsail(name username) {
   require_auth(username);
   auto& user = _users.get(username.value, "User doesn't exist");
   _users.modify(user, username, [&](auto& user) {
+    // Initialize game table
+    game game_data;
     // option other codes here...
-    user.set_sail = READY;
+    user.game_data.setsail = READY;
   });
 }
 

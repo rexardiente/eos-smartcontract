@@ -53,6 +53,11 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     PLAYER_LOST  = -1
   };
 
+  enum set_sail: int8_t {
+    NOT_READY   = 0,
+    READY       = 1
+  };
+
   struct game {
     int8_t          ticket_player = 1;
     int8_t          ticket_ai = 1;
@@ -65,24 +70,22 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     uint8_t         ticket_lost_player = 0;
     uint8_t         ticket_lost_ai = 0;
     int8_t          status = ONGOING;
+    int8_t          setsail = NOT_READY;
   };
 
   struct [[eosio::table]] user {
     uint16_t user_ID;
+    name username;
     asset user_balance;
     game game_data;
-    auto primary_key() const { return username.user_ID; }
+
+    auto primary_key() const { return username.value; }
   };
 
   struct [[eosio::table]] ticket {
     uint16_t ticket_ID;
     name ticket_name;
-    auto primary_key() const { return ticket_ID.value; }
-  };
-
-  struct [[eosio::table]] history {
-    uint16_t game_ID;
-    auto primary_key() const { return game_ID.value; }
+    auto primary_key() const { return ticket_name.value; }
   };
 
   struct [[eosio::table]] seed {
@@ -94,10 +97,9 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   typedef eosio::multi_index<name("seed"), seed> seed_table;
   typedef eosio::multi_index<name("user"), user> users_table;
   typedef eosio::multi_index<name("ticket"), ticket> ticket_table;
-  typedef eosio::multi_index<name("history"), history> history_table;
 
   users_table _users;
-  seed_table _seeds;
+  seed_table _seed;
   ticket_table _tickets;
 
   /* RNG function */
@@ -114,12 +116,13 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   void resolve_selected_maps(game& game_data);
 
-  void update_game_status(user_info& user);
+  // void update_game_status(user_info& user);
 
   public:
   treasurehunt( name receiver, name code, datastream<const char*> ds ):contract(receiver, code, ds),
                        _users(receiver, receiver.value),
-                       _seed(receiver, receiver.value) {}
+                       _seed(receiver, receiver.value),
+                       _tickets(receiver, receiver.value) {}
 
   /* --- Authenticated Actions --- */
   [[eosio::action]]
@@ -132,7 +135,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void endgame(name username);
 
   [[eosio::action]]
-  bool has_existing_game(name username);
+  bool has_existing_game(user username);
 
   [[eosio::action]]
   void reset_game(name username);
@@ -144,7 +147,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void game_history(name username);
 
   [[eosio::action]]
-  void gamestatus(name username, user user_data);
+  void gamestatus(name username);
 
   [[eosio::action]]
   void setsail(name username);
@@ -159,7 +162,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void playhunt(name username, uint8_t player_map_idx);
 
   [[eosio::action]]
-  void calculateprize(user user_data, uint64_t selected_panel);
+  void calculatePrize(name username,uint64_t results);
 
   [[eosio::action]]
   void generatePrize(name username, uint8_t selected_map_player);
