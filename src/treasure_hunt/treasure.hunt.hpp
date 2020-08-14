@@ -57,15 +57,11 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   struct game {
     int8_t          ticket_player = 1;
-    //int8_t          ticket_ai = 1;
     vector<uint8_t> map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
-    //vector<uint8_t> map_ai = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
     vector<uint8_t> hand_player = {0,0,0,0};
-    //vector<uint8_t> hand_ai = {0,0,0,0};
     uint8_t         selected_map_player = 0;
-   // uint8_t         selected_map_ai = 0;
     uint8_t         ticket_lost_player = 0;
-   // uint8_t         ticket_lost_ai = 0;
+    int8_t          explorers = 0;
     int8_t          status = ONGOING;
     int8_t          setsail = NOT_READY;
     int8_t          newdestination = NO;
@@ -147,7 +143,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void setsail(name username);
 
   [[eosio::action]]
-  void newexplorers(name username, uint16_t number_of_explorers);
+  void newexplorers(name username, uint8_t number_of_explorers);
 
   [[eosio::action]]
   void nextround(name username);

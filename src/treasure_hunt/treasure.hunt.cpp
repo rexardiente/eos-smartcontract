@@ -160,11 +160,11 @@ Purpose: Modifies the setsail variable to reflect the user ready to begin flaggi
 void treasurehunt::setsail(name username) {
   require_auth(username);
   auto& user = _users.get(username.value, "User doesn't exist");
-  _users.modify(user, username, [&](auto& user) {
+  _users.modify(user, username, [&](auto& modified_user) {
     // Initialize game table
     game game_data;
     // option other codes here...
-    user.game_data.setsail = READY;
+    modified_user.game_data.setsail = READY;
   });
 }
 
@@ -173,13 +173,25 @@ Function name: New Explorers
 Parameters: name username, uint16_t number_of_explorers
 Purpose: Generates new explorers.
 -------------------------------------------------------------------- */
-void treasurehunt::newexplorers(name username, uint16_t number_of_explorers) {
+void treasurehunt::newexplorers(name username, uint8_t number_of_explorers) {
+  // Ensure this action is authorized by the player
+  require_auth(username);
+  auto& user = _users.get(username.value, "User doesn't exist");
+
+  // Verify that the user hasn't set sail or there isn't an ongoing game.
+  check(user.game_data.setsail == NOT_READY && user.game_data.status != ONGOING,
+              "User cannot buy new explorers until the game is over. ");
+
+  _users.modify(user, username, [&](auto& modified_user) {
+    game game_data;
+    modified_user.game_data.explorers = number_of_explorers;
+  });
 }
 
 /* --------------------------------------------------------------------
 Function name: Next round
 Parameters: name username
-Purpose:
+Purpose: Ushers user to the next round of gameplay.
 -------------------------------------------------------------------- */
 void treasurehunt::nextround(name username) {
   // Ensure this action is authorized by the player
@@ -203,6 +215,7 @@ Parameters: name username, uint8_t player_map_idx
 Purpose:
 -------------------------------------------------------------------- */
 void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
+  
 }
 
 /* --------------------------------------------------------------------
@@ -212,11 +225,11 @@ Purpose: Calculates the user's prize based upon the RNG function & occurance rat
 -------------------------------------------------------------------- */
 void treasurehunt::calculatePrize(name username,uint64_t results) {
   double finalprize = 0.00;
-  //ramdom tier_results
+  //ramdom tier_results.
   int tier_results = random(results);
-  //results is random prize results from generate Prize
+  //results is random prize results from generate Prize.
   if (results <= 350) {
-     //gameid=7;
+     //gameid = 7;
      if (tier_results <= 70) finalprize = tier_results * 01.00;
      else finalprize = tier_results * 0.20;
   } else if (results <= 700) {
