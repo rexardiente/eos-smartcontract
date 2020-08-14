@@ -129,6 +129,9 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void endgame(name username);
 
   [[eosio::action]]
+  bool hasexisting(name username);
+
+  [[eosio::action]]
   void resetgame(name username);
 
   [[eosio::action]]

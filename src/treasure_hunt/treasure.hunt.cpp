@@ -64,17 +64,13 @@ Function name: Has existing game
 Parameters: user username
 Purpose: Checks to see if a given user has an existing game.
 -------------------------------------------------------------------- */
-bool treasurehunt::hasexisting(user username) {
-  /*
+bool treasurehunt::hasexisting(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
   auto& user = _users.get(username.value, "User doesn't exist");
-  game& game_data = user.game_data;
+  game game_data;
   if (user.game_data.status == ONGOING) return true;
   return false;
-  */
- bool existinggame = false;
- return existinggame;
 }
 
 /* --------------------------------------------------------------------
