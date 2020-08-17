@@ -1,11 +1,6 @@
 #include "treasure.hunt.hpp"
 using namespace eosio;
 
-/* --------------------------------------------------------------------
-Function name: Start game
-Parameters: name username, vector<uint8_t> panel_set
-Purpose: Starts the game for a specific user and panel set.
--------------------------------------------------------------------- */
 void treasurehunt::loguser(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
@@ -18,6 +13,11 @@ void treasurehunt::loguser(name username) {
   }
 }
 
+/* --------------------------------------------------------------------
+Function name: Start game
+Parameters: name username, vector<uint8_t> panel_set
+Purpose: Starts the game for a specific user and panel set.
+-------------------------------------------------------------------- */
 void treasurehunt::startgame(name username,uint8_t  selected_map_player) {
   // Ensure this action is authorized by the player
   require_auth(username);
@@ -212,10 +212,10 @@ void treasurehunt::nextround(name username) {
 /* --------------------------------------------------------------------
 Function name: Play hunt
 Parameters: name username, uint8_t player_map_idx
-Purpose:
+Purpose: To begin playhunt
 -------------------------------------------------------------------- */
 void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
-  
+
 }
 
 /* --------------------------------------------------------------------
