@@ -16,7 +16,7 @@ void treasurehunt::loguser(name username) {
 /* --------------------------------------------------------------------
 Function name: Start game
 Parameters: name username, vector<uint8_t> panel_set
-Purpose: Starts the game for a specific user and panel set.
+Purpose: Starts the   game for a specific user and panel set.
 -------------------------------------------------------------------- */
 void treasurehunt::startgame(name username,uint8_t  selected_map_player) {
   // Ensure this action is authorized by the player
