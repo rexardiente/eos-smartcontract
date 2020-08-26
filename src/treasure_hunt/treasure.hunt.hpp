@@ -143,7 +143,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void setsail(name username);
 
   [[eosio::action]]
-  void newexplorers(name username, uint8_t number_of_explorers);
+  void newexplorers(name username, uint16_t number_of_explorers);
 
   [[eosio::action]]
   void nextround(name username);
