@@ -219,8 +219,10 @@ void treasurehunt::playhunt(name username, uint8_t player_map_idx) {
   auto& user = _users.get(username.value, "User doesn't exist");
     int results = random(player_map_idx);
   _users.modify(user, username, [&](auto& user) {
+   
     calculatePrize(username,results);
   });
+  
 }
 
 /* --------------------------------------------------------------------
