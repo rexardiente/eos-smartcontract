@@ -81,17 +81,20 @@ Purpose: Resets the game to the default game settings.
 void treasurehunt::resetgame(name username) {
   // Ensure this action is authorized by the player
   require_auth(username);
+
   // Get the user and modify game data to reset the game.
   auto& user = _users.get(username.value, "User doesn't exist");
+
   _users.modify(user, username, [&](auto& modified_user) {
     // Initialize game table
     game game_data;
+
     // revert all game details to default values.
      modified_user.game_data.hand_player = {0, 0, 0,0,0};
-     // user.game_data.status = ONGOING;
-     // user.game_data.ticket_lost_player = 0;
-      //user.game_data.ticket_player = 1;
-      //user.game_data.selected_map_player =0;
+     modified_user.game_data.status = ONGOING;
+     modified_user.game_data.ticket_lost_player = 0;
+      modified_user.game_data.ticket_player = 1;
+      modified_user.game_data.selected_map_player =0;
       modified_user.game_data.map_player[1] = 1;
     // add game_data into user table..
     modified_user.game_data = game_data;
