@@ -61,10 +61,10 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     vector<uint8_t> hand_player = {0,0,0,0};
     uint8_t         selected_map_player = 0;
     uint8_t         ticket_lost_player = 0;
-    int8_t          explorers = 0;
     int8_t          status = ONGOING;
     int8_t          setsail = NOT_READY;
     int8_t          newdestination = NO;
+    int16_t          explorers = 0;
   };
 
   struct [[eosio::table]] user {
