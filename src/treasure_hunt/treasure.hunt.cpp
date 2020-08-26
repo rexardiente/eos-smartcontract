@@ -173,7 +173,7 @@ Function name: New Explorers
 Parameters: name username, uint16_t number_of_explorers
 Purpose: Generates new explorers.
 -------------------------------------------------------------------- */
-void treasurehunt::newexplorers(name username, uint8_t number_of_explorers) {
+void treasurehunt::newexplorers(name username, uint16_t number_of_explorers) {
   // Ensure this action is authorized by the player
   require_auth(username);
   auto& user = _users.get(username.value, "User doesn't exist");
