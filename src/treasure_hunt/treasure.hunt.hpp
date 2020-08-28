@@ -99,11 +99,6 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   int random(const int range);
 
   /* --- Common Actions --- */
-  void generate_panel();
-  void system_fairness_strategy();
-  int calculate_map_coins();
-  int calculate_attack_point(const island& island1, const island& island2);
-  void resolve_selected_maps(game& game_data);
   void calculatePrize(name username,uint64_t results);
   void generatePrize(name username, uint8_t selected_map_player);
   bool hasexisting(user username);
