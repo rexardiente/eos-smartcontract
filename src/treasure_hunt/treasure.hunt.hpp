@@ -64,7 +64,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     int8_t          status = ONGOING;
     int8_t          setsail = NOT_READY;
     int8_t          newdestination = NO;
-    int16_t          explorers = 0;
+    int16_t         explorers = 0;
   };
 
   struct [[eosio::table]] user {
