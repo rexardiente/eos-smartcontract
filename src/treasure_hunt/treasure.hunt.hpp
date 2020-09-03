@@ -1,13 +1,5 @@
-/*
---------------------------------------------------------------
-Filename: treasurehunt.hpp
-Purpose: This is a header file for the TH game contract.
---------------------------------------------------------------
-*/
-
 #include <eosio/eosio.hpp>
 #include <eosio/system.hpp>
-
 #include <eosio/asset.hpp>
 using namespace std;
 using namespace eosio;
@@ -58,19 +50,21 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     READY       = 1
   };
 
+  enum newDestination: int8_t {
+    NO        = 0,
+    YES       = 1
+  };
+
   struct game {
     int8_t          ticket_player = 1;
-    int8_t          ticket_ai = 1;
     vector<uint8_t> map_player = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
-    vector<uint8_t> map_ai = {1,2,3,4,7,8,9,10,11,12,13,14,15,16};
     vector<uint8_t> hand_player = {0,0,0,0};
-    vector<uint8_t> hand_ai = {0,0,0,0};
     uint8_t         selected_map_player = 0;
-    uint8_t         selected_map_ai = 0;
     uint8_t         ticket_lost_player = 0;
-    uint8_t         ticket_lost_ai = 0;
     int8_t          status = ONGOING;
     int8_t          setsail = NOT_READY;
+    int8_t          newdestination = NO;
+    int16_t         explorers = 0;
   };
 
   struct [[eosio::table]] user {
@@ -78,7 +72,6 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
     name username;
     asset user_balance;
     game game_data;
-
     auto primary_key() const { return username.value; }
   };
 
@@ -106,17 +99,9 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   int random(const int range);
 
   /* --- Common Actions --- */
-  void generate_panel();
-
-  void system_fairness_strategy();
-
-  int calculate_map_coins();
-
-  int calculate_attack_point(const island& island1, const island& island2);
-
-  void resolve_selected_maps(game& game_data);
-
-  // void update_game_status(user_info& user);
+  void calculatePrize(name username,uint64_t results);
+  void generatePrize(name username, uint8_t selected_map_player);
+  bool hasexisting(user username);
 
   public:
   treasurehunt( name receiver, name code, datastream<const char*> ds ):contract(receiver, code, ds),
@@ -126,7 +111,7 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
 
   /* --- Authenticated Actions --- */
   [[eosio::action]]
-  void login(name username);
+  void loguser(name username);
 
   [[eosio::action]]
   void startgame(name username,uint8_t  selected_map_player);
@@ -135,16 +120,16 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void endgame(name username);
 
   [[eosio::action]]
-  bool has_existing_game(user username);
+  bool hasexisting(name username);
 
   [[eosio::action]]
-  void reset_game(name username);
+  void resetgame(name username);
 
   [[eosio::action]]
-  void new_destination(name username);
+  void destination(name username);
 
   [[eosio::action]]
-  void game_history(name username);
+  void gamehistory(name username);
 
   [[eosio::action]]
   void gamestatus(name username);
@@ -153,17 +138,11 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract {
   void setsail(name username);
 
   [[eosio::action]]
-  void new_explorers(name username, uint16_t number_of_explorers);
+  void newexplorers(name username, uint16_t number_of_explorers);
 
   [[eosio::action]]
   void nextround(name username);
 
   [[eosio::action]]
   void playhunt(name username, uint8_t player_map_idx);
-
-  [[eosio::action]]
-  void calculatePrize(name username,uint64_t results);
-
-  [[eosio::action]]
-  void generatePrize(name username, uint8_t selected_map_player);
 };
