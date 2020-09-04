@@ -129,7 +129,7 @@ public:
 
   [[eosio::action]] void resetgame(name username);
 
-  [[eosio::action]] void destination(name username);
+  [[eosio::action]] void destination(name username, uint8_t selected_map_player);
 
   [[eosio::action]] void gamehistory(name username);
 
@@ -142,4 +142,6 @@ public:
   [[eosio::action]] void nextround(name username);
 
   [[eosio::action]] void playhunt(name username, uint8_t player_map_idx);
+  [[eosio::action]] void newstartgame(name username);
+  [[eosio::action]] void playerticket(name username, uint16_t ticket_player);
 };
