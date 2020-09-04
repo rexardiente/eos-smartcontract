@@ -2,26 +2,21 @@
 
 using namespace eosio;
 
-void treasurehunt::loguser(name username)
-{
-  // Ensure this action is authorized by the player
-  require_auth(username);
-  // Create a record in the table if the player doesn't exist in our app yet
-  auto itr = _users.find(username.value);
-  if (itr == _users.end())
-  {
-    itr = _users.emplace(username, [&](auto &new_user) {
-      new_user.username = username;
-    });
-  }
-}
+// void treasurehunt::loguser(name username)
+// {
+//   // Ensure this action is authorized by the player
+//   require_auth(username);
+//   // Create a record in the table if the player doesn't exist in our app yet
+  
+  
+// }
 
 /* --------------------------------------------------------------------
 Function name: Start game
 Parameters: name username, vector<uint8_t> panel_set
 Purpose: Starts the   game for a specific user and panel set.
 -------------------------------------------------------------------- */
-void treasurehunt::startgame(name username, uint8_t selected_map_player)
+void treasurehunt::destination(name username, uint8_t selected_map_player)
 {
   // Ensure this action is authorized by the player
   require_auth(username);
@@ -30,18 +25,9 @@ void treasurehunt::startgame(name username, uint8_t selected_map_player)
   if (user.game_data.status != ONGOING)
   {
     _users.modify(user, username, [&](auto &user) {
-      // Initialize game table
-      game game_data;
       // update game_data details..
       generatePrize(username, 3);
-      user.game_data.hand_player = {0, 0, 0, 0, 0};
-      user.game_data.status = ONGOING;
-      user.game_data.ticket_lost_player = 0;
-      user.game_data.ticket_player = 1;
       user.game_data.selected_map_player = selected_map_player;
-      user.game_data.map_player[1] = 1;
-      // add game_data into user table..
-      user.game_data = game_data;
     });
   }
   else
@@ -116,16 +102,23 @@ Function name: New destination
 Parameters: name username
 Purpose: Generates a new destination for a given user.
 -------------------------------------------------------------------- */
-void treasurehunt::destination(name username)
+void treasurehunt::startgame(name username)
 {
   require_auth(username);
   auto &user = _users.get(username.value, "User doesn't exist");
-  _users.modify(user, username, [&](auto &user) {
+  auto itr = _users.find(username.value);
+  if (itr == _users.end())
+  {
+    itr = _users.emplace(username, [&](auto &new_user) {
+      new_user.username = username;
+      new_user.game_data = game_data;
+    });
+  }
+  
+  // _users.modify(user, username, [&](auto &user) {
     // Initialize game table
-    game game_data;
     // option other codes here...
-    user.game_data.newdestination = YES;
-  });
+    // user.game_data.newdestination = YES;
 }
 
 /* --------------------------------------------------------------------
