@@ -108,7 +108,7 @@ private:
   int random(const int range);
 
   /* --- Common Actions --- */
-  void calculatePrize(name username, uint64_t results);
+  double calculatePrize(name username, uint8_t index);
   void generatePrize(name username, uint8_t selected_map_player);
   bool hasexisting(user username);
 
@@ -121,7 +121,7 @@ public:
   /* --- Authenticated Actions --- */
   [[eosio::action]] void loguser(name username);
 
-  [[eosio::action]] void startgame(name username, uint8_t selected_map_player);
+  [[eosio::action]] void destination(name username, uint8_t selected_map_player);
 
   [[eosio::action]] void endgame(name username);
 
@@ -129,7 +129,7 @@ public:
 
   [[eosio::action]] void resetgame(name username);
 
-  [[eosio::action]] void destination(name username);
+  [[eosio::action]] void startgame(name username);
 
   [[eosio::action]] void gamehistory(name username);
 

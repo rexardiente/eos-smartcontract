@@ -237,9 +237,9 @@ void treasurehunt::playhunt(name username, uint8_t player_map_idx)
 {
   require_auth(username);
   auto &user = _users.get(username.value, "User doesn't exist");
-  int results = random(player_map_idx);
+  // int results = random(player_map_idx);
   _users.modify(user, username, [&](auto &user) {
-    calculatePrize(username, results);
+    calculatePrize(username, player_map_idx);
   });
 }
 
@@ -248,13 +248,14 @@ Function name: Calculate prize
 Parameters: user user_data, uint64_t selected_panel
 Purpose: Calculates the user's prize based upon the RNG function & occurance rate.
 -------------------------------------------------------------------- */
-void treasurehunt::calculatePrize(name username, uint64_t results)
+double treasurehunt::calculatePrize(name username, uint8_t idx)
 {
+  int PRIZE_SET = random(idx);
   double finalprize = 0.00;
   //ramdom tier_results.
-  int tier_results = random(results);
-  //results is random prize results from generate Prize.
-  if (results <= 350)
+  int tier_results = random(PRIZE_SET);
+  //PRIZE_SET is random prize PRIZE_SET from generate Prize.
+  if (PRIZE_SET <= 350)
   {
     //gameid = 7;
     if (tier_results <= 70)
@@ -262,14 +263,14 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
     else
       finalprize = tier_results * 0.20;
   }
-  else if (results <= 700)
+  else if (PRIZE_SET <= 700)
   {
     if (tier_results <= 70)
       finalprize = tier_results * 01.00;
     else
       finalprize = tier_results * 0.20;
   }
-  else if (results <= 850)
+  else if (PRIZE_SET <= 850)
   {
     if (tier_results <= 30)
       finalprize = tier_results * 1.00;
@@ -280,7 +281,7 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
     else
       finalprize = tier_results * 0.15;
   }
-  else if (results <= 950)
+  else if (PRIZE_SET <= 950)
   {
     if (tier_results <= 30)
       finalprize = tier_results * 1.00;
@@ -291,7 +292,7 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
     else
       finalprize = tier_results * 0.12;
   }
-  else if (results <= 990)
+  else if (PRIZE_SET <= 990)
   {
     if (tier_results <= 30)
       finalprize = tier_results * 1.00;
@@ -302,7 +303,7 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
     else
       finalprize = tier_results * 0.10;
   }
-  else if (results <= 999)
+  else if (PRIZE_SET <= 999)
   {
     if (tier_results <= 30)
       finalprize = tier_results * 1.00;
@@ -324,7 +325,7 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
     else
       finalprize = tier_results * 0.01;
   }
-  game game_data; // add new the final_prize..
+  // game game_data; // add new the final_prize..
                   // gameStatus(username);
 }
 
@@ -341,10 +342,10 @@ void treasurehunt::generatePrize(name username, uint8_t selected_map_player)
   auto &user = _users.get(username.value, "User doesn't exist");
   // verify game status if player is suitable to take the action.
   // If all the validations success, then modify users_info..
-  int results = random(selected_map_player);
+  // int results = random(selected_map_player);
   _users.modify(user, username, [&](auto &user) {
     //user.set_sail = ONHOLD;
-    calculatePrize(username, results);
+    calculatePrize(username, selected_map_player);
   });
 }
 /* --------------------------------------------------------------------
