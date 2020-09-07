@@ -10,13 +10,10 @@
                 {
                     "name": "username",
                     "type": "name"
-<<<<<<< HEAD
                 },
                 {
                     "name": "selected_map_player",
                     "type": "uint8"
-=======
->>>>>>> 4338a1351a2e9190643c0d13e97a6d9fb6bcac55
                 }
             ]
         },
@@ -39,6 +36,10 @@
                     "type": "int8"
                 },
                 {
+                    "name": "panel_player",
+                    "type": "uint8[]"
+                },
+                {
                     "name": "map_player",
                     "type": "uint8[]"
                 },
@@ -48,6 +49,10 @@
                 },
                 {
                     "name": "selected_map_player",
+                    "type": "uint8"
+                },
+                {
+                    "name": "selected_panel_player",
                     "type": "uint8"
                 },
                 {
@@ -69,6 +74,10 @@
                 {
                     "name": "explorers",
                     "type": "int16"
+                },
+                {
+                    "name": "win_counter",
+                    "type": "uint8"
                 }
             ]
         },
@@ -113,21 +122,6 @@
             ]
         },
         {
-            "name": "newexplorers",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "number_of_explorers",
-                    "type": "uint16"
-                }
-            ]
-        },
-        {
-<<<<<<< HEAD
             "name": "newstartgame",
             "base": "",
             "fields": [
@@ -138,8 +132,6 @@
             ]
         },
         {
-=======
->>>>>>> 4338a1351a2e9190643c0d13e97a6d9fb6bcac55
             "name": "nextround",
             "base": "",
             "fields": [
@@ -150,7 +142,6 @@
             ]
         },
         {
-<<<<<<< HEAD
             "name": "playerticket",
             "base": "",
             "fields": [
@@ -161,22 +152,6 @@
                 {
                     "name": "ticket_player",
                     "type": "uint16"
-                }
-            ]
-        },
-        {
-=======
->>>>>>> 4338a1351a2e9190643c0d13e97a6d9fb6bcac55
-            "name": "playhunt",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "player_map_idx",
-                    "type": "uint8"
                 }
             ]
         },
@@ -211,6 +186,10 @@
                 {
                     "name": "username",
                     "type": "name"
+                },
+                {
+                    "name": "selected_panel_player",
+                    "type": "uint8"
                 }
             ]
         },
@@ -297,34 +276,18 @@
             "ricardian_contract": ""
         },
         {
-            "name": "newexplorers",
-            "type": "newexplorers",
-            "ricardian_contract": ""
-        },
-        {
-<<<<<<< HEAD
             "name": "newstartgame",
             "type": "newstartgame",
             "ricardian_contract": ""
         },
         {
-=======
->>>>>>> 4338a1351a2e9190643c0d13e97a6d9fb6bcac55
             "name": "nextround",
             "type": "nextround",
             "ricardian_contract": ""
         },
         {
-<<<<<<< HEAD
             "name": "playerticket",
             "type": "playerticket",
-            "ricardian_contract": ""
-        },
-        {
-=======
->>>>>>> 4338a1351a2e9190643c0d13e97a6d9fb6bcac55
-            "name": "playhunt",
-            "type": "playhunt",
             "ricardian_contract": ""
         },
         {

@@ -63,14 +63,18 @@ private:
   struct game
   {
     int8_t ticket_player = 1;
-    vector<uint8_t> map_player = {1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-    vector<uint8_t> hand_player = {0, 0, 0, 0};
+    vector<uint8_t> panel_player = {1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    vector<uint8_t> map_player = {0, 0, 0};
+    vector<uint8_t> hand_player = {0, 0, 0};
+
     uint8_t selected_map_player = 0;
+    uint8_t selected_panel_player = 0;
     uint8_t ticket_lost_player = 0;
     int8_t status = ONGOING;
     int8_t setsail = NOT_READY;
     int8_t newdestination = NO;
     int16_t explorers = 0;
+    uint8_t win_counter = 0;
   };
 
   struct [[eosio::table]] user
@@ -135,13 +139,9 @@ public:
 
   [[eosio::action]] void gamestatus(name username);
 
-  [[eosio::action]] void setsail(name username);
-
-  [[eosio::action]] void newexplorers(name username, uint16_t number_of_explorers);
-
   [[eosio::action]] void nextround(name username);
 
-  [[eosio::action]] void playhunt(name username, uint8_t player_map_idx);
+  [[eosio::action]] void setsail(name username, uint8_t selected_panel_player);
   [[eosio::action]] void newstartgame(name username);
   [[eosio::action]] void playerticket(name username, uint16_t ticket_player);
 };

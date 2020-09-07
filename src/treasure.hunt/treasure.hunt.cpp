@@ -177,43 +177,6 @@ void treasurehunt::gamestatus(name username)
     // won prizes, available prizes, available tickets and etc..
 }
 
-/* --------------------------------------------------------------------
-Function name: Set sail
-Parameters: name username
-Purpose: Modifies the setsail variable to reflect the user ready to begin flagging locations.
--------------------------------------------------------------------- */
-void treasurehunt::setsail(name username)
-{
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    _users.modify(user, username, [&](auto &modified_user) {
-        // Initialize game table
-        game game_data;
-        // option other codes here...
-        modified_user.game_data.setsail = READY;
-    });
-}
-
-/* --------------------------------------------------------------------
-Function name: New Explorers
-Parameters: name username, uint16_t number_of_explorers
-Purpose: Generates new explorers.
--------------------------------------------------------------------- */
-void treasurehunt::newexplorers(name username, uint16_t number_of_explorers)
-{
-    // Ensure this action is authorized by the player
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-
-    // Verify that the user hasn't set sail or there isn't an ongoing game.
-    check(user.game_data.setsail == NOT_READY && user.game_data.status != ONGOING,
-          "User cannot buy new explorers until the game is over. ");
-
-    _users.modify(user, username, [&](auto &modified_user) {
-        game game_data;
-        modified_user.game_data.explorers = number_of_explorers;
-    });
-}
 void treasurehunt::playerticket(name username, uint16_t ticket_player)
 {
     // Ensure this action is authorized by the player
@@ -253,16 +216,22 @@ Function name: Play hunt
 Parameters: name username, uint8_t player_map_idx
 Purpose: To begin playhunt
 -------------------------------------------------------------------- */
-void treasurehunt::playhunt(name username, uint8_t player_map_idx)
+void treasurehunt::setsail(name username, uint8_t selected_panel_player)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.selected_map_player = player_map_idx,
-          "Already open: Please choose another panel");
-    int results = random(player_map_idx);
-    _users.modify(user, username, [&](auto &user) {
-        calculatePrize(username, results);
-    });
+
+    check(user.game_data.selected_panel_player != 0,
+          "next panel  Please...");
+
+    int results = random(selected_panel_player);
+
+    calculatePrize(username, results);
+
+    //_users.modify(user, username, [&](auto &user) {
+    //    user.game_data.selected_panel_player = selected_panel_player;
+    //    user.game_data.setsail = READY;
+    //});
 }
 
 /* --------------------------------------------------------------------
