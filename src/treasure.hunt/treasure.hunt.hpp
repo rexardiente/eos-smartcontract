@@ -60,8 +60,37 @@ private:
     YES = 1
   };
 
+  struct Tile
+  {
+    uint8_t panel_idx;
+    uint8_t isopen;
+  };
+  enum prize_value : int8_t
+  {
+    PRIZE_DEFAULT = 0,
+    OPENED = 1,
+    UNOPENED = 2,
+    WIN_LIMIT = 4
+  };
   struct game
   {
+    vector<Tile> panels = {
+        {0, UNOPENED},
+        {1, UNOPENED},
+        {2, UNOPENED},
+        {3, UNOPENED},
+        {4, UNOPENED},
+        {5, UNOPENED},
+        {6, UNOPENED},
+        {7, UNOPENED},
+        {8, UNOPENED},
+        {9, UNOPENED},
+        {10, UNOPENED},
+        {11, UNOPENED},
+        {12, UNOPENED},
+        {13, UNOPENED},
+        {14, UNOPENED},
+        {15, UNOPENED}};
     int8_t ticket_player = 1;
     vector<uint8_t> panel_player = {1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     vector<uint8_t> map_player = {0, 0, 0};
@@ -125,7 +154,7 @@ public:
   /* --- Authenticated Actions --- */
   [[eosio::action]] void loguser(name username);
 
-  [[eosio::action]] void startgame(name username, uint8_t selected_map_player);
+  [[eosio::action]] void startgame(name username);
 
   [[eosio::action]] void endgame(name username);
 

@@ -4,6 +4,20 @@
     "types": [],
     "structs": [
         {
+            "name": "Tile",
+            "base": "",
+            "fields": [
+                {
+                    "name": "panel_idx",
+                    "type": "uint8"
+                },
+                {
+                    "name": "isopen",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "destination",
             "base": "",
             "fields": [
@@ -31,6 +45,10 @@
             "name": "game",
             "base": "",
             "fields": [
+                {
+                    "name": "panels",
+                    "type": "Tile[]"
+                },
                 {
                     "name": "ticket_player",
                     "type": "int8"
@@ -200,10 +218,6 @@
                 {
                     "name": "username",
                     "type": "name"
-                },
-                {
-                    "name": "selected_map_player",
-                    "type": "uint8"
                 }
             ]
         },

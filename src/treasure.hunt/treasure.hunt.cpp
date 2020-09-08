@@ -39,7 +39,7 @@ Function name: Start game
 Parameters: name username, vector<uint8_t> panel_set
 Purpose: Starts the   game for a specific user and panel set.
 -------------------------------------------------------------------- */
-void treasurehunt::startgame(name username, uint8_t selected_map_player)
+void treasurehunt::startgame(name username)
 {
     // Ensure this action is authorized by the player
     require_auth(username);
@@ -221,17 +221,20 @@ void treasurehunt::setsail(name username, uint8_t selected_panel_player)
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
 
-    check(user.game_data.selected_panel_player != 0,
-          "next panel  Please...");
+    //check(user.game_data.selected_panel_player != 0,
+    //      "next panel  Please...");
 
     int results = random(selected_panel_player);
+    int win_count = user.game_data.win_counter;
+    win_count++;
 
     calculatePrize(username, results);
 
-    //_users.modify(user, username, [&](auto &user) {
-    //    user.game_data.selected_panel_player = selected_panel_player;
-    //    user.game_data.setsail = READY;
-    //});
+    _users.modify(user, username, [&](auto &user) {
+        user.game_data.selected_panel_player = selected_panel_player;
+        user.game_data.setsail = READY;
+        user.game_data.win_counter = win_count;
+    });
 }
 
 /* --------------------------------------------------------------------
@@ -243,80 +246,83 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
 {
     double finalprize = 0.00;
     //ramdom tier_results.
-    int tier_results = random(results);
-    //results is random prize results from generate Prize.
-    if (results <= 350)
+    if (results > 0)
     {
-        //gameid = 7;
-        if (tier_results <= 70)
-            finalprize = tier_results * 01.00;
+        int tier_results = random(results);
+        //results is random prize results from generate Prize.
+        if (results <= 350)
+        {
+            //gameid = 7;
+            if (tier_results <= 70)
+                finalprize = tier_results * 01.00;
+            else
+                finalprize = tier_results * 0.20;
+        }
+        else if (results <= 700)
+        {
+            if (tier_results <= 70)
+                finalprize = tier_results * 01.00;
+            else
+                finalprize = tier_results * 0.20;
+        }
+        else if (results <= 850)
+        {
+            if (tier_results <= 30)
+                finalprize = tier_results * 1.00;
+            else if (tier_results <= 50)
+                finalprize = tier_results * 0.75;
+            else if (tier_results < 80)
+                finalprize = tier_results * 0.20;
+            else
+                finalprize = tier_results * 0.15;
+        }
+        else if (results <= 950)
+        {
+            if (tier_results <= 30)
+                finalprize = tier_results * 1.00;
+            else if (tier_results <= 50)
+                finalprize = tier_results * 0.65;
+            else if (tier_results < 80)
+                finalprize = tier_results * 0.15;
+            else
+                finalprize = tier_results * 0.12;
+        }
+        else if (results <= 990)
+        {
+            if (tier_results <= 30)
+                finalprize = tier_results * 1.00;
+            else if (tier_results <= 50)
+                finalprize = tier_results * 0.60;
+            else if (tier_results < 80)
+                finalprize = tier_results * 0.12;
+            else
+                finalprize = tier_results * 0.10;
+        }
+        else if (results <= 999)
+        {
+            if (tier_results <= 30)
+                finalprize = tier_results * 1.00;
+            else if (tier_results <= 50)
+                finalprize = tier_results * 0.50;
+            else if (tier_results < 80)
+                finalprize = tier_results * 0.30;
+            else
+                finalprize = tier_results * 0.05;
+        }
         else
-            finalprize = tier_results * 0.20;
+        {
+            if (tier_results <= 30)
+                finalprize = tier_results * 1.00;
+            else if (tier_results <= 50)
+                finalprize = tier_results * 0.40;
+            else if (tier_results < 80)
+                finalprize = tier_results * 0.25;
+            else
+                finalprize = tier_results * 0.01;
+        }
+        game game_data; // add new the final_prize..
+                        // gameStatus(username);
     }
-    else if (results <= 700)
-    {
-        if (tier_results <= 70)
-            finalprize = tier_results * 01.00;
-        else
-            finalprize = tier_results * 0.20;
-    }
-    else if (results <= 850)
-    {
-        if (tier_results <= 30)
-            finalprize = tier_results * 1.00;
-        else if (tier_results <= 50)
-            finalprize = tier_results * 0.75;
-        else if (tier_results < 80)
-            finalprize = tier_results * 0.20;
-        else
-            finalprize = tier_results * 0.15;
-    }
-    else if (results <= 950)
-    {
-        if (tier_results <= 30)
-            finalprize = tier_results * 1.00;
-        else if (tier_results <= 50)
-            finalprize = tier_results * 0.65;
-        else if (tier_results < 80)
-            finalprize = tier_results * 0.15;
-        else
-            finalprize = tier_results * 0.12;
-    }
-    else if (results <= 990)
-    {
-        if (tier_results <= 30)
-            finalprize = tier_results * 1.00;
-        else if (tier_results <= 50)
-            finalprize = tier_results * 0.60;
-        else if (tier_results < 80)
-            finalprize = tier_results * 0.12;
-        else
-            finalprize = tier_results * 0.10;
-    }
-    else if (results <= 999)
-    {
-        if (tier_results <= 30)
-            finalprize = tier_results * 1.00;
-        else if (tier_results <= 50)
-            finalprize = tier_results * 0.50;
-        else if (tier_results < 80)
-            finalprize = tier_results * 0.30;
-        else
-            finalprize = tier_results * 0.05;
-    }
-    else
-    {
-        if (tier_results <= 30)
-            finalprize = tier_results * 1.00;
-        else if (tier_results <= 50)
-            finalprize = tier_results * 0.40;
-        else if (tier_results < 80)
-            finalprize = tier_results * 0.25;
-        else
-            finalprize = tier_results * 0.01;
-    }
-    game game_data; // add new the final_prize..
-                    // gameStatus(username);
 }
 
 /* --------------------------------------------------------------------
