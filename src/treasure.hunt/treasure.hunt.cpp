@@ -227,14 +227,17 @@ void treasurehunt::setsail(name username, uint8_t selected_panel_player)
     int results = random(selected_panel_player);
     int win_count = user.game_data.win_counter;
     win_count++;
+    check(user.game_data.panels.at(selected_panel_player).isopen == UNOPENED, "Tile already opened!");
+    if (win_count <= 4)
+    {
+        calculatePrize(username, results);
 
-    calculatePrize(username, results);
-
-    _users.modify(user, username, [&](auto &user) {
-        user.game_data.selected_panel_player = selected_panel_player;
-        user.game_data.setsail = READY;
-        user.game_data.win_counter = win_count;
-    });
+        _users.modify(user, username, [&](auto &user) {
+            user.game_data.selected_panel_player = selected_panel_player;
+            user.game_data.setsail = READY;
+            user.game_data.win_counter = win_count;
+        });
+    }
 }
 
 /* --------------------------------------------------------------------
