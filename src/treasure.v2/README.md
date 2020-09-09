@@ -1,8 +1,14 @@
+##### Note:
+    - We can add Game_ID as parameter in every action.
+    - Automatically end and add to history if Explore count will be empty.
+
 ##### Private Key: 
     PW5JMmjNXNGCZqyMNbskJ1NJBehUPF8AJqf6aSNodsTQwC1o73tv8
 
 ##### Create Account
     cleos create account eosio treasurev2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 
 ##### Compile: 
     eosio-cpp ./treasure.v2.cpp -o treasure.v2.wasm --abigen
@@ -20,7 +26,7 @@
 
 ### Testing Process
 1. Create ticket inorder to use the game using purchase action.
-2. Create User/Login using authorized action.
+2. Create User/Login using init action.
 3. Start the game using startgame action.
 4. set sail button will allow user user to select any available panel, once selected a panel it generate prize using genprize action
 5. renew map using renew action
@@ -48,7 +54,7 @@ void treasurev2::test(name username) {
         { 15, UNOPENED } };
 
     <!-- login or create user -->
-    authorized(username);
+    init(username);
     <!-- Start game -->
     startgame(username, MAP_1, EXPLORE_1, set);
     <!-- remove current user.. -->
