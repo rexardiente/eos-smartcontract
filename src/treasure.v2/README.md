@@ -1,6 +1,7 @@
 ##### Note:
     - We can add Game_ID as parameter in every action.
     - Automatically end and add to history if Explore count will be empty.
+    - Problem adding history automatically, using other actions.
 
 ##### Private Key: 
     PW5JMmjNXNGCZqyMNbskJ1NJBehUPF8AJqf6aSNodsTQwC1o73tv8
