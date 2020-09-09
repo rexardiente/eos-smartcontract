@@ -75,17 +75,19 @@ void treasurev2::renew(name username)
   require_auth(username);
   auto &user = _users.get(username.value, "Error: User doesn't exist");
   // Check if user has no balancecheck(ticket_balance(username) != 0, "Error: 0 balance, Can't renew the map.");
-  // Before renewing current user game data, add it to the history..
-  // and check if the current game is inserted into the history or else fail.
-  // if (!addhistory(user))
-  //   check(false, "Error: Adding to History. Please try again!");
+  check(!user.game_data.tile_prizes.empty(), "Error: Please Open atleast 1 panel to renew the map.");
 
   _users.modify(user, username, [&](auto &modified_user) {
-    // Initialized game_data
-    game game_data;
+    // Before renewing current user game data, add it to the history..
+    // and check if the current game is inserted into the history or else fail.
+    addhistory(modified_user);
+    auto itr = _users.find(username.value);
+    auto history = _history.find(itr->game_id);
+    check(history != _history.end(), "Error: Adding to History. Please try again!");
 
     // initialized using the current data
     // generate new panel with unopened as default value..
+    game game_data;
     game_data.panels = modified_user.game_data.panels;
     for (uint8_t i = 0; i < modified_user.game_data.panels.size(); i++)
     {
@@ -124,15 +126,10 @@ void treasurev2::genprize(name username, uint8_t panel_idx)
   auto itr = _users.find(username.value);
 
   check(ticket_balance(username) != 0, "Error: No enough balance to play the game.");
+  check(itr->game_data.set_sail == true, "Error: Not Yet Ready To Set Sail.");
   check(itr->game_data.status == ONGOING, "Error: Either game has ended or not yet configured.");
   check(itr->game_data.win_count < 4, "Error: No more prizes available, Game already ended.");
   check(itr->game_data.explore_count > 0, "Error: You've Reached Game Explorer Count.");
-  // if (itr->game_data.win_count < 4)
-  // {
-  //   end(username); // remove the game if every game exists..
-  //   return;
-  // }
-  check(itr->game_data.set_sail == true, "Error: Not Yet Ready To Set Sail.");
 
   _users.modify(itr, username, [&](auto &modified_user) {
     game game_data = modified_user.game_data;
@@ -156,10 +153,10 @@ void treasurev2::genprize(name username, uint8_t panel_idx)
     game_data.panels.at(panel_idx).isopen = OPENED;
 
     modified_user.game_data = game_data;
-
-    // Update Overall Game Status..
-    game_update(username);
   });
+
+  // Update Overall Game Status..
+  game_update(username);
 }
 
 void treasurev2::end(name username)

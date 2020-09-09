@@ -94,17 +94,13 @@ void treasurev2::addhistory(user user_data)
             new_history = game_history;
         });
     }
-    // Double check if added successfully to history
-    // auto updated_history = _history.find(game_id); // Bad implementation..
-    // if (updated_history != _history.end())
-    //     return true;
-    // return false;
 }
 
 void treasurev2::game_update(name username)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "Error: User doesn't exist");
+    auto iterator = _users.find(username.value);
 
     _users.modify(user, username, [&](auto &modified_user) {
         // check the current total win and limit is already reached, change the game status, add to history
@@ -119,22 +115,15 @@ void treasurev2::game_update(name username)
         if (game_data.win_count == 4 || game_data.explore_count == 0)
         {
             modified_user.game_data.status = DONE;
-
-            // add to history and remove to users tbl
-            // bool isAddedToHistory = addhistory(modified_user);
-            // print(isAddedToHistory);
-            // if (!isAddedToHistory)
-            //     check(false, "Error: Adding to History. Please try again!");
-            // else
-            // game_update(username);
+            addhistory(modified_user);
         }
     });
 
-    // Check if game has ended...
-    // auto itr = _users.find(username.value);
-    // if (itr->game_data.status == DONE)
-    // {
-    //     print("DONE DONE DONE");
-    //     _users.erase(itr);
-    // }
+    // Check if game is already done, if true then remove..
+    if (iterator->game_data.status == DONE)
+    {
+        auto updated_history = _history.find(iterator->game_id); // Bad implementation..
+        if (updated_history != _history.end())
+            _users.erase(iterator);
+    }
 }
