@@ -247,8 +247,12 @@ Purpose: Calculates the user's prize based upon the RNG function & occurance rat
 -------------------------------------------------------------------- */
 void treasurehunt::calculatePrize(name username, uint64_t results)
 {
-    double finalprize = 0.00;
-    //ramdom tier_results.
+    require_auth(username);
+
+    // Get the user and reset the game
+
+    int64_t finalprize = 0.00;
+    // double balance_amount = 0.00;
     if (results > 0)
     {
         int tier_results = random(results);
@@ -323,9 +327,16 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
             else
                 finalprize = tier_results * 0.01;
         }
-        game game_data; // add new the final_prize..
-                        // gameStatus(username);
+        //game game_data; // add new the final_prize..
+        // gameStatus(username);
     }
+
+    auto &user = _users.get(username.value, "User doesn't exist");
+    _users.modify(user, username, [&](auto &modified_user) {
+        modified_user.user_balance += finalprize;
+    });
+
+    //ramdom tier_results.
 }
 
 /* --------------------------------------------------------------------

@@ -110,7 +110,7 @@ private:
   {
     uint16_t user_ID;
     name username;
-    asset user_balance;
+    int64_t user_balance;
     game game_data;
     auto primary_key() const { return username.value; }
   };

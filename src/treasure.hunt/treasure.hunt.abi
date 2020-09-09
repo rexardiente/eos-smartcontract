@@ -249,7 +249,7 @@
                 },
                 {
                     "name": "user_balance",
-                    "type": "asset"
+                    "type": "int64"
                 },
                 {
                     "name": "game_data",
