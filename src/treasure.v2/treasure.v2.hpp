@@ -8,7 +8,8 @@
 using namespace std;
 using namespace eosio;
 
-class [[eosio::contract("treasure.v2")]] treasurev2 : public contract {
+class [[eosio::contract("treasure.v2")]] treasurev2 : public contract
+{
 public:
     struct Tile
     {
@@ -31,8 +32,8 @@ private:
     enum prize_value : int8_t
     {
         PRIZE_DEFAULT = 0,
+        UNOPENED = 0,
         OPENED = 1,
-        UNOPENED = 2,
         WIN_LIMIT = 4
     };
     enum game_status : int8_t
@@ -61,36 +62,23 @@ private:
 
     struct game
     {
-        vector<Tile> panels ={
-            { 0, UNOPENED },
-            { 1, UNOPENED },
-            { 2, UNOPENED },
-            { 3, UNOPENED },
-            { 4, UNOPENED },
-            { 5, UNOPENED },
-            { 6, UNOPENED },
-            { 7, UNOPENED },
-            { 8, UNOPENED },
-            { 9, UNOPENED },
-            { 10, UNOPENED },
-            { 11, UNOPENED },
-            { 12, UNOPENED },
-            { 13, UNOPENED },
-            { 14, UNOPENED },
-            { 15, UNOPENED } };
-        vector<TilePrize> tile_prizes ={};
+        vector<Tile> panels;
+        vector<TilePrize> tile_prizes = {};
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = MAP_DEFAULT;
         uint16_t explore_count = EXPLORE_DEFAULT;
-        int8_t status = INITIALIZED;
+        bool set_sail = false;
+        uint8_t status = INITIALIZED;
     };
 
     // Tickets Table
-    struct [[eosio::table]] ticket {
+    struct [[eosio::table]] ticket
+    {
         name username;
         int64_t balance;
 
-        auto primary_key() const {
+        auto primary_key() const
+        {
             return username.value;
         }
     };
@@ -102,14 +90,15 @@ private:
         game game_data;
         uint64_t total_win; // total win in points (1 ticket):(1 EOS)
 
-        auto primary_key() const {
+        auto primary_key() const
+        {
             return username.value;
         }
     };
 
     struct [[eosio::table]] seed
     {
-        uint64_t key   = 1; // default key of 1
+        uint64_t key = 1;   // default key of 1
         uint32_t value = 1; // default value of 1
 
         auto primary_key() const
@@ -140,28 +129,29 @@ private:
     seeds_table _seeds;
     history_table _history;
 
-    // vector<results> prizeresults(game game_data, user modified_users);
-    // void panel_prize();
-    // void update_game();
     int rng(const int range);
-    uint16_t calculate_prize(vector<TilePrize>& tile_prizes, uint8_t& win_count);
+    uint16_t calculate_prize(vector<TilePrize> & tile_prizes, uint8_t & win_count);
     uint64_t gen_gameid();
     void addhistory(user user_data);
-    void purchase(name username, uint64_t amount);
     void ticket_update(name username, bool isdeduction, uint64_t amount);
     int64_t ticket_balance(name username);
+    void game_update(name username);
 
 public:
-    treasurev2(name receiver, name code, datastream<const char*> ds) :
-        contract(receiver, code, ds),
-        _users(receiver, receiver.value),
-        _tickets(receiver, receiver.value),
-        _history(receiver, receiver.value),
-        _seeds(receiver, receiver.value) {}
-
-    [[eosio::action]] void authorized(name username);
-    [[eosio::action]] void startgame(name username, uint8_t destination, uint16_t explore_count, vector<Tile> panel_set);
+    treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
+                                                                        _users(receiver, receiver.value),
+                                                                        _tickets(receiver, receiver.value),
+                                                                        _history(receiver, receiver.value),
+                                                                        _seeds(receiver, receiver.value)
+    {
+    }
+    [[eosio::action]] void purchase(name username, uint64_t amount);
+    [[eosio::action]] void setsail(name username, bool ready);
+    [[eosio::action]] void setdest(name username, uint8_t destination);
+    [[eosio::action]] void setexplr(name username, uint16_t explore_count);
+    [[eosio::action]] void init(name username);
+    [[eosio::action]] void setpanel(name username, vector<Tile> panel_set);
     [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
-    [[eosio::action]] void renew(name username, bool isreset);
+    [[eosio::action]] void renew(name username);
 };
