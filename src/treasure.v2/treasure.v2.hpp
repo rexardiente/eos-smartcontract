@@ -83,6 +83,17 @@ private:
         }
     };
 
+    struct [[eosio::table]] prizelimit
+    {
+        uint8_t A = 7;
+        uint8_t B = 6;
+        uint8_t C = 5;
+        uint8_t D = 4;
+        uint8_t E = 3;
+        uint8_t F = 2;
+        uint8_t G = 1;
+    };
+
     struct [[eosio::table]] user
     {
         name username;
@@ -136,6 +147,7 @@ private:
     void ticket_update(name username, bool isdeduction, uint64_t amount);
     int64_t ticket_balance(name username);
     void game_update(name username);
+    uint64_t tierGen(uint64_t & genPrize);
 
 public:
     treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),

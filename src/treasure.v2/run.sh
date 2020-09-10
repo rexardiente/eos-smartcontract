@@ -35,7 +35,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 {
     # Get Table Info
     echo "${EXECUTE} Fetching ${PROJECT_NAME} Tables"
-    for TBL in "cleos get table treasurev2 treasurev2 user" "cleos get table treasurev2 treasurev2 ticket" "cleos get table treasurev2 treasurev2 history"
+    for TBL in "cleos get table treasurev2 treasurev2 user" "cleos get table treasurev2 treasurev2 ticket" "cleos get table --limit 100 treasurev2 treasurev2 history"
     do
         echo "> ${TBL}"
         ${TBL}
@@ -45,7 +45,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 PURCHASE_NEW_TICKET() 
 {
     echo "${EXECUTE} Purchase new 5 Tickets, and display user1 updated balances..."
-    cleos push action treasurev2 purchase '["user1", 3]' -p user1@active
+    cleos push action treasurev2 purchase '["user1", 5]' -p user1@active
 }
 # Create user and game_defaults
 INITIALIZE_GAME()
@@ -76,7 +76,7 @@ SET_DESTINATION()
 SET_EXPLORER()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Explorer Count."
-    cleos push action treasurev2 setexplr '["user1", 1]' -p user1@active
+    cleos push action treasurev2 setexplr '["user1", 5]' -p user1@active
 }
 # Enable Set Sail
 SET_SAIL()
@@ -88,7 +88,7 @@ SET_SAIL()
 GET_PRIZE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action treasurev2 genprize '["user1", 1]' -p user1@active
+    cleos push action treasurev2 genprize '["user1", 11]' -p user1@active
 }
 RENEW_MAP()
 {
@@ -105,8 +105,8 @@ RENEW_MAP()
 # SET_GAME_PANEL
 # SET_DESTINATION
 # SET_EXPLORER
-# SET_SAIL
-# GET_PRIZE
+SET_SAIL
+GET_PRIZE
 # RENEW_MAP
 # REMOVE_EXISTING_GAME
-# SHOW_EOSIO_CONTRACT_TABLE
+SHOW_EOSIO_CONTRACT_TABLE

@@ -11,15 +11,14 @@ private:
   {
     EMPTY = 0,
     MAP_A = 1,
-    MAP_B = 2,
-    MAP_C = 3,
-    VOID = 4
+    MAP_B = 5,
+    MAP_C = 10
   };
 
   struct island
   {
     uint8_t type;
-    uint8_t attack_point;
+
   };
 
   const map<uint8_t, island> map_dict = {
@@ -39,7 +38,7 @@ private:
       {13, {MAP_C, 2}},
       {14, {MAP_C, 2}},
       {15, {MAP_B, 3}},
-      {16, {VOID, 0}}};
+      {16, {EMPTY, 0}}};
 
   enum game_status : int8_t
   {
