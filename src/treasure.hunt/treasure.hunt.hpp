@@ -95,7 +95,7 @@ private:
     vector<uint8_t> panel_player = {1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     vector<uint8_t> map_player = {0, 0, 0};
     vector<uint8_t> hand_player = {0, 0, 0};
-
+    int64_t tile_prize;
     uint8_t selected_map_player = 0;
     uint8_t selected_panel_player = 0;
     uint8_t ticket_lost_player = 0;

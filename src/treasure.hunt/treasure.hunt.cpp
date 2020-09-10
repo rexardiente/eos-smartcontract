@@ -236,6 +236,7 @@ void treasurehunt::setsail(name username, uint8_t selected_panel_player)
             user.game_data.selected_panel_player = selected_panel_player;
             user.game_data.setsail = READY;
             user.game_data.win_counter = win_count;
+            user.game_data.ticket_player -= 1;
         });
     }
 }
@@ -333,7 +334,7 @@ void treasurehunt::calculatePrize(name username, uint64_t results)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     _users.modify(user, username, [&](auto &modified_user) {
-        modified_user.user_balance += finalprize;
+        modified_user.game_data.tile_prize += finalprize;
     });
 
     //ramdom tier_results.

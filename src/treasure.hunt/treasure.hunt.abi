@@ -66,6 +66,10 @@
                     "type": "uint8[]"
                 },
                 {
+                    "name": "tile_prize",
+                    "type": "int64"
+                },
+                {
                     "name": "selected_map_player",
                     "type": "uint8"
                 },
