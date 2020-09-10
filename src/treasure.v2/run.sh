@@ -45,7 +45,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 PURCHASE_NEW_TICKET() 
 {
     echo "${EXECUTE} Purchase new 5 Tickets, and display user1 updated balances..."
-    cleos push action treasurev2 purchase '["user1", 7]' -p user1@active
+    cleos push action treasurev2 purchase '["user1", 3]' -p user1@active
 }
 # Create user and game_defaults
 INITIALIZE_GAME()
@@ -70,13 +70,13 @@ SET_GAME_PANEL()
 SET_DESTINATION()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action treasurev2 setdest '["user1", 2]' -p user1@active
+    cleos push action treasurev2 setdest '["user1", 1]' -p user1@active
 }
 # Set Game Destination
 SET_EXPLORER()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Explorer Count."
-    cleos push action treasurev2 setexplr '["user1", 2]' -p user1@active
+    cleos push action treasurev2 setexplr '["user1", 1]' -p user1@active
 }
 # Enable Set Sail
 SET_SAIL()
@@ -88,7 +88,7 @@ SET_SAIL()
 GET_PRIZE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action treasurev2 genprize '["user1", 3]' -p user1@active
+    cleos push action treasurev2 genprize '["user1", 1]' -p user1@active
 }
 RENEW_MAP()
 {
@@ -96,14 +96,11 @@ RENEW_MAP()
     cleos push action treasurev2 renew '["user1"]' -p user1@active
 }
 
-
-# Execute Test Functions here....
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
 # PURCHASE_NEW_TICKET
-
 # INITIALIZE_GAME
 # SET_GAME_PANEL
 # SET_DESTINATION
@@ -112,4 +109,4 @@ DEPLOY_CONTRACT
 # GET_PRIZE
 # RENEW_MAP
 # REMOVE_EXISTING_GAME
-SHOW_EOSIO_CONTRACT_TABLE
+# SHOW_EOSIO_CONTRACT_TABLE
