@@ -10,22 +10,8 @@ This repository contains files, code, and resources for smart contracts associat
     - Automatically end game once Explore count is empty and add to history.
 
 #### Private Key: 
-    PW5JMmjNXNGCZqyMNbskJ1NJBehUPF8AJqf6aSNodsTQwC1o73tv8
-
-#### Create Account
-    cleos create account eosio treasurev2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
-    cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
-    cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
-
-#### Compile: 
-    eosio-cpp ./treasure.v2.cpp -o treasure.v2.wasm --abigen
-
-#### Deploy: 
-    cleos set contract treasurev2 ./ -p treasurev2@active
-
-#### Testing: 
-    cleos push action treasurev2 hello '["treasurev2"]' -p treasurev2@active
-
+    PW5J9srswAQKDMAhCKHer5pdKczsq5heMafi9DSqT28YrgvuDXApV
+    
 #### Get Table Info
     cleos get table treasurev2 treasurev2 user
     cleos get table treasurev2 treasurev2 ticket

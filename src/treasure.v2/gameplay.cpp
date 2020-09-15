@@ -164,10 +164,10 @@ int treasurev2::rng(const int range)
     int prime = 65537;
     auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
 
-    // Store the updated seed value in the table
-    _seeds.modify(seed_iterator, _self, [&](auto &s) {
-        s.value = new_seed_value;
-    });
+    // // Store the updated seed value in the table
+    // _seeds.modify(seed_iterator, _self, [&](auto &s) {
+    //     s.value = new_seed_value;
+    // });
 
     // Get the random result in desired range
     int random_result = new_seed_value % range;
