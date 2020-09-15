@@ -1,5 +1,6 @@
 
 *.wasm
-*.hpp
+*.abi
+*.log
 *.DS_Store
 
