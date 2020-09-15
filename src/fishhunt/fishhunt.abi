@@ -44,6 +44,24 @@
             ]
         },
         {
+            "name": "history",
+            "base": "",
+            "fields": [
+                {
+                    "name": "game_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "game_data",
+                    "type": "game"
+                }
+            ]
+        },
+        {
             "name": "initgames",
             "base": "",
             "fields": [
@@ -74,6 +92,20 @@
                 {
                     "name": "value",
                     "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "ticket",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "balance",
+                    "type": "int64"
                 }
             ]
         },
@@ -114,8 +146,22 @@
     ],
     "tables": [
         {
+            "name": "history",
+            "type": "history",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
             "name": "seed",
             "type": "seed",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "ticket",
+            "type": "ticket",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
