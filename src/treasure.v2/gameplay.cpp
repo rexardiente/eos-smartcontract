@@ -193,11 +193,10 @@ void treasurev2::ticket_update(name username, bool isdeduction, uint64_t amount)
     });
 }
 
-//  Add to history tbl and return true if successfully added
+//  Add to history tbl
 void treasurev2::addhistory(user user_data)
 {
-    name username = user_data.username;
-    require_auth(username);
+    require_auth(user_data.username);
 
     uint64_t game_id = user_data.game_id;
     auto itr = _history.find(game_id);
@@ -205,7 +204,7 @@ void treasurev2::addhistory(user user_data)
     // check if the game_id doesn't exist
     if (itr == _history.end())
     {
-        _history.emplace(username, [&](auto &new_history) {
+        _history.emplace(user_data.username, [&](auto &new_history) {
             history game_history;
 
             game_history.game_id = game_id;
@@ -233,7 +232,7 @@ void treasurev2::game_update(name username)
         modified_user.game_data = game_data;
 
         // Todo: If Explorer Count is Empty End the game and add history..
-        if (game_data.win_count == 4 || game_data.explore_count == 0)
+        if (game_data.win_count == 4)
         {
             modified_user.game_data.status = DONE;
             addhistory(modified_user);
@@ -244,7 +243,10 @@ void treasurev2::game_update(name username)
     if (iterator->game_data.status == DONE)
     {
         auto updated_history = _history.find(iterator->game_id); // Bad implementation..
-        if (updated_history != _history.end())
+
+        if (updated_history != _history.end() && iterator->game_data.explore_count == 0)
             _users.erase(iterator);
+        if (iterator->game_data.explore_count != 0)
+            renew(username);
     }
 }
