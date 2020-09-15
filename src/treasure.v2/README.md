@@ -1,7 +1,13 @@
+# Treasure Hunt | Smart contract repository documentation
+
+![](https://i.imgur.com/q5O2tTg.jpg)
+
+### Overview & Goals
+This repository contains files, code, and resources for smart contracts associated with the Treasure Hunt game. 
+
 ##### Note:
-    - We can add Game_ID as parameter in every action.
-    - Automatically end and add to history if Explore count will be empty.
-    - Problem adding history automatically, using other actions.
+    - We can add Game_ID as parameter in every action as an option.
+    - Automatically end game once Explore count is empty and add to history.
 
 ##### Private Key: 
     PW5JMmjNXNGCZqyMNbskJ1NJBehUPF8AJqf6aSNodsTQwC1o73tv8
