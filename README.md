@@ -1,4 +1,4 @@
-# Treasure Hunt | Smart Contract Repository Documentation
+# EGS | Smart Contract Documentation
 
 ![](https://i.imgur.com/5xOuFpT.png)
 

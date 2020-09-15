@@ -1,29 +1,29 @@
-# Treasure Hunt | Smart contract repository documentation
+# Treasure Hunt | Smart Contract Documentation
 
 ![](https://i.imgur.com/q5O2tTg.jpg)
 
 ### Overview & Goals
 This repository contains files, code, and resources for smart contracts associated with the Treasure Hunt game. 
 
-##### Note:
+#### Note:
     - We can add Game_ID as parameter in every action as an option.
     - Automatically end game once Explore count is empty and add to history.
 
-##### Private Key: 
+#### Private Key: 
     PW5JMmjNXNGCZqyMNbskJ1NJBehUPF8AJqf6aSNodsTQwC1o73tv8
 
-##### Create Account
+#### Create Account
     cleos create account eosio treasurev2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
     cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
     cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 
-##### Compile: 
+#### Compile: 
     eosio-cpp ./treasure.v2.cpp -o treasure.v2.wasm --abigen
 
-##### Deploy: 
+#### Deploy: 
     cleos set contract treasurev2 ./ -p treasurev2@active
 
-##### Testing: 
+#### Testing: 
     cleos push action treasurev2 hello '["treasurev2"]' -p treasurev2@active
 
 #### Get Table Info
