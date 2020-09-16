@@ -93,14 +93,20 @@ struct [[eosio::table]] ticket
         }
     };
 
-     using users_table = eosio::multi_index<"user"_n, user>;
+   using users_table = eosio::multi_index<"user"_n, user>;
+    using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
+    using history_table = eosio::multi_index<"history"_n, history>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
+    tickets_table _tickets;
     seeds_table _seeds;
+    history_table _history;
   
 public:
     fishhunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
+                                                                         _tickets(receiver, receiver.value),
+                                                                        _history(receiver, receiver.value),
                                                                       _users(receiver, receiver.value),
                                                                       _seeds(receiver, receiver.value)
     {

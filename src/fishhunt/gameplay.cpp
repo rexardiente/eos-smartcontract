@@ -22,3 +22,46 @@ void fishhunt::addhistory(user user_data)
         });
     }
 }
+nt treasurev2::rng(const int range)
+{
+    // Find the existing seed
+    auto seed_iterator = _seeds.begin();
+
+    // Initialize the seed with default value if it is not found
+    if (seed_iterator == _seeds.end())
+    {
+        seed_iterator = _seeds.emplace(_self, [&](auto &seed) {});
+    }
+
+    // Generate new seed value using the existing seed value
+    int prime = 65537;
+    auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
+
+    // Store the updated seed value in the table
+    _seeds.modify(seed_iterator, _self, [&](auto &s) {
+        s.value = new_seed_value;
+    });
+
+    // Get the random result in desired range
+    int random_result = new_seed_value % range;
+    return random_result;
+}
+
+int64_t treasurev2::ticket_balance(name username)
+{
+    require_auth(username);
+    auto &ticket = _tickets.get(username.value, "Ticket doesn't exist");
+    return ticket.balance;
+}
+
+void treasurev2::ticket_update(name username, bool isdeduction, uint64_t amount)
+{
+    require_auth(username);
+    auto &ticket = _tickets.get(username.value, "Ticket doesn't exist");
+    _tickets.modify(ticket, username, [&](auto &modified_ticket) {
+        if (isdeduction)
+            modified_ticket.balance -= amount;
+        else
+            modified_ticket.balance += amount;
+    });
+}

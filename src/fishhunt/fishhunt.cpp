@@ -21,5 +21,8 @@ void fishhunt::renew(name username)
 {
     //username log
     require_auth(username);
-
+    auto &user = _users.get(username.value, "Error: User doesn't exist");
+  _users.modify(user, username, [&](auto &modified_user) {
+    
+  });
 }
