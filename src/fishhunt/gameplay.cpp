@@ -22,7 +22,7 @@ void fishhunt::addhistory(user user_data)
         });
     }
 }
-nt treasurev2::rng(const int range)
+nt fishhunt::rng(const int range)
 {
     // Find the existing seed
     auto seed_iterator = _seeds.begin();
@@ -47,14 +47,14 @@ nt treasurev2::rng(const int range)
     return random_result;
 }
 
-int64_t treasurev2::ticket_balance(name username)
+int64_t fisthunt::ticket_balance(name username)
 {
     require_auth(username);
     auto &ticket = _tickets.get(username.value, "Ticket doesn't exist");
     return ticket.balance;
 }
 
-void treasurev2::ticket_update(name username, bool isdeduction, uint64_t amount)
+void fishhunt::ticket_update(name username, bool isdeduction, uint64_t amount)
 {
     require_auth(username);
     auto &ticket = _tickets.get(username.value, "Ticket doesn't exist");
