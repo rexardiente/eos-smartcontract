@@ -27,7 +27,17 @@ private:
     // update first the table before calling `game_status` function
     // user win_tracker will be table with username and array for win details..
 
-    // remove ticket on user value and use update function to update ticket..
+    //remove ticket on user value and use update function to update ticket..
+    // enum prize_limit : int8_t
+    // {
+    //     A = 7,
+    //     B = 6,
+    //     C = 5,
+    //     D = 4,
+    //     E = 3,
+    //     F = 2,
+    //     G = 1
+    // };
 
     enum prize_value : int8_t
     {
@@ -60,6 +70,31 @@ private:
         uint16_t value = PRIZE_DEFAULT;
     };
 
+    struct Prize
+    {
+        char key;
+        uint16_t value;
+    };
+
+    struct Type
+    {
+        name username;
+        vector<Prize> prizes = {
+            {'A', 7},
+            {'B', 6},
+            {'C', 5},
+            {'D', 4},
+            {'E', 3},
+            {'F', 2},
+            {'G', 1}};
+        auto primary_key() const
+        {
+            return username.value;
+        }
+    };
+
+    vector<Type> ListOfTypes;
+
     struct game
     {
         vector<Tile> panels;
@@ -83,16 +118,22 @@ private:
         }
     };
 
-    struct [[eosio::table]] prizelimit
-    {
-        uint8_t A = 7;
-        uint8_t B = 6;
-        uint8_t C = 5;
-        uint8_t D = 4;
-        uint8_t E = 3;
-        uint8_t F = 2;
-        uint8_t G = 1;
-    };
+    // struct occurlimit
+    // {
+    //     name username;
+    //     uint8_t prize_A = 7;
+    //     uint8_t prize_B = 6;
+    //     uint8_t prize_C = 5;
+    //     uint8_t prize_D = 4;
+    //     uint8_t prize_E = 3;
+    //     uint8_t prize_F = 2;
+    //     uint8_t prize_G = 1;
+
+    //     auto primary_key() const
+    //     {
+    //         return username.value;
+    //     }
+    // };
 
     struct [[eosio::table]] user
     {
@@ -130,12 +171,14 @@ private:
         }
     };
 
+    // using occurlimit_table = eosio::multi_index<"occurlimit"_n, occurlimit>;
     using users_table = eosio::multi_index<"user"_n, user>;
     using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
     using history_table = eosio::multi_index<"history"_n, history>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
+    // occurlimit_table _occurlimit;
     tickets_table _tickets;
     seeds_table _seeds;
     history_table _history;
@@ -147,7 +190,7 @@ private:
     void ticket_update(name username, bool isdeduction, uint64_t amount);
     int64_t ticket_balance(name username);
     void game_update(name username);
-    uint64_t tierGen(uint64_t & genPrize);
+    uint64_t tierGen(uint64_t & genPrize, name username);
 
 public:
     treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),

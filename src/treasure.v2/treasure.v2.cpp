@@ -5,6 +5,16 @@ using namespace eosio;
 // After the game ended, remove the user on the current users list...
 void treasurev2::init(name username)
 {
+
+  vector<Type>::iterator aa = std::find_if(ListOfTypes.begin(), ListOfTypes.end(), [&](const Type &o) {
+    return o.username == username;
+  });
+
+  if (aa[0].username == username)
+  {
+    Type aa_prize_type = Type();
+  }
+
   require_auth(username);
   // Create a record in the table if the player doesn't exist in our app yet
   auto itr = _users.find(username.value);
@@ -107,6 +117,7 @@ void treasurev2::renew(name username)
 
 void treasurev2::setsail(name username, bool ready)
 {
+
   require_auth(username);
   auto itr = _users.find(username.value);
   check(itr != _users.end(), "Error: Game Doesn't Exist.");
