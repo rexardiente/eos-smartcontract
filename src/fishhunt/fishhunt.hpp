@@ -15,6 +15,8 @@ private:
     enum prize_value : int8_t
     {
         PRIZE_DEFAULT = 0,
+        OPENED = 1,
+        UNOPENED = 0,
         WIN_LIMIT = 6
     };
     enum game_status : int8_t

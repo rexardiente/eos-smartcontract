@@ -1,17 +1,25 @@
-# Treasure Hunt | Smart Contract Documentation
+##### Note:
+    - We can add Game_ID as parameter in every action.
+    - Automatically end and add to history if Explore count will be empty.
+    - Problem adding history automatically, using other actions.
 
-![](https://i.imgur.com/q5O2tTg.jpg)
+##### Private Key: 
+    PW5JMmjNXNGCZqyMNbskJ1NJBehUPF8AJqf6aSNodsTQwC1o73tv8
 
-### Overview & Goals
-This repository contains files, code, and resources for smart contracts associated with the Treasure Hunt game. 
+##### Create Account
+    cleos create account eosio treasurev2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 
-#### Note:
-    - We can add Game_ID as parameter in every action as an option.
-    - Automatically end game once Explore count is empty and add to history.
+##### Compile: 
+    eosio-cpp ./treasure.v2.cpp -o treasure.v2.wasm --abigen
 
-#### Private Key: 
-    PW5J9srswAQKDMAhCKHer5pdKczsq5heMafi9DSqT28YrgvuDXApV
-    
+##### Deploy: 
+    cleos set contract treasurev2 ./ -p treasurev2@active
+
+##### Testing: 
+    cleos push action treasurev2 hello '["treasurev2"]' -p treasurev2@active
+
 #### Get Table Info
     cleos get table treasurev2 treasurev2 user
     cleos get table treasurev2 treasurev2 ticket

@@ -27,17 +27,7 @@ private:
     // update first the table before calling `game_status` function
     // user win_tracker will be table with username and array for win details..
 
-    //remove ticket on user value and use update function to update ticket..
-    // enum prize_limit : int8_t
-    // {
-    //     A = 7,
-    //     B = 6,
-    //     C = 5,
-    //     D = 4,
-    //     E = 3,
-    //     F = 2,
-    //     G = 1
-    // };
+    // remove ticket on user value and use update function to update ticket..
 
     enum prize_value : int8_t
     {
@@ -69,31 +59,6 @@ private:
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
     };
-
-    // struct Prize
-    // {
-    //     char key;
-    //     uint16_t value;
-    // };
-
-    // struct Type
-    // {
-    //     name username;
-    //     vector<Prize> prizes = {
-    //         {'A', 7},
-    //         {'B', 6},
-    //         {'C', 5},
-    //         {'D', 4},
-    //         {'E', 3},
-    //         {'F', 2},
-    //         {'G', 1}};
-    //     auto primary_key() const
-    //     {
-    //         return username.value;
-    //     }
-    // };
-
-    // vector<Type> ListOfTypes;
 
     struct game
     {
@@ -154,26 +119,24 @@ private:
         }
     };
 
-    // using occurlimit_table = eosio::multi_index<"occurlimit"_n, occurlimit>;
     using users_table = eosio::multi_index<"user"_n, user>;
     using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
     using history_table = eosio::multi_index<"history"_n, history>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
-    // occurlimit_table _occurlimit;
     tickets_table _tickets;
     seeds_table _seeds;
     history_table _history;
 
     int rng(const int range);
-    uint16_t calculate_prize(vector<TilePrize> & tile_prizes, uint8_t & win_count, uint8_t destination);
+    uint16_t calculate_prize(vector<TilePrize> & tile_prizes, uint8_t & win_count);
     uint64_t gen_gameid();
     void addhistory(user user_data);
     void ticket_update(name username, bool isdeduction, uint64_t amount);
     int64_t ticket_balance(name username);
     void game_update(name username);
-    uint64_t chestGen();
+    uint64_t tierGen(uint64_t & genPrize);
 
 public:
     treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),

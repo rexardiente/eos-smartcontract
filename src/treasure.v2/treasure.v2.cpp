@@ -85,7 +85,7 @@ void treasurev2::renew(name username)
   require_auth(username);
   auto &user = _users.get(username.value, "Error: User doesn't exist");
   // Check if user has no balancecheck(ticket_balance(username) != 0, "Error: 0 balance, Can't renew the map.");
-  check(!user.game_data.tile_prizes.empty(), "Error: Please open atleast 1 panel to renew the map.");
+  check(!user.game_data.tile_prizes.empty(), "Error: Please Open atleast 1 panel to renew the map.");
 
   _users.modify(user, username, [&](auto &modified_user) {
     // Before renewing current user game data, add it to the history..
@@ -93,7 +93,7 @@ void treasurev2::renew(name username)
     addhistory(modified_user);
     auto itr = _users.find(username.value);
     auto history = _history.find(itr->game_id);
-    check(history != _history.end(), "Error: Renew Game but Game History Does Not Exist. Please try again!");
+    check(history != _history.end(), "Error: Adding to History. Please try again!");
 
     // initialized using the current data
     // generate new panel with unopened as default value..
@@ -117,7 +117,6 @@ void treasurev2::renew(name username)
 
 void treasurev2::setsail(name username, bool ready)
 {
-
   require_auth(username);
   auto itr = _users.find(username.value);
   check(itr != _users.end(), "Error: Game Doesn't Exist.");
@@ -151,7 +150,7 @@ void treasurev2::genprize(name username, uint8_t panel_idx)
     game_data.explore_count -= 1;
 
     // calculate and generate prize
-    uint16_t prize = calculate_prize(game_data.tile_prizes, game_data.win_count, game_data.destination);
+    uint16_t prize = calculate_prize(game_data.tile_prizes, game_data.win_count);
 
     // if prize is > 0, user win.
     if (prize > 0)

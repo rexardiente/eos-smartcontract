@@ -2,70 +2,140 @@
 #include <eosio/system.hpp>
 
 // random users win with based on win limit = 4
-uint16_t treasurev2::calculate_prize(vector<TilePrize> &tile_prizes, uint8_t &win_count, uint8_t destination)
+uint16_t treasurev2::calculate_prize(vector<TilePrize> &tile_prizes, uint8_t &win_count)
 {
     const uint8_t unopened = 16 - tile_prizes.size();
+
     // has equal or less 4 wins and has available panel equal to win limit
-    const int win_rate = rng(16);
+    const int win_rate = rng(10);
+    uint64_t genPrize = rng(1000);
+    uint64_t intPrize = genPrize / 10;
     // check remaining tile and win is equal
+    print(win_rate);
+
     if (unopened == win_count)
-        return destination * chestGen();
-    if (win_rate > 12)
-        return destination * chestGen();
+        return intPrize * tierGen(genPrize);
+    if (win_rate > 2)
+        return intPrize * tierGen(genPrize);
     else
         return 0;
 }
 
-//chest generator
-uint64_t treasurev2::chestGen()
+//tier generator
+uint64_t treasurev2::tierGen(uint64_t &genPrize)
 {
-    const int genChest = rng(1000);
-    const int genTier = rng(100);
-    if (genTier < 26)
+    int genTier;
+    if (genPrize >= 1 && genPrize <= 700)
     {
-        return 1;
-    }
-    else if (genTier >= 26 && genTier <= 50)
-    {
-        return 2;
-    }
-    else if (genTier >= 26 && genTier <= 50)
-    {
-        if (genChest >= 1 && genChest <= 700)
+        genTier = rng(320);
+        if (genTier >= 1 && genTier <= 100)
+        {
+            return 1;
+        }
+        else if (genTier >= 101 && genTier <= 200)
+        {
+            return 2;
+        }
+        else if (genTier >= 201 && genTier <= 300)
         {
             return 3;
         }
         else
-        {
             return 4;
-        }
     }
-    else
+    else if (genPrize >= 701 && genPrize <= 850)
     {
-        if (genChest >= 1 && genChest <= 700)
+        genTier = rng(210);
+        if (genTier >= 1 && genTier <= 100)
+        {
+            return 1;
+        }
+        else if (genTier >= 101 && genTier <= 175)
+        {
+            return 2;
+        }
+        else if (genTier >= 176 && genTier <= 195)
         {
             return 4;
-        }
-        else if (genChest >= 701 && genChest <= 850)
-        {
-            return 8;
-        }
-        else if (genChest >= 851 && genChest <= 950)
-        {
-            return 16;
-        }
-        else if (genChest >= 951 && genChest <= 990)
-        {
-            return 32;
-        }
-        else if (genChest >= 991 && genChest <= 999)
-        {
-            return 64;
         }
         else
+            return 8;
+    }
+
+    else if (genPrize >= 851 && genPrize <= 950)
+    {
+        genTier = rng(192);
+        if (genTier >= 1 && genTier <= 100)
         {
-            return 128;
+            return 1;
         }
+        else if (genTier >= 101 && genTier <= 165)
+        {
+            return 2;
+        }
+        else if (genTier >= 166 && genTier <= 180)
+        {
+            return 4;
+        }
+        else
+            return 16;
+    }
+
+    else if (genPrize >= 951 && genPrize <= 990)
+    {
+        genTier = rng(182);
+        if (genTier >= 1 && genTier <= 100)
+        {
+            return 1;
+        }
+        else if (genTier >= 101 && genTier <= 160)
+        {
+            return 2;
+        }
+        else if (genTier >= 161 && genTier <= 172)
+        {
+            return 4;
+        }
+        else
+            return 32;
+    }
+
+    else if (genPrize >= 991 && genPrize <= 999)
+    {
+        genTier = rng(185);
+        if (genTier >= 1 && genTier <= 100)
+        {
+            return 1;
+        }
+        else if (genTier >= 101 && genTier <= 150)
+        {
+            return 2;
+        }
+        else if (genTier >= 151 && genTier <= 180)
+        {
+            return 4;
+        }
+        else
+            return 64;
+    }
+
+    else
+    {
+        genTier = rng(166);
+        if (genTier >= 1 && genTier <= 100)
+        {
+            return 1;
+        }
+        else if (genTier >= 101 && genTier <= 140)
+        {
+            return 2;
+        }
+        else if (genTier >= 141 && genTier <= 165)
+        {
+            return 4;
+        }
+        else
+            return 128;
     }
 }
 
@@ -81,7 +151,7 @@ uint64_t treasurev2::gen_gameid()
 
 int treasurev2::rng(const int range)
 {
-    // Find the existing seed1
+    // Find the existing seed
     auto seed_iterator = _seeds.begin();
 
     // Initialize the seed with default value if it is not found
@@ -94,7 +164,7 @@ int treasurev2::rng(const int range)
     int prime = 65537;
     auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
 
-    // // Store the updated seed value in the table
+    // Store the updated seed value in the table
     _seeds.modify(seed_iterator, _self, [&](auto &s) {
         s.value = new_seed_value;
     });
@@ -123,10 +193,11 @@ void treasurev2::ticket_update(name username, bool isdeduction, uint64_t amount)
     });
 }
 
-//  Add to history tbl
+//  Add to history tbl and return true if successfully added
 void treasurev2::addhistory(user user_data)
 {
-    require_auth(user_data.username);
+    name username = user_data.username;
+    require_auth(username);
 
     uint64_t game_id = user_data.game_id;
     auto itr = _history.find(game_id);
@@ -134,7 +205,7 @@ void treasurev2::addhistory(user user_data)
     // check if the game_id doesn't exist
     if (itr == _history.end())
     {
-        _history.emplace(user_data.username, [&](auto &new_history) {
+        _history.emplace(username, [&](auto &new_history) {
             history game_history;
 
             game_history.game_id = game_id;
@@ -173,11 +244,7 @@ void treasurev2::game_update(name username)
     if (iterator->game_data.status == DONE)
     {
         auto updated_history = _history.find(iterator->game_id); // Bad implementation..
-
-        if (updated_history != _history.end() && iterator->game_data.explore_count == 0)
+        if (updated_history != _history.end())
             _users.erase(iterator);
-        // Auto renew map  if has existing explore_count
-        // if (iterator->game_data.explore_count != 0)
-        // renew(username);
     }
 }
