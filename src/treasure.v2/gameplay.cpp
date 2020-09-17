@@ -6,11 +6,11 @@ uint16_t treasurev2::calculate_prize(vector<TilePrize> &tile_prizes, uint8_t &wi
 {
     const uint8_t unopened = 16 - tile_prizes.size();
     // has equal or less 4 wins and has available panel equal to win limit
-    const int win_rate = rng(10);
+    const int win_rate = rng(16);
     // check remaining tile and win is equal
     if (unopened == win_count)
         return destination * chestGen();
-    if (win_rate > 7)
+    if (win_rate > 12)
         return destination * chestGen();
     else
         return 0;
