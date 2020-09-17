@@ -11,11 +11,14 @@ using namespace eosio;
 class [[eosio::contract("fishhunt")]] fishhunt : public contract
 {
 public:
+<<<<<<< HEAD
 struct Tile
     {
         uint8_t panel_idx;
         uint8_t isopen;
     };
+=======
+>>>>>>> 1b40b3892d12f8aecd9637a959f3f058ef4583cb
 private:
     enum prize_value : int8_t
     {
@@ -33,10 +36,10 @@ private:
     enum game_destination : int8_t
     {
         lake_DEFAULT = 0,
-        lake_1 = 1,
-        lake_2 = 5,
-        lake_3 = 10,
-        lake_4 = 20
+        river = 1,
+        lake = 5,
+        nearshore = 10,
+        farshore = 20
     };
 
     struct TilePrize
@@ -60,12 +63,15 @@ private:
         name username;
         game game_data;
 
+<<<<<<< HEAD
         auto primary_key() const
         {
             return game_id;
         }
     };
 
+=======
+>>>>>>> 1b40b3892d12f8aecd9637a959f3f058ef4583cb
     struct [[eosio::table]] user
     {
         name username;
@@ -99,7 +105,6 @@ struct [[eosio::table]] ticket
             return username.value;
         }
     };
-
    using users_table = eosio::multi_index<"user"_n, user>;
     using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
     using history_table = eosio::multi_index<"history"_n, history>;
@@ -127,6 +132,9 @@ public:
     [[eosio::action]] void playerticket(name username, uint64_t amount);
     [[eosio::action]] void renew(name username);
     [[eosio::action]] void initgames(name username);
+<<<<<<< HEAD
     [[eosio::action]] void setuppanel(name username, vector<Tile> panel_set);
 
+=======
+>>>>>>> 1b40b3892d12f8aecd9637a959f3f058ef4583cb
 };
