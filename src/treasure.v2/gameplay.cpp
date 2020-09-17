@@ -162,7 +162,7 @@ void treasurev2::game_update(name username)
         modified_user.game_data = game_data;
 
         // Todo: If Explorer Count is Empty End the game and add history..
-        if (game_data.win_count == 4)
+        if (game_data.win_count == 4 || game_data.explore_count == 0)
         {
             modified_user.game_data.status = DONE;
             addhistory(modified_user);
