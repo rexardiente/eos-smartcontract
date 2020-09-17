@@ -32,6 +32,20 @@
             ]
         },
         {
+            "name": "destlake",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "lakechoice",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "game",
             "base": "",
             "fields": [
@@ -179,6 +193,11 @@
         }
     ],
     "actions": [
+        {
+            "name": "destlake",
+            "type": "destlake",
+            "ricardian_contract": ""
+        },
         {
             "name": "initgames",
             "type": "initgames",

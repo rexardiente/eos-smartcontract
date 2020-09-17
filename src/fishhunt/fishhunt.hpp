@@ -11,14 +11,11 @@ using namespace eosio;
 class [[eosio::contract("fishhunt")]] fishhunt : public contract
 {
 public:
-<<<<<<< HEAD
 struct Tile
     {
         uint8_t panel_idx;
         uint8_t isopen;
     };
-=======
->>>>>>> 1b40b3892d12f8aecd9637a959f3f058ef4583cb
 private:
     enum prize_value : int8_t
     {
@@ -63,15 +60,12 @@ private:
         name username;
         game game_data;
 
-<<<<<<< HEAD
         auto primary_key() const
         {
             return game_id;
         }
     };
 
-=======
->>>>>>> 1b40b3892d12f8aecd9637a959f3f058ef4583cb
     struct [[eosio::table]] user
     {
         name username;
@@ -132,9 +126,7 @@ public:
     [[eosio::action]] void playerticket(name username, uint64_t amount);
     [[eosio::action]] void renew(name username);
     [[eosio::action]] void initgames(name username);
-<<<<<<< HEAD
     [[eosio::action]] void setuppanel(name username, vector<Tile> panel_set);
+    [[eosio::action]]  void destlake(name username, uint8_t lakechoice);
 
-=======
->>>>>>> 1b40b3892d12f8aecd9637a959f3f058ef4583cb
 };
