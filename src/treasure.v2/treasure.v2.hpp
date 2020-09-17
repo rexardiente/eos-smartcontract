@@ -184,13 +184,13 @@ private:
     history_table _history;
 
     int rng(const int range);
-    uint16_t calculate_prize(vector<TilePrize> & tile_prizes, uint8_t & win_count);
+    uint16_t calculate_prize(vector<TilePrize> & tile_prizes, uint8_t & win_count, uint8_t destination);
     uint64_t gen_gameid();
     void addhistory(user user_data);
     void ticket_update(name username, bool isdeduction, uint64_t amount);
     int64_t ticket_balance(name username);
     void game_update(name username);
-    uint64_t tierGen(uint64_t & genPrize, name username);
+    uint64_t chestGen();
 
 public:
     treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),

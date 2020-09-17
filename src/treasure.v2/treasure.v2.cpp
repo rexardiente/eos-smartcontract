@@ -151,7 +151,7 @@ void treasurev2::genprize(name username, uint8_t panel_idx)
     game_data.explore_count -= 1;
 
     // calculate and generate prize
-    uint16_t prize = calculate_prize(game_data.tile_prizes, game_data.win_count);
+    uint16_t prize = calculate_prize(game_data.tile_prizes, game_data.win_count, game_data.destination);
 
     // if prize is > 0, user win.
     if (prize > 0)

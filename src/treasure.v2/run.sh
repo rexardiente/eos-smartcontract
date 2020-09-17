@@ -76,7 +76,7 @@ SET_DESTINATION()
 SET_EXPLORER()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Explorer Count."
-    cleos push action admin setexplr '["user1", 18]' -p user1@active
+    cleos push action admin setexplr '["user1", 2]' -p user1@active
 }
 # Enable Set Sail
 SET_SAIL()
@@ -88,7 +88,7 @@ SET_SAIL()
 GET_PRIZE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action admin genprize '["user1", 9]' -p user1@active
+    cleos push action admin genprize '["user1", 4]' -p user1@active
 }
 RENEW_MAP()
 {
@@ -98,15 +98,15 @@ RENEW_MAP()
 
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
-COMPILE_CONTRACT
+# COMPILE_CONTRACT
 # DEPLOY_CONTRACT
 # PURCHASE_NEW_TICKET
 # INITIALIZE_GAME
 # SET_GAME_PANEL
 # SET_DESTINATION
 # SET_EXPLORER
-# SET_SAIL
-# GET_PRIZE
+SET_SAIL
+GET_PRIZE
 # RENEW_MAP
 # REMOVE_EXISTING_GAME
-# SHOW_EOSIO_CONTRACT_TABLE
+SHOW_EOSIO_CONTRACT_TABLE

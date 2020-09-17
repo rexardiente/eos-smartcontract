@@ -2,149 +2,69 @@
 #include <eosio/system.hpp>
 
 // random users win with based on win limit = 4
-uint16_t treasurev2::calculate_prize(vector<TilePrize> &tile_prizes, uint8_t &win_count)
+uint16_t treasurev2::calculate_prize(vector<TilePrize> &tile_prizes, uint8_t &win_count, uint8_t destination)
 {
     const uint8_t unopened = 16 - tile_prizes.size();
     // has equal or less 4 wins and has available panel equal to win limit
     const int win_rate = rng(10);
-    uint64_t genChest = rng(1000);
-    uint64_t intPrize = genChest / 10;
     // check remaining tile and win is equal
-
     if (unopened == win_count)
-        return intPrize * tierGen(genChest);
-    if (win_rate > 6)
-        return intPrize * tierGen(genChest);
+        return destination * chestGen();
+    if (win_rate > 7)
+        return destination * chestGen();
     else
         return 0;
 }
 
-//tier generator
-uint64_t treasurev2::tierGen(uint64_t &genChest, name username)
+//chest generator
+uint64_t treasurev2::chestGen()
 {
-    int genTier;
-    if (genChest >= 1 && genChest <= 700)
+    const int genChest = rng(1000);
+    const int genTier = rng(100);
+    if (genTier < 26)
     {
+        return 1;
+    }
+    else if (genTier >= 26 && genTier <= 50)
+    {
+        return 2;
+    }
+    else if (genTier >= 26 && genTier <= 50)
+    {
+        if (genChest >= 1 && genChest <= 700)
         {
-            genTier = rng(320);
-            if (genTier >= 1 && genTier <= 100)
-            {
-                return 1;
-            }
-            else if (genTier >= 101 && genTier <= 200)
-            {
-                return 2;
-            }
-            else if (genTier >= 201 && genTier <= 300)
-            {
-                return 3;
-            }
-            else
-                return 4;
+            return 3;
+        }
+        else
+        {
+            return 4;
         }
     }
-    else if (genChest >= 701 && genChest <= 850)
-    {
-        {
-            genTier = rng(210);
-            if (genTier >= 1 && genTier <= 100)
-            {
-                return 1;
-            }
-            else if (genTier >= 101 && genTier <= 175)
-            {
-                return 2;
-            }
-            else if (genTier >= 176 && genTier <= 195)
-            {
-                return 4;
-            }
-            else
-                return 8;
-        }
-    }
-
-    else if (genChest >= 851 && genChest <= 950)
-    {
-        {
-            genTier = rng(192);
-            if (genTier >= 1 && genTier <= 100)
-            {
-                return 1;
-            }
-            else if (genTier >= 101 && genTier <= 165)
-            {
-                return 2;
-            }
-            else if (genTier >= 166 && genTier <= 180)
-            {
-                return 4;
-            }
-            else
-                return 16;
-        }
-    }
-
-    else if (genChest >= 951 && genChest <= 990)
-    {
-        {
-            genTier = rng(182);
-            if (genTier >= 1 && genTier <= 100)
-            {
-                return 1;
-            }
-            else if (genTier >= 101 && genTier <= 160)
-            {
-                return 2;
-            }
-            else if (genTier >= 161 && genTier <= 172)
-            {
-                return 4;
-            }
-            else
-                return 32;
-        }
-    }
-
-    else if (genChest >= 991 && genChest <= 999)
-    {
-        {
-            genTier = rng(185);
-            if (genTier >= 1 && genTier <= 100)
-            {
-                return 1;
-            }
-            else if (genTier >= 101 && genTier <= 150)
-            {
-                return 2;
-            }
-            else if (genTier >= 151 && genTier <= 180)
-            {
-                return 4;
-            }
-            else
-                return 64;
-        }
-    }
-
     else
     {
+        if (genChest >= 1 && genChest <= 700)
         {
-            genTier = rng(166);
-            if (genTier >= 1 && genTier <= 100)
-            {
-                return 1;
-            }
-            else if (genTier >= 101 && genTier <= 140)
-            {
-                return 2;
-            }
-            else if (genTier >= 141 && genTier <= 165)
-            {
-                return 4;
-            }
-            else
-                return 128;
+            return 4;
+        }
+        else if (genChest >= 701 && genChest <= 850)
+        {
+            return 8;
+        }
+        else if (genChest >= 851 && genChest <= 950)
+        {
+            return 16;
+        }
+        else if (genChest >= 951 && genChest <= 990)
+        {
+            return 32;
+        }
+        else if (genChest >= 991 && genChest <= 999)
+        {
+            return 64;
+        }
+        else
+        {
+            return 128;
         }
     }
 }
@@ -175,9 +95,9 @@ int treasurev2::rng(const int range)
     auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
 
     // // Store the updated seed value in the table
-    // _seeds.modify(seed_iterator, _self, [&](auto &s) {
-    //     s.value = new_seed_value;
-    // });
+    _seeds.modify(seed_iterator, _self, [&](auto &s) {
+        s.value = new_seed_value;
+    });
 
     // Get the random result in desired range
     int random_result = new_seed_value % range;
