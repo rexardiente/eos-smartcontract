@@ -246,7 +246,8 @@ void treasurev2::game_update(name username)
 
         if (updated_history != _history.end() && iterator->game_data.explore_count == 0)
             _users.erase(iterator);
-        if (iterator->game_data.explore_count != 0)
-            renew(username);
+        // Auto renew map  if has existing explore_count
+        // if (iterator->game_data.explore_count != 0)
+        // renew(username);
     }
 }
