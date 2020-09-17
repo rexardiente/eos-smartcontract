@@ -11,11 +11,18 @@ using namespace eosio;
 class [[eosio::contract("fishhunt")]] fishhunt : public contract
 {
 public:
+struct Tile
+    {
+        uint8_t panel_idx;
+        uint8_t isopen;
+    };
 private:
     enum prize_value : int8_t
     {
         PRIZE_DEFAULT = 0,
-        WIN_LIMIT = 6
+        UNOPENED = 0,
+        OPENED = 1,
+        WIN_LIMIT = 4
     };
     enum game_status : int8_t
     {
@@ -32,7 +39,7 @@ private:
         lake_4 = 20
     };
 
-    struct fishPrize
+    struct TilePrize
     {
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
@@ -40,8 +47,8 @@ private:
 
     struct game
     {
-
-        vector<fishPrize> Fish_prizes = {};
+        vector<Tile> panels;
+        vector<TilePrize> tile_prizes = {};
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = lake_DEFAULT;
         bool set_hunt = false;
@@ -102,7 +109,13 @@ struct [[eosio::table]] ticket
     tickets_table _tickets;
     seeds_table _seeds;
     history_table _history;
-  
+
+    int rng(const int range);
+    uint64_t gen_gameid();
+    void addhistory(user user_data);
+     void ticket_update(name username, bool isdeduction, uint64_t amount);
+   int64_t ticket_balance(name username);
+    
 public:
     fishhunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
                                                                          _tickets(receiver, receiver.value),
@@ -111,6 +124,9 @@ public:
                                                                       _seeds(receiver, receiver.value)
     {
     }
+    [[eosio::action]] void playerticket(name username, uint64_t amount);
     [[eosio::action]] void renew(name username);
     [[eosio::action]] void initgames(name username);
+    [[eosio::action]] void setuppanel(name username, vector<Tile> panel_set);
+
 };

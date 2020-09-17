@@ -22,7 +22,18 @@ void fishhunt::addhistory(user user_data)
         });
     }
 }
-nt fishhunt::rng(const int range)
+
+uint64_t fishhunt::gen_gameid()
+{
+    // get current time
+    uint64_t current_time = current_time_point().elapsed._count;
+    // get current size of the table
+    int size = std::distance(_users.begin(), _users.end());
+
+    return (size + rng(1000)) + current_time;
+}
+
+int fishhunt::rng(const int range)
 {
     // Find the existing seed
     auto seed_iterator = _seeds.begin();
@@ -47,7 +58,7 @@ nt fishhunt::rng(const int range)
     return random_result;
 }
 
-int64_t fisthunt::ticket_balance(name username)
+int64_t fishhunt::ticket_balance(name username)
 {
     require_auth(username);
     auto &ticket = _tickets.get(username.value, "Ticket doesn't exist");

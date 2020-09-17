@@ -4,7 +4,21 @@
     "types": [],
     "structs": [
         {
-            "name": "fishPrize",
+            "name": "Tile",
+            "base": "",
+            "fields": [
+                {
+                    "name": "panel_idx",
+                    "type": "uint8"
+                },
+                {
+                    "name": "isopen",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
+            "name": "TilePrize",
             "base": "",
             "fields": [
                 {
@@ -22,8 +36,12 @@
             "base": "",
             "fields": [
                 {
-                    "name": "Fish_prizes",
-                    "type": "fishPrize[]"
+                    "name": "panels",
+                    "type": "Tile[]"
+                },
+                {
+                    "name": "tile_prizes",
+                    "type": "TilePrize[]"
                 },
                 {
                     "name": "win_count",
@@ -72,6 +90,20 @@
             ]
         },
         {
+            "name": "playerticket",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "amount",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "renew",
             "base": "",
             "fields": [
@@ -92,6 +124,20 @@
                 {
                     "name": "value",
                     "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "setuppanel",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "panel_set",
+                    "type": "Tile[]"
                 }
             ]
         },
@@ -139,8 +185,18 @@
             "ricardian_contract": ""
         },
         {
+            "name": "playerticket",
+            "type": "playerticket",
+            "ricardian_contract": ""
+        },
+        {
             "name": "renew",
             "type": "renew",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setuppanel",
+            "type": "setuppanel",
             "ricardian_contract": ""
         }
     ],
