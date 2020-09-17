@@ -2,7 +2,7 @@
 #include <eosio/system.hpp>
 
 // random users win with based on win limit = 4
-uint16_t treasurev2::calculate_prize(vector<TilePrize> &tile_prizes, uint8_t &win_count, uint8_t destination)
+uint16_t treasurev2::calculate_prize(const vector<TilePrize> &tile_prizes, const uint8_t &win_count, const uint8_t &destination)
 {
     const uint8_t unopened = 16 - tile_prizes.size();
 
@@ -81,7 +81,7 @@ uint64_t treasurev2::gen_gameid()
     return (size + rng(1000)) + current_time;
 }
 
-int treasurev2::rng(const int range)
+int treasurev2::rng(const int &range)
 {
     // Find the existing seed
     auto seed_iterator = _seeds.begin();
@@ -113,7 +113,7 @@ int64_t treasurev2::ticket_balance(name username)
     return ticket.balance;
 }
 
-void treasurev2::ticket_update(name username, bool isdeduction, uint64_t amount)
+void treasurev2::ticket_update(name username, const bool &isdeduction, const uint64_t &amount)
 {
     require_auth(username);
     auto &ticket = _tickets.get(username.value, "Ticket doesn't exist");

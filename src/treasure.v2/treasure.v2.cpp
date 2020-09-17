@@ -5,16 +5,6 @@ using namespace eosio;
 // After the game ended, remove the user on the current users list...
 void treasurev2::init(name username)
 {
-
-  // vector<Type>::iterator aa = std::find_if(ListOfTypes.begin(), ListOfTypes.end(), [&](const Type &o) {
-  //   return o.username == username;
-  // });
-
-  // if (aa[0].username == username)
-  // {
-  //   Type aa_prize_type = Type();
-  // }
-
   require_auth(username);
   // Create a record in the table if the player doesn't exist in our app yet
   auto itr = _users.find(username.value);
@@ -30,7 +20,7 @@ void treasurev2::init(name username)
 }
 
 // Configure Existing Game - User Settings
-void treasurev2::setpanel(name username, vector<treasurev2::Tile> panel_set)
+void treasurev2::setpanel(name username, vector<Tile> panel_set)
 {
   require_auth(username);
   auto &user = _users.get(username.value, "Error: User doesn't exist");
@@ -135,17 +125,6 @@ void treasurev2::genprize(name username, uint8_t panel_idx)
   require_auth(username);
   auto user = _users.find(username.value);
 
-  // Check if game is already done, if true then remove..
-  // if (user->game_data.status == DONE)
-  // {
-  //   _users.modify(user, username, [&](auto &modified_user) {
-  //     addhistory(user);
-  //     auto updated_history = _history.find(user->game_id); // Bad implementation..
-  //     if (updated_history != _history.end())
-  //       _users.erase(user);
-  //   });
-  // }
-
   check(ticket_balance(username) != 0, "Error: No enough balance to play the game.");
   check(user->game_data.set_sail == true, "Error: Not Yet Ready To Set Sail.");
   check(user->game_data.status == ONGOING, "Error: Either game has ended or not yet configured.");
@@ -192,12 +171,6 @@ void treasurev2::end(name username)
   }
 
   _users.erase(user);
-  // auto updated_history = _history.find(user.game_id); // Bad implementation..
-  // if (updated_history != _history.end())
-  // _users.erase(iterator);
-  // _users.modify(user, username, [&](auto& modified_user) {
-  //     modified_user.game_data = game();
-  //     });
 }
 
 // Purchase new ticket

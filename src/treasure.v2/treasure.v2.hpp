@@ -18,17 +18,6 @@ public:
     };
 
 private:
-    // Basics Operation
-    // Table for current opened and available tile..
-    //     * (1 - 16) in bool data type which be represented by (1 or 2)
-    // game_id as secondary ID for history
-    // auto play mode will be added once manual gameplay is done!
-    // Useer will provide 16, panel set.
-    // update first the table before calling `game_status` function
-    // user win_tracker will be table with username and array for win details..
-
-    // remove ticket on user value and use update function to update ticket..
-
     enum prize_value : int8_t
     {
         PRIZE_DEFAULT = 0,
@@ -129,11 +118,11 @@ private:
     seeds_table _seeds;
     history_table _history;
 
-    int rng(const int range);
-    uint16_t calculate_prize(vector<TilePrize> & tile_prizes, uint8_t & win_count, uint8_t destination);
+    int rng(const int &range);
+    uint16_t calculate_prize(const vector<TilePrize> &tile_prizes, const uint8_t &win_count, const uint8_t &destination);
     uint64_t gen_gameid();
     void addhistory(user user_data);
-    void ticket_update(name username, bool isdeduction, uint64_t amount);
+    void ticket_update(name username, const bool &isdeduction, const uint64_t &amount);
     int64_t ticket_balance(name username);
     void game_update(name username);
     uint64_t chestGen();
@@ -143,9 +132,7 @@ public:
                                                                         _users(receiver, receiver.value),
                                                                         _tickets(receiver, receiver.value),
                                                                         _history(receiver, receiver.value),
-                                                                        _seeds(receiver, receiver.value)
-    {
-    }
+                                                                        _seeds(receiver, receiver.value) {}
     [[eosio::action]] void purchase(name username, uint64_t amount);
     [[eosio::action]] void setsail(name username, bool ready);
     [[eosio::action]] void setdest(name username, uint8_t destination);
