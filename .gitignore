@@ -1,6 +1,6 @@
 
-*.wasm
-*.abi
+
 *.log
 *.DS_Store
-
+*.wasm
+*.abi

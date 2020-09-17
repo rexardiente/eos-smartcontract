@@ -133,15 +133,26 @@ void treasurev2::setsail(name username, bool ready)
 void treasurev2::genprize(name username, uint8_t panel_idx)
 {
   require_auth(username);
-  auto itr = _users.find(username.value);
+  auto user = _users.find(username.value);
+
+  // Check if game is already done, if true then remove..
+  // if (user->game_data.status == DONE)
+  // {
+  //   _users.modify(user, username, [&](auto &modified_user) {
+  //     addhistory(user);
+  //     auto updated_history = _history.find(user->game_id); // Bad implementation..
+  //     if (updated_history != _history.end())
+  //       _users.erase(user);
+  //   });
+  // }
 
   check(ticket_balance(username) != 0, "Error: No enough balance to play the game.");
-  check(itr->game_data.set_sail == true, "Error: Not Yet Ready To Set Sail.");
-  check(itr->game_data.status == ONGOING, "Error: Either game has ended or not yet configured.");
-  check(itr->game_data.win_count < 4, "Error: No more prizes available, Game already ended.");
-  check(itr->game_data.explore_count > 0, "Error: You've Reached Game Explorer Count.");
+  check(user->game_data.set_sail == true, "Error: Not Yet Ready To Set Sail.");
+  check(user->game_data.status == ONGOING, "Error: Either game has ended or not yet configured.");
+  check(user->game_data.win_count < 4, "Error: No more prizes available, Game already ended.");
+  check(user->game_data.explore_count > 0, "Error: You've Reached Game Explorer Count.");
 
-  _users.modify(itr, username, [&](auto &modified_user) {
+  _users.modify(user, username, [&](auto &modified_user) {
     game game_data = modified_user.game_data;
 
     // check if tile not opened
@@ -173,9 +184,17 @@ void treasurev2::end(name username)
 {
   require_auth(username);
   auto &user = _users.get(username.value, "Error: User doesn't exist");
-  auto iterator = _users.find(username.value);
 
-  _users.erase(iterator);
+  // Note: It will continue even if theres an error adding at history.
+  if (user.game_data.status == DONE || (user.game_data.status == ONGOING && user.game_data.tile_prizes.size() != 0))
+  {
+    addhistory(user);
+  }
+
+  _users.erase(user);
+  // auto updated_history = _history.find(user.game_id); // Bad implementation..
+  // if (updated_history != _history.end())
+  // _users.erase(iterator);
   // _users.modify(user, username, [&](auto& modified_user) {
   //     modified_user.game_data = game();
   //     });

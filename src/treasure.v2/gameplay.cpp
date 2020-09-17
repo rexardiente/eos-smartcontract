@@ -168,15 +168,15 @@ void treasurev2::game_update(name username)
         if (game_data.win_count == 4 || game_data.explore_count == 0)
         {
             modified_user.game_data.status = DONE;
-            addhistory(modified_user);
+            // addhistory(modified_user);
         }
     });
 
     // Check if game is already done, if true then remove..
-    if (iterator->game_data.status == DONE)
-    {
-        auto updated_history = _history.find(iterator->game_id); // Bad implementation..
-        if (updated_history != _history.end())
-            _users.erase(iterator);
-    }
+    // if (iterator->game_data.status == DONE)
+    // {
+    //     auto updated_history = _history.find(iterator->game_id); // Bad implementation..
+    //     if (updated_history != _history.end())
+    //         _users.erase(iterator);
+    // }
 }
