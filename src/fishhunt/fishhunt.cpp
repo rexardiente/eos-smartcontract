@@ -38,6 +38,18 @@ void fishhunt::playerticket(name username, uint64_t amount)
     });
   }
 }
+void fishhunt::destlake(name username, uint8_t lakechoice)
+{
+  require_auth(username);
+  auto &user = _users.get(username.value, "Error: User doesn't exist");
+  // check if the user has existing game, else cancel start new game
+  check(user.game_data.status == INITIALIZED, "Error: Has an existing game, can't start a new game.");
+  check(user.game_data.destination == 0, "Error: Game Destination Already Set.");
+
+  _users.modify(user, username, [&](auto &modified_user) {
+    modified_user.game_data.destination = lakechoice;
+  });
+}
 void fishhunt::setuppanel(name username, vector<fishhunt::Tile> panel_set)
 {
   require_auth(username);
