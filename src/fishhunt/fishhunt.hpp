@@ -32,6 +32,47 @@ private:
         farshore = 20
     };
 
+    struct Fish
+    {
+        char key;
+        uint8_t value;
+    };
+
+    struct FishList
+    {
+        name username;
+        vector<Fish> fishes = {
+            {'A', 0},
+            {'B', 0},
+            {'C', 0},
+            {'D', 0},
+            {'E', 0},
+            {'F', 0},
+            {'G', 0},
+            {'H', 0},
+            {'I', 0},
+            {'J', 0},
+            {'K', 0},
+            {'L', 0},
+            {'M', 0},
+            {'N', 0},
+            {'O', 0},
+            {'P', 0},
+            {'Q', 0},
+            {'R', 0},
+            {'S', 0},
+            {'T', 0},
+            {'U', 0},
+            {'V', 0},
+            {'W', 0},
+            {'X', 0}};
+
+        auto primary_key() const
+        {
+            return username.value;
+        }
+    };
+
     struct fishPrize
     {
         uint16_t key;
@@ -40,7 +81,6 @@ private:
 
     struct game
     {
-
         vector<fishPrize> Fish_prizes = {};
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = lake_DEFAULT;
@@ -73,7 +113,6 @@ private:
     };
 
     using users_table = eosio::multi_index<"user"_n, user>;
-
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
@@ -87,4 +126,5 @@ public:
     }
     [[eosio::action]] void renew(name username);
     [[eosio::action]] void initgames(name username);
+    [[eosio::action]] void end(name username);
 };

@@ -6,14 +6,14 @@ using namespace eosio;
 void treasurev2::init(name username)
 {
 
-  vector<Type>::iterator aa = std::find_if(ListOfTypes.begin(), ListOfTypes.end(), [&](const Type &o) {
-    return o.username == username;
-  });
+  // vector<Type>::iterator aa = std::find_if(ListOfTypes.begin(), ListOfTypes.end(), [&](const Type &o) {
+  //   return o.username == username;
+  // });
 
-  if (aa[0].username == username)
-  {
-    Type aa_prize_type = Type();
-  }
+  // if (aa[0].username == username)
+  // {
+  //   Type aa_prize_type = Type();
+  // }
 
   require_auth(username);
   // Create a record in the table if the player doesn't exist in our app yet

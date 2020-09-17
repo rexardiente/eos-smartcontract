@@ -70,30 +70,30 @@ private:
         uint16_t value = PRIZE_DEFAULT;
     };
 
-    struct Prize
-    {
-        char key;
-        uint16_t value;
-    };
+    // struct Prize
+    // {
+    //     char key;
+    //     uint16_t value;
+    // };
 
-    struct Type
-    {
-        name username;
-        vector<Prize> prizes = {
-            {'A', 7},
-            {'B', 6},
-            {'C', 5},
-            {'D', 4},
-            {'E', 3},
-            {'F', 2},
-            {'G', 1}};
-        auto primary_key() const
-        {
-            return username.value;
-        }
-    };
+    // struct Type
+    // {
+    //     name username;
+    //     vector<Prize> prizes = {
+    //         {'A', 7},
+    //         {'B', 6},
+    //         {'C', 5},
+    //         {'D', 4},
+    //         {'E', 3},
+    //         {'F', 2},
+    //         {'G', 1}};
+    //     auto primary_key() const
+    //     {
+    //         return username.value;
+    //     }
+    // };
 
-    vector<Type> ListOfTypes;
+    // vector<Type> ListOfTypes;
 
     struct game
     {
@@ -117,23 +117,6 @@ private:
             return username.value;
         }
     };
-
-    // struct occurlimit
-    // {
-    //     name username;
-    //     uint8_t prize_A = 7;
-    //     uint8_t prize_B = 6;
-    //     uint8_t prize_C = 5;
-    //     uint8_t prize_D = 4;
-    //     uint8_t prize_E = 3;
-    //     uint8_t prize_F = 2;
-    //     uint8_t prize_G = 1;
-
-    //     auto primary_key() const
-    //     {
-    //         return username.value;
-    //     }
-    // };
 
     struct [[eosio::table]] user
     {
