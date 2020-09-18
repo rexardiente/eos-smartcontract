@@ -106,11 +106,16 @@ private:
         {
             return game_id;
         }
+
+        uint64_t secondary_indice() const
+        {
+            return username.value;
+        }
     };
 
     using users_table = eosio::multi_index<"user"_n, user>;
     using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
-    using history_table = eosio::multi_index<"history"_n, history>;
+    using history_table = eosio::multi_index<"history"_n, history, indexed_by<"byusername"_n, const_mem_fun<history, uint64_t, &history::secondary_indice>>>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
