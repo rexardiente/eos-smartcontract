@@ -110,7 +110,7 @@ void treasurev2::setsail(name username, bool ready)
   require_auth(username);
   auto itr = _users.find(username.value);
   check(itr != _users.end(), "Error: Game Doesn't Exist.");
-  check(itr->game_data.set_sail == false, "Error: Setsail Status Already Triggered.");
+  // check(itr->game_data.set_sail == false, "Error: Setsail Status Already Triggered.");
 
   _users.modify(itr, username, [&](auto &modified_user) {
     modified_user.game_data.set_sail = ready;
