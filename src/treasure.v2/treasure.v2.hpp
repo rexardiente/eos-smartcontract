@@ -47,6 +47,7 @@ private:
     {
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
+        uint16_t multiplier;
     };
 
     struct game
@@ -124,13 +125,13 @@ private:
     history_table _history;
 
     int rng(const int &range);
-    uint16_t calculate_prize(const vector<TilePrize> &tile_prizes, const uint8_t &win_count, const uint8_t &destination);
+    uint16_t iswinning(const vector<TilePrize> &tile_prizes, const uint8_t &win_count);
     uint64_t gen_gameid();
     void addhistory(user user_data);
     void ticket_update(name username, const bool &isdeduction, const uint64_t &amount);
     int64_t ticket_balance(name username);
     void game_update(name username);
-    uint64_t chestGen();
+    uint64_t multiplier();
 
 public:
     treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),

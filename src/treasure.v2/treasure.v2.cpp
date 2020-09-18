@@ -140,13 +140,14 @@ void treasurev2::genprize(name username, uint8_t panel_idx)
     game_data.explore_count -= 1;
 
     // calculate and generate prize
-    uint16_t prize = calculate_prize(game_data.tile_prizes, game_data.win_count, game_data.destination);
+    uint16_t multiplier = iswinning(game_data.tile_prizes, game_data.win_count);
+    uint16_t prize = game_data.destination * multiplier;
 
     // if prize is > 0, user win.
-    if (prize > 0)
+    if (multiplier > 0)
       game_data.win_count += 1;
 
-    game_data.tile_prizes.insert(game_data.tile_prizes.begin(), {panel_idx, prize});
+    game_data.tile_prizes.insert(game_data.tile_prizes.begin(), {panel_idx, prize, multiplier});
 
     // deduct ticket and update tile to open and game status
     ticket_update(username, true, game_data.destination);

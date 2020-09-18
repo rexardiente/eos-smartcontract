@@ -2,7 +2,7 @@
 #include <eosio/system.hpp>
 
 // random users win with based on win limit = 4
-uint16_t treasurev2::calculate_prize(const vector<TilePrize> &tile_prizes, const uint8_t &win_count, const uint8_t &destination)
+uint16_t treasurev2::iswinning(const vector<TilePrize> &tile_prizes, const uint8_t &win_count)
 {
     const uint8_t unopened = 16 - tile_prizes.size();
 
@@ -10,16 +10,20 @@ uint16_t treasurev2::calculate_prize(const vector<TilePrize> &tile_prizes, const
     const int win_rate = rng(10);
     // check remaining tile and win is equal
 
+    // if (unopened == (4 - win_count))
+    //     return destination * multiplier();
+    // if (win_rate > 6)
+    //     return destination * multiplier();
     if (unopened == (4 - win_count))
-        return destination * chestGen();
+        return multiplier();
     if (win_rate > 6)
-        return destination * chestGen();
+        return multiplier();
     else
         return 0;
 }
 
-//chest and tier generator
-uint64_t treasurev2::chestGen()
+// chest multiplier
+uint64_t treasurev2::multiplier()
 {
     const int genChest = rng(1000);
     const int genTier = rng(100);
