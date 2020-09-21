@@ -33,6 +33,11 @@ private:
     };
     enum game_destination : int8_t
     {
+        EXPLORE_DEFAULT = 0,
+        EXPLORE_1 = 1,
+        EXPLORE_2 = 5,
+        EXPLORE_3 = 10,
+        EXPLORE_4 = 20,
         lake_DEFAULT = 0,
         river = 1,
         lake = 5,
@@ -86,14 +91,17 @@ private:
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
     };
+    
 
     struct game
     {
+         vector<Tile> panels;
         vector<fishPrize> Fish_prizes = {};
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = lake_DEFAULT;
         bool set_hunt = false;
         uint8_t status = INITIALIZED;
+        uint16_t explore_count = EXPLORE_DEFAULT;
     };
 
     struct [[eosio::table]] user
@@ -129,6 +137,22 @@ private:
             return username.value;
         }
     };
+    struct [[eosio::table]] history
+    {
+        uint64_t game_id = 1; // default key of 1
+        name username;
+        game game_data;
+
+        auto primary_key() const
+        {
+            return game_id;
+        }
+
+        uint64_t secondary_indice() const
+        {
+            return username.value;
+        }
+    };
     using users_table = eosio::multi_index<"user"_n, user>;
     using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
     using history_table = eosio::multi_index<"history"_n, history>;
@@ -136,6 +160,8 @@ private:
 
     users_table _users;
     seeds_table _seeds;
+    tickets_table _tickets;
+    history_table _history;
 
     int rng(const int range);
     uint64_t gen_gameid();
@@ -154,6 +180,7 @@ public:
     [[eosio::action]] void renew(name username);
     [[eosio::action]] void initgames(name username);
     [[eosio::action]] void setuppanel(name username, vector<Tile> panel_set);
+    [[eosio::action]] void playerticket(name username, uint64_t amount);
     [[eosio::action]] void destlake(name username, uint8_t lakechoice);
     [[eosio::action]] void sethuntfish(name username, bool ready);
 };

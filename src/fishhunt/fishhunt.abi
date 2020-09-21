@@ -18,20 +18,6 @@
             ]
         },
         {
-            "name": "TilePrize",
-            "base": "",
-            "fields": [
-                {
-                    "name": "key",
-                    "type": "uint16"
-                },
-                {
-                    "name": "value",
-                    "type": "uint16"
-                }
-            ]
-        },
-        {
             "name": "destlake",
             "base": "",
             "fields": [
@@ -46,6 +32,20 @@
             ]
         },
         {
+            "name": "fishPrize",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "uint16"
+                },
+                {
+                    "name": "value",
+                    "type": "uint16"
+                }
+            ]
+        },
+        {
             "name": "game",
             "base": "",
             "fields": [
@@ -54,8 +54,8 @@
                     "type": "Tile[]"
                 },
                 {
-                    "name": "tile_prizes",
-                    "type": "TilePrize[]"
+                    "name": "Fish_prizes",
+                    "type": "fishPrize[]"
                 },
                 {
                     "name": "win_count",
@@ -72,6 +72,10 @@
                 {
                     "name": "status",
                     "type": "uint8"
+                },
+                {
+                    "name": "explore_count",
+                    "type": "uint16"
                 }
             ]
         },
