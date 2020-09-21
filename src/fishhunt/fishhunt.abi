@@ -142,6 +142,20 @@
             ]
         },
         {
+            "name": "sethuntfish",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "ready",
+                    "type": "bool"
+                }
+            ]
+        },
+        {
             "name": "setuppanel",
             "base": "",
             "fields": [
@@ -211,6 +225,11 @@
         {
             "name": "renew",
             "type": "renew",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "sethuntfish",
+            "type": "sethuntfish",
             "ricardian_contract": ""
         },
         {

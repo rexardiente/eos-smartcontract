@@ -17,7 +17,19 @@ void fishhunt::initgames(name username)
     });
   }
 }
-void fishhunt::renew(name username)
+void fishhunt::sethuntfish(name username, bool ready)
+{
+
+  require_auth(username);
+  auto itr = _users.find(username.value);
+  check(itr != _users.end(), "Error: Game Doesn't Exist.");
+  check(itr->game_data.set_hunt == false, "Error: Set Hunt Status Already Triggered.");
+
+  _users.modify(itr, username, [&](auto &modified_user) {
+    modified_user.game_data.set_hunt = ready;
+  });
+}
+void fishhunt::destlake(name username, uint8_t lakechoice)
 {
   //username log
   require_auth(username);

@@ -11,6 +11,12 @@ using namespace eosio;
 class [[eosio::contract("fishhunt")]] fishhunt : public contract
 {
 public:
+    struct Tile
+    {
+        uint8_t panel_idx;
+        uint8_t isopen;
+    };
+
 private:
     enum prize_value : int8_t
     {
@@ -113,20 +119,41 @@ private:
             return key;
         }
     };
+    struct [[eosio::table]] ticket
+    {
+        name username;
+        int64_t balance;
 
+        auto primary_key() const
+        {
+            return username.value;
+        }
+    };
     using users_table = eosio::multi_index<"user"_n, user>;
+    using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
+    using history_table = eosio::multi_index<"history"_n, history>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
     seeds_table _seeds;
 
+    int rng(const int range);
+    uint64_t gen_gameid();
+    void addhistory(user user_data);
+    void ticket_update(name username, bool isdeduction, uint64_t amount);
+    int64_t ticket_balance(name username);
+
 public:
     fishhunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
+                                                                      _tickets(receiver, receiver.value),
+                                                                      _history(receiver, receiver.value),
                                                                       _users(receiver, receiver.value),
                                                                       _seeds(receiver, receiver.value)
     {
     }
     [[eosio::action]] void renew(name username);
     [[eosio::action]] void initgames(name username);
-    [[eosio::action]] void end(name username);
+    [[eosio::action]] void setuppanel(name username, vector<Tile> panel_set);
+    [[eosio::action]] void destlake(name username, uint8_t lakechoice);
+    [[eosio::action]] void sethuntfish(name username, bool ready);
 };
