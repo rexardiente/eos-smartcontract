@@ -89,7 +89,7 @@ void fishhunt::destlake(name username, uint8_t lakechoice)
 {
   //username log
   require_auth(username);
-   auto &user = _users.get(username.value, "Error: User doesn't exist");
+  auto &user = _users.get(username.value, "Error: User doesn't exist");
   // check if the user has existing game, else cancel start new game
   check(user.game_data.status == INITIALIZED, "Error: Has an existing game, can't start a new game.");
   check(user.game_data.destination == 0, "Error: Game Destination Already Set.");
@@ -126,3 +126,43 @@ void fishhunt::end(name username)
   //     });
 }
 */
+void fishhunt::genprize(name username, uint8_t panel_idx)
+{
+  require_auth(username);
+  auto user = _users.find(username.value);
+
+  check(ticket_balance(username) != 0, "Error: Not enough balance to play the game.");
+  check(user->game_data.set_hunt == true, "Error: Not Yet Ready To Hunt/Fish");
+  check(user->game_data.win_count < 6, "Error : No more prizes available, Game already ended.");
+  check(user->game_data.explore_count > 0, "Error: You've Reached Game Explorer Count.");
+
+  _users.modify(user, username, [&](auto &modified_user) {
+    game game_data = modified_user.game_data;
+
+    //check if tile is not opened
+    check(game_data.panels.at(panel_idx).isopen == UNOPENED, "Error: Tile already opened.");
+    //deduct current explorer count
+    game_data.explore_count -= 1;
+
+    //generate fish
+    uint8_t fishNum = rngtwo(23);
+    Fish fish_catch = _fishlists.fishes[fishNum];
+    _fishlists.fishes[fishNum].value += 1;
+    //calculate prize
+    uint16_t multiplier = iswinning(game_data.Fish_prizes, game_data.win_count, fish_catch);
+    uint16_t prize = game_data.destination * multiplier;
+
+    // if prize is > 0, user win
+    if (multiplier > 0)
+      game_data.win_count += 1;
+
+    game_data.Fish_prizes.insert(game_data.Fish_prizes.begin(), {panel_idx, prize, multiplier});
+
+    //deduct ticket and update tile to open and game status
+    ticket_update(username, true, game_data.destination);
+    game_data.panels.at(panel_idx).isopen = OPENED;
+  });
+
+  //Update Overall Game Status
+  game_update(username);
+}

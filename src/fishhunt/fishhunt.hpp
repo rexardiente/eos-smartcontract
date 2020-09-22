@@ -51,9 +51,8 @@ private:
         uint8_t value;
     };
 
-    struct FishList
+    struct fishlist
     {
-        name username;
         vector<Fish> fishes = {
             {'A', 0},
             {'B', 0},
@@ -79,11 +78,6 @@ private:
             {'V', 0},
             {'W', 0},
             {'X', 0}};
-
-        auto primary_key() const
-        {
-            return username.value;
-        }
     };
 
     struct fishPrize
@@ -91,11 +85,10 @@ private:
         uint16_t key;
         uint16_t value = PRIZE_DEFAULT;
     };
-    
 
     struct game
     {
-         vector<Tile> panels;
+        vector<Tile> panels;
         vector<fishPrize> Fish_prizes = {};
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = lake_DEFAULT;
@@ -110,6 +103,7 @@ private:
         uint64_t game_id;
         game game_data;
         uint64_t total_win;
+        fishlist fish_caught;
 
         auto primary_key() const
         {
@@ -153,21 +147,28 @@ private:
             return username.value;
         }
     };
+
+    using fishlists_table = eosio::multi_index<"fishlist"_n, fishlist>;
     using users_table = eosio::multi_index<"user"_n, user>;
     using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
     using history_table = eosio::multi_index<"history"_n, history>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
+    fishlists_table _fishlists;
     users_table _users;
     seeds_table _seeds;
     tickets_table _tickets;
     history_table _history;
 
     int rng(const int range);
+    int rngTwo(const int range);
     uint64_t gen_gameid();
+    uint16_t iswinning(const vector<fishPrize> &Fish_prizes, const uint8_t &win_count, uint8_t fishcatch);
     void addhistory(user user_data);
     void ticket_update(name username, bool isdeduction, uint64_t amount);
+    void game_update(name username);
     int64_t ticket_balance(name username);
+    uint64_t multiplier();
 
 public:
     fishhunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
@@ -183,4 +184,5 @@ public:
     [[eosio::action]] void playerticket(name username, uint64_t amount);
     [[eosio::action]] void destlake(name username, uint8_t lakechoice);
     [[eosio::action]] void sethuntfish(name username, bool ready);
+    [[eosio::action]] void genprize(name username, uint8_t panel_idx);
 };
