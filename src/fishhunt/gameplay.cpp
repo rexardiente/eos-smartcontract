@@ -34,12 +34,12 @@ uint64_t fishhunt::multiplier(Fish fishcatch)
         } while (size < 10);
         return 0.5, size;
     }
-    else if (fishcatch.key == 'B')
+    else if (fishcatch.key == 'C')
     {
         do
         {
-            size = rng(30);
-        } while (size < 10);
+            size = rng(15);
+        } while (size < 5);
         return 0.5;
     }
 }
@@ -166,5 +166,5 @@ void fishhunt::game_update(name username)
         {
             modified_user.game_data.status = DONE;
         }
-    })
+    });
 }

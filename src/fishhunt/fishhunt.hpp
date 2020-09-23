@@ -161,7 +161,7 @@ private:
     history_table _history;
 
     int rng(const int range);
-    int rngTwo(const int range);
+    int rngtwo(const int range);
     uint64_t gen_gameid();
     uint16_t iswinning(const vector<fishPrize> &Fish_prizes, const uint8_t &win_count, Fish fishcatch);
     void addhistory(user user_data);
