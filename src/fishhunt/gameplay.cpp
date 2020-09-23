@@ -1,22 +1,47 @@
 #include "fishhunt.hpp"
 #include <eosio/system.hpp>
 
-uint16_t fishhunt::iswinning(const vector<fishPrize> &Fish_prizes, const uint8_t &win_count, uint8_t fishcatch)
+uint16_t fishhunt::iswinning(const vector<fishPrize> &Fish_prizes, const uint8_t &win_count, Fish fishcatch)
 {
     const uint8_t unopened = 16 - Fish_prizes.size();
     const int win_rate = rng(10);
     // has equal or less 6 wins and has available panel equal to win limit
     if (unopened == (4 - win_count))
-        return multiplier();
+        return multiplier(fishcatch);
     if (win_rate > 6)
-        return multiplier();
+        return multiplier(fishcatch);
     else
         return 0;
 }
 
 //fish multiplier
-uint64_t fishhunt::multiplier()
+uint64_t fishhunt::multiplier(Fish fishcatch)
 {
+    double_t size;
+    if (fishcatch.key == 'A')
+    {
+        do
+        {
+            size = rng(15);
+        } while (size < 5);
+        return 0.5, size;
+    }
+    else if (fishcatch.key == 'B')
+    {
+        do
+        {
+            size = rng(30);
+        } while (size < 10);
+        return 0.5, size;
+    }
+    else if (fishcatch.key == 'B')
+    {
+        do
+        {
+            size = rng(30);
+        } while (size < 10);
+        return 0.5;
+    }
 }
 
 void fishhunt::addhistory(user user_data)

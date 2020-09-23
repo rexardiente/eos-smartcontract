@@ -163,12 +163,12 @@ private:
     int rng(const int range);
     int rngTwo(const int range);
     uint64_t gen_gameid();
-    uint16_t iswinning(const vector<fishPrize> &Fish_prizes, const uint8_t &win_count, uint8_t fishcatch);
+    uint16_t iswinning(const vector<fishPrize> &Fish_prizes, const uint8_t &win_count, Fish fishcatch);
     void addhistory(user user_data);
     void ticket_update(name username, bool isdeduction, uint64_t amount);
     void game_update(name username);
     int64_t ticket_balance(name username);
-    uint64_t multiplier();
+    uint64_t multiplier(Fish fishcatch);
 
 public:
     fishhunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
