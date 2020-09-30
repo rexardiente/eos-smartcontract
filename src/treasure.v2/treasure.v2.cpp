@@ -20,7 +20,7 @@ void treasurev2::init(name username)
 }
 
 // Configure Existing Game - User Settings
-void treasurev2::setpanel(name username, vector<Tile> panel_set)
+void treasurev2::setpanel(name username, vector<Tile> panel_set,uint8_t enemy_count)
 {
   require_auth(username);
   auto &user = _users.get(username.value, "Error: User doesn't exist");
@@ -30,6 +30,7 @@ void treasurev2::setpanel(name username, vector<Tile> panel_set)
 
   _users.modify(user, username, [&](auto &modified_user) {
     modified_user.game_data.panels = panel_set;
+     modified_user.game_data.enemy_count = enemy_count;
 
     modified_user.total_win = 0; // Find another way to track users total win..
     // modified_user.tickets = ticket_balance(username); // create another table for tickets

@@ -28,6 +28,10 @@
                 {
                     "name": "value",
                     "type": "uint16"
+                },
+                {
+                    "name": "multiplier",
+                    "type": "uint16"
                 }
             ]
         },
@@ -72,6 +76,10 @@
                 {
                     "name": "status",
                     "type": "uint8"
+                },
+                {
+                    "name": "enemy_count",
+                    "type": "uint8"
                 }
             ]
         },
@@ -114,40 +122,6 @@
                 {
                     "name": "username",
                     "type": "name"
-                }
-            ]
-        },
-        {
-            "name": "prizelimit",
-            "base": "",
-            "fields": [
-                {
-                    "name": "A",
-                    "type": "uint8"
-                },
-                {
-                    "name": "B",
-                    "type": "uint8"
-                },
-                {
-                    "name": "C",
-                    "type": "uint8"
-                },
-                {
-                    "name": "D",
-                    "type": "uint8"
-                },
-                {
-                    "name": "E",
-                    "type": "uint8"
-                },
-                {
-                    "name": "F",
-                    "type": "uint8"
-                },
-                {
-                    "name": "G",
-                    "type": "uint8"
                 }
             ]
         },
@@ -228,6 +202,10 @@
                 {
                     "name": "panel_set",
                     "type": "Tile[]"
+                },
+                {
+                    "name": "enemy_count",
+                    "type": "uint8"
                 }
             ]
         },
@@ -333,13 +311,6 @@
         {
             "name": "history",
             "type": "history",
-            "index_type": "i64",
-            "key_names": [],
-            "key_types": []
-        },
-        {
-            "name": "prizelimit",
-            "type": "prizelimit",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
