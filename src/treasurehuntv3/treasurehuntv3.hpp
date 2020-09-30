@@ -15,6 +15,7 @@ public:
     {
         uint8_t panel_idx;
         uint8_t isopen;
+        uint8_t iswin;
     };
 
 private:
@@ -56,7 +57,7 @@ private:
     struct [[eosio::table]] user
     {
         name username;
-        uint_t game_id;
+        uint64_t game_id;
         game game_data;
 
         auto primary_key() const
