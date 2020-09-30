@@ -59,6 +59,7 @@ private:
         uint16_t explore_count = EXPLORE_DEFAULT;
         bool set_sail = false;
         uint8_t status = INITIALIZED;
+        uint8_t enemy_count =0;
     };
 
     // Tickets Table
@@ -144,7 +145,7 @@ public:
     [[eosio::action]] void setdest(name username, uint8_t destination);
     [[eosio::action]] void setexplr(name username, uint16_t explore_count);
     [[eosio::action]] void init(name username);
-    [[eosio::action]] void setpanel(name username, vector<Tile> panel_set);
+    [[eosio::action]] void setpanel(name username, vector<Tile> panel_set,uint8_t enemy_count);
     [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
     [[eosio::action]] void renew(name username);
