@@ -42,7 +42,7 @@ private:
         MAP_2 = 10,
         MAP_3 = 50
     };
-
+    
     struct TilePrize
     {
         uint16_t key;
@@ -60,6 +60,8 @@ private:
         bool set_sail = false;
         uint8_t status = INITIALIZED;
         uint8_t enemy_count =0;
+        int64_t bet_amount;
+        
     };
 
     // Tickets Table
@@ -78,9 +80,11 @@ private:
     {
         name username;
         uint64_t game_id;
+        int64_t cash_balance;
         game game_data;
+        
         uint64_t total_win; // total win in points (1 ticket):(1 EOS)
-
+      
         auto primary_key() const
         {
             return username.value;
@@ -141,7 +145,7 @@ public:
                                                                         _history(receiver, receiver.value),
                                                                         _seeds(receiver, receiver.value) {}
     [[eosio::action]] void purchase(name username, uint64_t amount);
-    [[eosio::action]] void setsail(name username, bool ready);
+    [[eosio::action]] void setsail(name username, bool ready,int64_t bet_amount);
     [[eosio::action]] void setdest(name username, uint8_t destination);
     [[eosio::action]] void setexplr(name username, uint16_t explore_count);
     [[eosio::action]] void init(name username);
@@ -149,4 +153,5 @@ public:
     [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
     [[eosio::action]] void renew(name username);
+    [[eosio::action]] void gamestart(name username,vector<Tile> panel_set,uint8_t enemy_count);
 };

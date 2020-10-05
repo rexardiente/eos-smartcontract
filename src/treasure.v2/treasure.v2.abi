@@ -80,6 +80,28 @@
                 {
                     "name": "enemy_count",
                     "type": "uint8"
+                },
+                {
+                    "name": "bet_amount",
+                    "type": "int64"
+                }
+            ]
+        },
+        {
+            "name": "gamestart",
+            "base": "",
+            "fields": [
+                {
+                    "name": "username",
+                    "type": "name"
+                },
+                {
+                    "name": "panel_set",
+                    "type": "Tile[]"
+                },
+                {
+                    "name": "enemy_count",
+                    "type": "uint8"
                 }
             ]
         },
@@ -220,6 +242,10 @@
                 {
                     "name": "ready",
                     "type": "bool"
+                },
+                {
+                    "name": "bet_amount",
+                    "type": "int64"
                 }
             ]
         },
@@ -250,6 +276,10 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "cash_balance",
+                    "type": "int64"
+                },
+                {
                     "name": "game_data",
                     "type": "game"
                 },
@@ -264,6 +294,11 @@
         {
             "name": "end",
             "type": "end",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "gamestart",
+            "type": "gamestart",
             "ricardian_contract": ""
         },
         {
