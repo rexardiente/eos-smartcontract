@@ -56,8 +56,6 @@ private:
         vector<TilePrize> tile_prizes = {};
         uint8_t win_count = PRIZE_DEFAULT;
         uint8_t destination = MAP_DEFAULT;
-        uint16_t explore_count = EXPLORE_DEFAULT;
-        bool set_sail = false;
         uint8_t status = INITIALIZED;
         uint8_t enemy_count =0;
         int64_t bet_amount;
@@ -102,56 +100,25 @@ private:
         }
     };
 
-    struct [[eosio::table]] history
-    {
-        uint64_t game_id = 1; // default key of 1
-        name username;
-        game game_data;
-
-        auto primary_key() const
-        {
-            return game_id;
-        }
-
-        uint64_t secondary_indice() const
-        {
-            return username.value;
-        }
-    };
+    
 
     using users_table = eosio::multi_index<"user"_n, user>;
-    using tickets_table = eosio::multi_index<"ticket"_n, ticket>;
-    using history_table = eosio::multi_index<"history"_n, history, indexed_by<"byusername"_n, const_mem_fun<history, uint64_t, &history::secondary_indice>>>;
     using seeds_table = eosio::multi_index<"seed"_n, seed>;
 
     users_table _users;
-    tickets_table _tickets;
     seeds_table _seeds;
-    history_table _history;
-
+    
     int rng(const int &range);
     uint16_t iswinning(const vector<TilePrize> &tile_prizes, const uint8_t &win_count);
     uint64_t gen_gameid();
-    void addhistory(user user_data);
-    void ticket_update(name username, const bool &isdeduction, const uint64_t &amount);
-    int64_t ticket_balance(name username);
     void game_update(name username);
     uint64_t multiplier();
 
 public:
     treasurev2(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
                                                                         _users(receiver, receiver.value),
-                                                                        _tickets(receiver, receiver.value),
-                                                                        _history(receiver, receiver.value),
                                                                         _seeds(receiver, receiver.value) {}
-    [[eosio::action]] void purchase(name username, uint64_t amount);
-    [[eosio::action]] void setsail(name username, bool ready,int64_t bet_amount);
-    [[eosio::action]] void setdest(name username, uint8_t destination);
-    [[eosio::action]] void setexplr(name username, uint16_t explore_count);
     [[eosio::action]] void init(name username);
-    [[eosio::action]] void setpanel(name username, vector<Tile> panel_set,uint8_t enemy_count);
-    [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
-    [[eosio::action]] void renew(name username);
     [[eosio::action]] void gamestart(name username,vector<Tile> panel_set,uint8_t enemy_count,int64_t bet_amount);
 };

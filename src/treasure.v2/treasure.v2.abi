@@ -66,14 +66,6 @@
                     "type": "uint8"
                 },
                 {
-                    "name": "explore_count",
-                    "type": "uint16"
-                },
-                {
-                    "name": "set_sail",
-                    "type": "bool"
-                },
-                {
                     "name": "status",
                     "type": "uint8"
                 },
@@ -110,63 +102,7 @@
             ]
         },
         {
-            "name": "genprize",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "panel_idx",
-                    "type": "uint8"
-                }
-            ]
-        },
-        {
-            "name": "history",
-            "base": "",
-            "fields": [
-                {
-                    "name": "game_id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "game_data",
-                    "type": "game"
-                }
-            ]
-        },
-        {
             "name": "init",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                }
-            ]
-        },
-        {
-            "name": "purchase",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "amount",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "renew",
             "base": "",
             "fields": [
                 {
@@ -186,70 +122,6 @@
                 {
                     "name": "value",
                     "type": "uint32"
-                }
-            ]
-        },
-        {
-            "name": "setdest",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "destination",
-                    "type": "uint8"
-                }
-            ]
-        },
-        {
-            "name": "setexplr",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "explore_count",
-                    "type": "uint16"
-                }
-            ]
-        },
-        {
-            "name": "setpanel",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "panel_set",
-                    "type": "Tile[]"
-                },
-                {
-                    "name": "enemy_count",
-                    "type": "uint8"
-                }
-            ]
-        },
-        {
-            "name": "setsail",
-            "base": "",
-            "fields": [
-                {
-                    "name": "username",
-                    "type": "name"
-                },
-                {
-                    "name": "ready",
-                    "type": "bool"
-                },
-                {
-                    "name": "bet_amount",
-                    "type": "int64"
                 }
             ]
         },
@@ -306,54 +178,12 @@
             "ricardian_contract": ""
         },
         {
-            "name": "genprize",
-            "type": "genprize",
-            "ricardian_contract": ""
-        },
-        {
             "name": "init",
             "type": "init",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "purchase",
-            "type": "purchase",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "renew",
-            "type": "renew",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "setdest",
-            "type": "setdest",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "setexplr",
-            "type": "setexplr",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "setpanel",
-            "type": "setpanel",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "setsail",
-            "type": "setsail",
             "ricardian_contract": ""
         }
     ],
     "tables": [
-        {
-            "name": "history",
-            "type": "history",
-            "index_type": "i64",
-            "key_names": [],
-            "key_types": []
-        },
         {
             "name": "seed",
             "type": "seed",
