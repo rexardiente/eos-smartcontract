@@ -153,5 +153,5 @@ public:
     [[eosio::action]] void genprize(name username, uint8_t panel_idx);
     [[eosio::action]] void end(name username);
     [[eosio::action]] void renew(name username);
-    [[eosio::action]] void gamestart(name username,vector<Tile> panel_set,uint8_t enemy_count);
+    [[eosio::action]] void gamestart(name username,vector<Tile> panel_set,uint8_t enemy_count,int64_t bet_amount);
 };

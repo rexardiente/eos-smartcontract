@@ -102,6 +102,10 @@
                 {
                     "name": "enemy_count",
                     "type": "uint8"
+                },
+                {
+                    "name": "bet_amount",
+                    "type": "int64"
                 }
             ]
         },

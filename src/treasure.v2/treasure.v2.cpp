@@ -36,7 +36,7 @@ void treasurev2::setpanel(name username, vector<Tile> panel_set,uint8_t enemy_co
     // modified_user.tickets = ticket_balance(username); // create another table for tickets
   });
 }
-void treasurev2::gamestart(name username, vector<Tile> panel_set,uint8_t enemy_count)
+void treasurev2::gamestart(name username, vector<Tile> panel_set,uint8_t enemy_count,int64_t bet_amount)
 {
   require_auth(username);
   auto &user = _users.get(username.value, "Error: User doesn't exist");
@@ -47,6 +47,7 @@ void treasurev2::gamestart(name username, vector<Tile> panel_set,uint8_t enemy_c
     modified_user.game_data.panels =panel_set;
      modified_user.game_data.enemy_count = enemy_count;
     modified_user.total_win = 0;
+    modified_user.game_data.bet_amount=bet_amount;
   });
 }
 
