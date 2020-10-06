@@ -159,3 +159,49 @@ ACTION treasurehunt::end(name username)
     // Note: It will continue even if theres an error adding at history.
     // if (user.game_data.status == DONE || (user.game_data.status == ONGOING && user.game_data.explore_count != 0)){}
 }
+[[eosio::on_notify("eosio.token::transfer")]]
+ ACTION treasurehunt::deposit(name from, name to, eosio::asset qty, std::string memo) {
+     has_auth(from);
+      if (from == get_self() || to != get_self())
+      {
+        return;
+      }
+
+      check(now() < the_party, "You're way late");
+      check(qty.amount > 0, "When money fly");
+      check(qty.symbol == treasurehunt_symbol, "These are not the droids you are looking for.");
+
+      balance_table balance(get_self(), from.value);
+      auto from_it = balance.find(treasurehunt_symbol.raw());
+
+      if (from_it != balance.end())
+        balance.modify(from_it, get_self(), [&](auto &row) {
+          row.funds += qty;
+        });
+      else
+        balance.emplace(get_self(), [&](auto &row) {
+          row.funds = qty;
+        });
+        
+    }
+    [[eosio::action]]
+    ACTION treasurehunt::withdraw(name from)
+    {
+      require_auth(from);
+
+      check(now() > the_party, "Hold your money");
+
+      balance_table balance(get_self(), from.value);
+      auto from_it = balance.find(treasurehunt_symbol.raw());
+
+      check(from_it != balance.end(), "You're not allowed to party");
+
+      action{
+        permission_level{get_self(), "active"_n},
+        "eosio.token"_n,
+        "transfer"_n,
+        std::make_tuple(get_self(), from, from_it->funds, std::string("Party! Your hodl is free."))
+      }.send();
+
+      balance.erase(from_it);
+    }

@@ -1,5 +1,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include <eosio/print.hpp>
+#include <eosio/system.hpp>
 
 using namespace std;
 using namespace eosio;
@@ -8,6 +10,9 @@ class [[eosio::contract("treasurehunt")]] treasurehunt : public contract
 {
 
 private:
+    static const uint32_t the_party = 1645525342;
+    const symbol treasurehunt_symbol;
+
     enum Defaults : int64_t
     {
         EOS_DEFAULT = 0,
@@ -56,7 +61,16 @@ private:
             return username.value;
         };
     };
+struct [[eosio::table]] balance
+    {
+      eosio::asset funds;
+      uint64_t primary_key() const { return funds.symbol.raw(); }
+    };
 
+    
+    uint32_t now() {
+      return current_time_point().sec_since_epoch();
+    }
     struct [[eosio::table]] seed
     {
         uint64_t key = 1;   // default key '1'
@@ -70,6 +84,7 @@ private:
 
     using users_table = eosio::multi_index<"users"_n, user>;
     using seeds_table = eosio::multi_index<"seeds"_n, seed>;
+    using balance_table = eosio::multi_index<"balance"_n, balance>;
 
     users_table _users;
     seeds_table _seeds;
@@ -82,6 +97,7 @@ private:
 public:
     treasurehunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
                                                                           _users(receiver, receiver.value),
+                                                                          treasurehunt_symbol("SYS", 4),
                                                                           _seeds(receiver, receiver.value) {}
     static symbol eosio_symbol() { return symbol("EOS", 4); }
     static name eosio_contract() { return name("eosio.token"); }
@@ -98,4 +114,6 @@ public:
     ACTION gamestart(name username);
     ACTION opentile(name username, uint8_t index);
     ACTION end(name username);
+    ACTION deposit(name from, name to, eosio::asset qty, std::string memo);
+    ACTION withdraw(name from);
 };
