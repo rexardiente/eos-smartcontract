@@ -3,11 +3,9 @@
 
 // Wallet Destination = {0:1, 1:10, 2:50}
 // memo must have "Selected Wallet Destination: 0"
-void treasurehunt::ontransfernotification(name from,
-                                          name to,
-                                          asset quantity,
-                                          string memo)
+void treasurehunt::on_token_transfer(name from, name to, asset quantity, std::string memo)
 {
+    // do something on eosio.token contract's transfer action from any account to the account where the contract is deployed.
     if (from == _self)
     {
         // we're sending money, do nothing additional
@@ -20,7 +18,7 @@ void treasurehunt::ontransfernotification(name from,
 
     check(quantity.symbol == eosio_symbol(), "Invalid EOS Token");
 
-    // Your Code here...
+    print("Transfer Successfully");
 }
 
 uint64_t treasurehunt::generategameid()
