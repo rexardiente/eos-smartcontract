@@ -3,39 +3,25 @@
 
 // Wallet Destination = {0:1, 1:10, 2:50}
 // memo must have "Selected Wallet Destination: 0"
-// void treasurehunt::ondeposit(name from,
-//                         name to,
-//                         asset quantity,
-//                         string memo)
-// {
-//     if (from == _self)
-//     {
-//         // we're sending money, do nothing additional
-//         return;
-//     }
+void treasurehunt::ontransfernotification(name from,
+                                          name to,
+                                          asset quantity,
+                                          string memo)
+{
+    if (from == _self)
+    {
+        // we're sending money, do nothing additional
+        return;
+    }
 
-//     check(to == _self, "Not to our contract");
-//     check(quantity.symbol.is_valid(), "Invalid quantity");
-//     check(quantity.amount > 0, "Only positive quantity allowed");
+    check(to == _self, "Not to our contract");
+    check(quantity.symbol.is_valid(), "Invalid quantity");
+    check(quantity.amount > 0, "Only positive quantity allowed");
 
-//     check(quantity.symbol == eosio_symbol(), "Invalid EOS Token");
-//     eosio::print("Update current Ticket Balance.");
+    check(quantity.symbol == eosio_symbol(), "Invalid EOS Token");
 
-//     // Get Selected Destination
-//     int findCharPos = memo.find(":");
-//     string str_dest = memo.substr(findCharPos + 2); // get from "live" to the end
-//     uint64_t newdestination = stoi(str_dest);
-
-//     // Set 1EOS as default wallet
-//     if (findCharPos < 0 || newdestination > 2)
-//     {
-//         newdestination = 0;
-//     }
-
-//     uint64_t convertedquantity = quantity.amount / 10000;
-
-//     ticket_add(from, convertedquantity, newdestination);
-// }
+    // Your Code here...
+}
 
 uint64_t treasurehunt::generategameid()
 {

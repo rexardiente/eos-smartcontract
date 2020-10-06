@@ -1,4 +1,5 @@
 #include <eosio/eosio.hpp>
+#include <eosio/asset.hpp>
 
 using namespace std;
 using namespace eosio;
@@ -82,6 +83,12 @@ public:
     treasurehunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
                                                                           _users(receiver, receiver.value),
                                                                           _seeds(receiver, receiver.value) {}
+    static symbol eosio_symbol() { return symbol("EOS", 4); }
+    static name eosio_contract() { return name("eosio.token"); }
+    void ontransfernotification(eosio::name from,
+                               eosio::name to,
+                               eosio::asset quantity,
+                               std::string memo);
 
     ACTION initialize(name username);
     ACTION setpanel(name username, vector<uint8_t> panelset);
@@ -91,3 +98,29 @@ public:
     ACTION opentile(name username, uint8_t index);
     ACTION end(name username);
 };
+
+extern "C" void apply(uint64_t receiver, uint64_t code, uint64_t action)
+{
+#if DEBUG
+    eosio::print("receiver:");
+    eosio::print(receiver);
+    eosio::print("code:");
+    eosio::print(code);
+    eosio::print("action:");
+    eosio::print(action);
+    eosio::print("\n");
+#endif
+
+    if (code == treasurehunt::eosio_contract().value && action == "transfer"_n.value)
+    {
+        //proses transfer from user to our contract account
+        eosio::execute_action(eosio::name(receiver), eosio::name(code), &treasurehunt::ontransfernotification);
+    }
+    else if (code == receiver)
+    {
+        switch (action)
+        {
+            EOSIO_DISPATCH_HELPER(treasurehunt, (initialize)(destination)(setpanel)(setenemy)(gamestart)(opentile)(end))
+        }
+    }
+}
