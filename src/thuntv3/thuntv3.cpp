@@ -15,7 +15,7 @@ ACTION thuntv3::intgame(name username)
             new_users.game_id = gen_gameid(); // generate user game_id
         });
     }
-}  
+}
 
 ACTION thuntv3::setpanel(name username, vector<uint8_t> panelset)
 {
@@ -97,11 +97,11 @@ ACTION thuntv3::slcttile(name username, uint8_t index)
         game game_data = modified_user.game_data;
 
         // generate if treasure or pirate
-        uint8_t genres = rndm(16);
-        if (genres >= 0) // need changes...
+        uint8_t wintiles = (16 - game_data.enemy_count) * 100; // base on provided win chance calculations
+        uint8_t genres = rndm(100);
+        uint8_t winchance = wintiles / (PANEL_SIZE - game_data.win_count); // base on provided win chance calculations
+        if (genres < winchance)
         {
-            // int mltply = multiplier(game_data.win_count, game_data.unopentile, game_data.enemy_count);
-            // print(game_data.prize);
             double odds = (double)game_data.unopentile / ((double)game_data.unopentile - (double)game_data.enemy_count);
 
             float intprize = (game_data.prize * odds) * 0.98;
@@ -109,7 +109,7 @@ ACTION thuntv3::slcttile(name username, uint8_t index)
             game_data.panel_set.at(index).isopen = 1;
             game_data.unopentile--;
             game_data.win_count++; // count number of chest found
-            game_data.prize = roundoff(intprize);
+            game_data.prize = intprize;
         }
         else
         {
