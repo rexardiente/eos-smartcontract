@@ -98,8 +98,10 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         game game_data = modified_user.game_data;
 
         // generate if treasure or pirate
-        uint8_t genres = rng(16);
-        if (genres >= 0) // need changes...
+        uint8_t wintiles = (16 - game_data.enemy_count) * 100; // base on provided win chance calculations
+        uint8_t genres = rndm(100);
+        uint8_t winchance = wintiles / (PANEL_SIZE - game_data.win_count); // base on provided win chance calculations
+        if (genres < winchance)                                            // out of 100, if generated result is lesser than win chance, it means win
         {
             // int mltply = multiplier(game_data.win_count, game_data.unopentile, game_data.enemy_count);
             // print(game_data.prize);
