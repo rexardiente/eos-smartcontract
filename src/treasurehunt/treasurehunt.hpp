@@ -86,10 +86,10 @@ public:
     static symbol eosio_symbol() { return symbol("EOS", 4); }
     static name eosio_contract() { return name("eosio.token"); }
 
-    [[eosio::on_notify("eosio.token::transfer")]] void on_token_transfer(name from,
-                                                                         name to,
-                                                                         asset quantity,
-                                                                         std::string memo);
+    [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
+                                                                 name to,
+                                                                 asset quantity,
+                                                                 string memo);
 
     ACTION initialize(name username);
     ACTION setpanel(name username, vector<uint8_t> panelset);
