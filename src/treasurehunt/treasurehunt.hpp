@@ -55,6 +55,7 @@ private:
         name username;
         uint64_t game_id;
         game game_data;
+        eosio::asset balance_amt;
 
         auto primary_key() const
         {

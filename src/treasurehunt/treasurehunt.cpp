@@ -162,20 +162,20 @@ ACTION treasurehunt::end(name username)
 [[eosio::on_notify("eosio.token::transfer")]]
  ACTION treasurehunt::deposit(name from, name to, eosio::asset qty, std::string memo) {
      has_auth(from);
-      if (from == get_self() || to != get_self())
+      if (from == get_self())
       {
         return;
       }
 
-      check(now() < the_party, "You're way late");
-      check(qty.amount > 0, "When money fly");
-      check(qty.symbol == treasurehunt_symbol, "These are not the droids you are looking for.");
-
+      check(qty.symbol.is_valid(), "Invalid quantity");
+     
+      check(qty.amount > 0, "negative is not allowed");
+      check(qty.symbol == eosio_symbol(), "Invalid EOS Token");
       balance_table balance(get_self(), from.value);
       auto from_it = balance.find(treasurehunt_symbol.raw());
 
       if (from_it != balance.end())
-        balance.modify(from_it, get_self(), [&](auto &row) {
+        balance.modify(from_it,get_self(), [&](auto &row) {
           row.funds += qty;
         });
       else
@@ -189,7 +189,7 @@ ACTION treasurehunt::end(name username)
     {
       require_auth(from);
 
-      check(now() > the_party, "Hold your money");
+      //check(now() > the_party, "Hold your money");
 
       balance_table balance(get_self(), from.value);
       auto from_it = balance.find(treasurehunt_symbol.raw());
