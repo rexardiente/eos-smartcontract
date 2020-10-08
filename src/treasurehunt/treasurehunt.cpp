@@ -1,5 +1,7 @@
 #include "gameplay.cpp"
 
+#define DELAYSETTLE 1 //1 second, adjust to prevent result attack
+
 // After the game ended, remove the user on the current users list...
 ACTION treasurehunt::initialize(name username)
 {
@@ -155,53 +157,16 @@ ACTION treasurehunt::end(name username)
     require_auth(username);
     auto &user = _users.get(username.value, "Error: User doesn't exist");
     _users.erase(user);
-    // check(user.game_data.status == ONGOING, "Game does not exist.");
-    // Note: It will continue even if theres an error adding at history.
-    // if (user.game_data.status == DONE || (user.game_data.status == ONGOING && user.game_data.explore_count != 0)){}
 }
-[[eosio::on_notify("eosio.token::transfer")]]
- ACTION treasurehunt::deposit(name from, name to, eosio::asset qty, std::string memo) {
-     has_auth(from);
-      if (from == get_self())
-      {
-        return;
-      }
 
-      check(qty.symbol.is_valid(), "Invalid quantity");
-     
-      check(qty.amount > 0, "negative is not allowed");
-      check(qty.symbol == eosio_symbol(), "Invalid EOS Token");
-      balance_table balance(get_self(), from.value);
-      auto from_it = balance.find(treasurehunt_symbol.raw());
+ACTION treasurehunt::withdraw(name to)
+{
+    require_auth(_self);
 
-      if (from_it != balance.end())
-        balance.modify(from_it,get_self(), [&](auto &row) {
-          row.funds += qty;
-        });
-      else
-        balance.emplace(get_self(), [&](auto &row) {
-          row.funds = qty;
-        });
-        
-    }
-    [[eosio::action]]
-    ACTION treasurehunt::withdraw(name from)
-    {
-      require_auth(from);
-
-      //check(now() > the_party, "Hold your money");
-
-      balance_table balance(get_self(), from.value);
-      auto from_it = balance.find(treasurehunt_symbol.raw());
-
-      check(from_it != balance.end(), "You're not allowed to party");
-
-      action{
+    action(
         permission_level{get_self(), "active"_n},
-        "eosio.token"_n,
+        eosio_token,
         "transfer"_n,
-        std::make_tuple(get_self(), from, from_it->funds, std::string("Party! Your hodl is free."))
-      }.send();
-
-      balance.erase(from_it);
-    }
+        std::make_tuple(get_self(), to, eosio::asset(5, treasurehunt_symbol), std::string("Transfer from TH -> ", to.value)))
+        .send();
+}

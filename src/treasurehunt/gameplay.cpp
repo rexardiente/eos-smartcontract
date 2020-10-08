@@ -10,15 +10,12 @@ void treasurehunt::ondeposit(name from,
 {
     if (from == _self)
     {
-        // we're sending money, do nothing additional
-        return;
+        return; // we're sending money, do nothing additional
     }
-
     check(to == _self, "Not to our contract");
     check(quantity.symbol.is_valid(), "Invalid quantity");
     check(quantity.amount > 0, "Only positive quantity allowed");
-
-    check(quantity.symbol == eosio_symbol(), "Invalid EOS Token");
+    check(quantity.symbol == treasurehunt_symbol, "Invalid EOS Token");
 
     print("Wallet Transfer Successful");
 }
