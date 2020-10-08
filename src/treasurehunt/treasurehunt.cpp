@@ -3,21 +3,6 @@
 #define DELAYSETTLE 1 //1 second, adjust to prevent result attack
 
 // After the game ended, remove the user on the current users list...
-ACTION treasurehunt::initialize(name username)
-{
-    require_auth(username);
-    // Create a record in the table if the player doesn't exist in our app yet
-    auto itr = _users.find(username.value);
-    check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
-    // missing check balances
-    if (itr == _users.end())
-    {
-        _users.emplace(username, [&](auto &new_users) {
-            new_users.username = username;
-            new_users.game_id = generategameid(); // generate user game_id
-        });
-    }
-}
 
 ACTION treasurehunt::setpanel(name username, vector<uint8_t> panelset)
 {
@@ -138,6 +123,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
                 }
             }
 
+            // open all panels and show treasures and enemies
             for (int i = 0; i < PANEL_SIZE; i++)
             {
                 if (game_data.panel_set.at(i).isopen == 0 && game_data.panel_set.at(i).iswin == 0)
@@ -159,14 +145,14 @@ ACTION treasurehunt::end(name username)
     _users.erase(user);
 }
 
-ACTION treasurehunt::withdraw(name to)
+ACTION treasurehunt::withdraw(name username)
 {
-    require_auth(_self);
+    require_auth(username);
+    auto &user = _users.get(username.value, "Error: User doesn't exist");
+    check(user.game_data.status == ONGOING, "Error: Game either not started or finished.");
+    check(user.game_data.win_count > 0, "Error: You have not found any treasure yet.");
+    int prize = user.game_data.prize;
 
-    action{
-        permission_level{get_self(), "active"_n},
-        eosio_token,
-        "transfer"_n,
-        std::make_tuple(get_self(), to, asset(5, treasurehunt_symbol), std::string("Party! Your hodl is free."))}
-        .send();
+    sendwithdraw(username, prize); // send asset to user
+    _users.erase(user);
 }

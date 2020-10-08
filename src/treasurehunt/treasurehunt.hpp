@@ -79,6 +79,8 @@ private:
     seeds_table _seeds;
 
     uint64_t generategameid();
+    void sendwithdraw(name to, int prize);
+        void initialize(name username);
     int rng(const int &range);
     float roundoff(float value);
 
@@ -92,12 +94,12 @@ public:
                                                                  name to,
                                                                  asset quantity,
                                                                  string memo);
-    ACTION initialize(name username);
+
     ACTION setpanel(name username, vector<uint8_t> panelset);
     ACTION destination(name username, uint8_t destination);
     ACTION setenemy(name username, uint8_t enemy_count);
     ACTION gamestart(name username);
     ACTION opentile(name username, uint8_t index);
     ACTION end(name username);
-    ACTION withdraw(name to);
+    ACTION withdraw(name username);
 };
