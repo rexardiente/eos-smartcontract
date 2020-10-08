@@ -78,7 +78,7 @@ ACTION treasurehunt::gamestart(name username)
     auto itr = _users.find(username.value);
     check(itr != _users.end(), "Error: Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Error: Has an existing game, can't start a new game.");
-    check(user.game_data.destination != MAP_DEFAULT, "Error: Numbers of Enemies Not Set.");
+    check(user.game_data.destination != MAP_DEFAULT, "Error: Destination Not Set.");
     check(user.game_data.enemy_count != 0, "Error: Numbers of Enemies Not Set.");
 
     _users.modify(itr, username, [&](auto &modified_user) {
@@ -158,14 +158,6 @@ ACTION treasurehunt::end(name username)
     auto &user = _users.get(username.value, "Error: User doesn't exist");
     _users.erase(user);
 }
-<<<<<<< Updated upstream
-
-ACTION treasurehunt::withdraw(name to)
-{
-    require_auth(_self);
-
-    action(
-=======
 [[eosio::on_notify("eosio.token::transfer")]] ACTION treasurehunt::deposit(name from, name to, eosio::asset qty, std::string memo)
 {
     has_auth(from);
@@ -201,8 +193,8 @@ ACTION treasurehunt::withdraw(name to)
 
     check(from_it != balance.end(), "You're not allowed to party");
 
-    action{
->>>>>>> Stashed changes
+    action
+    {
         permission_level{get_self(), "active"_n},
         eosio_token,
         "transfer"_n,
@@ -210,9 +202,10 @@ ACTION treasurehunt::withdraw(name to)
         std::make_tuple(get_self(), to, eosio::asset(5, treasurehunt_symbol), std::string("Transfer from TH -> ", to.value)))
         .send();
 =======
-        std::make_tuple(get_self(), from, from_it->funds, std::string("Party! Your hodl is free."))}
-        .send();
+            std::make_tuple(get_self(), from, from_it->funds, std::string("Party! Your hodl is free."))
+    }
+    .send();
 
     balance.erase(from_it);
 >>>>>>> Stashed changes
-}
+    }
