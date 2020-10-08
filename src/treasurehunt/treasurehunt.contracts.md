@@ -40,3 +40,9 @@ Stub for setpanel action's ricardian contract parameters
 Input parameters:
 
 - `user` (vector<uint8_t> to include in the output)
+
+<h1 class="contract">withdraw</h1>
+Stub for withdraw action's ricardian contract parameters
+Input parameters:
+
+- `user` (vector<uint8_t> to include in the output)
