@@ -17,35 +17,18 @@ void treasurehunt::ondeposit(name from,
     check(quantity.amount > 0, "Only positive quantity allowed");
     check(quantity.symbol == treasurehunt_symbol, "Invalid EOS Token");
 
-    print("Wallet Transfer Successful");
-    initialize(from);
+    // eosio::print("Wallet Transfer Successful, ", _self);
+    send_init(from);
 }
 
-void treasurehunt::initialize(name username)
+void treasurehunt::send_init(name username)
 {
     require_auth(username);
-    // Create a record in the table if the player doesn't exist in our app yet
-    auto itr = _users.find(username.value);
-    check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
-    // missing check balances
-    if (itr == _users.end())
-    {
-        _users.emplace(username, [&](auto &new_users) {
-            new_users.username = username;
-            new_users.game_id = generategameid(); // generate user game_id
-        });
-    }
-}
-
-void treasurehunt::sendwithdraw(name to, int prize)
-{
-    require_auth(_self);
-
-    action{
-        permission_level{get_self(), "active"_n},
-        eosio_token,
-        "transfer"_n,
-        std::make_tuple(get_self(), to, asset(prize, treasurehunt_symbol), std::string("Congratulations!!!"))}
+    action(
+        permission_level{_self, "active"_n},
+        _self,
+        "initialize"_n,
+        std::make_tuple(username))
         .send();
 }
 

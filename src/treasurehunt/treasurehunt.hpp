@@ -44,7 +44,7 @@ private:
         uint8_t destination = MAP_DEFAULT;
         uint8_t status = INITIALIZED;
         uint8_t enemy_count = ENEMY_DEFAULT;
-        uint64_t prize = PRIZE_DEFAULT;
+        uint64_t prize = PRIZE_DEFAULT; // convert to asset type
         bool isready = false;
     };
 
@@ -78,10 +78,9 @@ private:
     seeds_table _seeds;
 
     uint64_t generategameid();
-    void sendwithdraw(name to, int prize);
-    void initialize(name username);
     int rng(const int &range);
     float roundoff(float value);
+    void send_init(name username);
 
 public:
     using contract::contract;
@@ -96,6 +95,7 @@ public:
                                                                  name to,
                                                                  asset quantity,
                                                                  string memo);
+    ACTION initialize(name username);
     ACTION setpanel(name username, vector<uint8_t> panelset);
     ACTION destination(name username, uint8_t destination);
     ACTION setenemy(name username, uint8_t enemy_count);
@@ -103,4 +103,5 @@ public:
     ACTION opentile(name username, uint8_t index);
     ACTION end(name username);
     ACTION withdraw(name username);
+    ACTION settlepay(name to, int prize);
 };
