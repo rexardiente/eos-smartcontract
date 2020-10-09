@@ -86,7 +86,23 @@ GAME_START()
 SELECT_TILE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action treasurehunt slcttile '["user1", 14]' -p user1@active
+    cleos push action treasurehunt opentile '["user1", 14]' -p user1@active
+}
+
+TRANSFER()
+{
+    cleos push action eosio.token transfer '[ "user1", "treasurehunt", "10.0000 EOS", "m" ]' -p user1@active
+}
+
+WITHDRAW()
+{
+    cleos push action treasurehunt withdraw '["user1"]' -p user1@active
+}
+
+GET_CURRENCY()
+{
+    cleos get currency balance eosio.token treasurehunt EOS
+    cleos get currency balance eosio.token user1 EOS
 }
 # RENEW_MAP()
 # {
@@ -96,7 +112,7 @@ SELECT_TILE()
 
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
-COMPILE_CONTRACT
+# COMPILE_CONTRACT
 # DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # SET_GAME_PANEL
@@ -104,5 +120,8 @@ COMPILE_CONTRACT
 # SET_ENEMY
 # GAME_START
 # SELECT_TILE
-# SHOW_EOSIO_CONTRACT_TABLE
 # REMOVE_EXISTING_GAME
+# TRANSFER
+# WITHDRAW
+# GET_CURRENCY
+# SHOW_EOSIO_CONTRACT_TABLE
