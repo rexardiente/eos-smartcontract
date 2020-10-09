@@ -5,9 +5,8 @@
 using namespace std;
 using namespace eosio;
 
-class [[eosio::contract("treasurehunt")]] treasurehunt : public contract
+class [[eosio::contract("treasurehunt")]] treasurehunt : public eosio::contract
 {
-
 private:
     const symbol treasurehunt_symbol;
     const name eosio_token;
@@ -80,21 +79,23 @@ private:
 
     uint64_t generategameid();
     void sendwithdraw(name to, int prize);
-        void initialize(name username);
+    void initialize(name username);
     int rng(const int &range);
     float roundoff(float value);
 
 public:
+    using contract::contract;
+
     treasurehunt(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
-                                                                          treasurehunt_symbol(MAIN_TOKEN, 4),
                                                                           eosio_token(MAIN_CONTRACT),
+                                                                          treasurehunt_symbol(MAIN_TOKEN, PRECISION),
                                                                           _users(receiver, receiver.value),
                                                                           _seeds(receiver, receiver.value) {}
+
     [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
                                                                  name to,
                                                                  asset quantity,
                                                                  string memo);
-
     ACTION setpanel(name username, vector<uint8_t> panelset);
     ACTION destination(name username, uint8_t destination);
     ACTION setenemy(name username, uint8_t enemy_count);
