@@ -18,17 +18,17 @@ void treasurehunt::ondeposit(name from,
     check(quantity.symbol == treasurehunt_symbol, "Invalid EOS Token");
 
     // eosio::print("Wallet Transfer Successful, ", _self);
-    send_init(from);
+    gameready(from, quantity);
 }
 
-void treasurehunt::send_init(name username)
+void treasurehunt::gameready(name username, asset quantity)
 {
     require_auth(username);
     action(
         permission_level{_self, "active"_n},
         _self,
-        "initialize"_n,
-        std::make_tuple(username))
+        "gamestart"_n,
+        std::make_tuple(username, quantity))
         .send();
 }
 

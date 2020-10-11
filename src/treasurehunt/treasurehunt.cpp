@@ -2,7 +2,7 @@
 
 ACTION treasurehunt::initialize(name username)
 {
-    require_auth(_self);
+    require_auth(username);
     // Create a record in the table if the player doesn't exist in our app yet
     auto itr = _users.find(username.value);
     check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
@@ -15,6 +15,17 @@ ACTION treasurehunt::initialize(name username)
         });
     }
 }
+
+// ACTION treasurehunt::gameready(name username, asset quantity)
+// {
+//     require_auth(_self);
+//     auto itr = _users.find(username.value);
+
+//     auto &user = _users.get(username.value, "Error: User doesn't exist");
+//     _users.modify(user, username, [&](auto &modified_user) {
+//         modified_user.game_data.sta = 1;
+//     });
+// }
 
 ACTION treasurehunt::setpanel(name username, vector<uint8_t> panelset)
 {
@@ -50,7 +61,6 @@ ACTION treasurehunt::destination(name username, uint8_t destination)
 
     _users.modify(user, username, [&](auto &modified_user) {
         modified_user.game_data.destination = destination;
-        modified_user.game_data.prize = destination;
     });
 }
 
@@ -68,18 +78,21 @@ ACTION treasurehunt::setenemy(name username, uint8_t enemy_count)
 }
 
 // Note: Game Start will be triggered using Notification..
-ACTION treasurehunt::gamestart(name username)
+ACTION treasurehunt::gamestart(name username, asset quantity)
 {
-    require_auth(username);
+    require_auth(_self);
+
     auto &user = _users.get(username.value, "Error: User doesn't exist");
     auto itr = _users.find(username.value);
+
     check(itr != _users.end(), "Error: Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Error: Has an existing game, can't start a new game.");
+    check(itr->game_data.destination == (quantity.amount / 10000), "Error: Deposited amount does not match the selected destination.");
     check(user.game_data.destination != MAP_DEFAULT, "Error: Destination Not Set.");
     check(user.game_data.enemy_count != 0, "Error: Numbers of Enemies Not Set.");
-
+    // print(quantity.amount);
     _users.modify(itr, username, [&](auto &modified_user) {
-        modified_user.game_data.isready = true;
+        modified_user.game_data.prize.amount = quantity.amount;
         modified_user.game_data.status = ONGOING;
     });
 }
@@ -89,7 +102,6 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
     require_auth(username);
     auto user = _users.find(username.value);
     // check if game is started, game status and if tile is not open
-    // check(user->game_data.isready == true, "Error: Not Yet Ready To Start Game.");
     check(user->game_data.win_count < (16 - user->game_data.enemy_count), "Error: You already found all treasures.");
     check(user->game_data.status == ONGOING, "Error: Either game has ended or not yet configured.");
     check(user->game_data.panel_set.at(index).isopen == UNOPENED, "Error: Tile already opened!");
@@ -97,21 +109,21 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         game game_data = modified_user.game_data;
 
         // generate if treasure or pirate
-        uint8_t wintiles = (16 - game_data.enemy_count) * 100; // base on provided win chance calculations
+        float wintiles = 16 - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
         uint8_t genres = rng(100);
-        uint8_t winchance = wintiles / (PANEL_SIZE - game_data.win_count); // base on provided win chance calculations
-        if (genres < winchance)                                            // out of 100, if generated result is lesser than win chance, it means win
+        float winchance = wintiles / (16 - game_data.win_count); // base on provided win chance calculations
+        if (genres < (winchance * 100))                          // out of 100, if generated result is lesser than win chance, it means win
         {
             // int mltply = multiplier(game_data.win_count, game_data.unopentile, game_data.enemy_count);
             // print(game_data.prize);
             double odds = (double)game_data.unopentile / ((double)game_data.unopentile - (double)game_data.enemy_count);
 
-            float intprize = (game_data.prize * odds) * 0.98;
+            float intprize = (game_data.prize.amount * odds) * 0.98;
             game_data.panel_set.at(index).iswin = 1;
             game_data.panel_set.at(index).isopen = 1;
             game_data.unopentile--;
             game_data.win_count++; // count number of chest found
-            game_data.prize = roundoff(intprize);
+            game_data.prize.amount = roundoff(intprize);
         }
         else
         {
@@ -119,7 +131,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
             game_data.unopentile--;
             game_data.enemy_count--;
             game_data.panel_set.at(index).isopen = 1;
-            game_data.prize = PRIZE_DEFAULT;
+            game_data.prize.amount = 0;
 
             // remaining prizes
             int random_result;
@@ -159,10 +171,10 @@ ACTION treasurehunt::end(name username)
 
 ACTION treasurehunt::withdraw(name username)
 {
-    require_auth(username);
+    // require_auth(username);
     auto &user = _users.get(username.value, "Error: User doesn't exist");
-    check(user.game_data.status == ONGOING, "Error: Game either not started or finished.");
-    check(user.game_data.win_count > 0, "Error: You have not found any treasure yet.");
+    // check(user.game_data.status == ONGOING, "Error: Game either not started or finished.");
+    // check(user.game_data.win_count > 0, "Error: You have not found any treasure yet.");
 
     action(
         permission_level{_self, "active"_n},
@@ -174,16 +186,16 @@ ACTION treasurehunt::withdraw(name username)
     // _users.erase(user);
 }
 
-ACTION treasurehunt::settlepay(name to, int prize)
+ACTION treasurehunt::settlepay(name to, asset prize)
 {
     require_auth(_self);
-    auto &user = _users.get(to.value, "Error: User doesn't exist");
-    check(user.game_data.prize == prize, "Error: This prize doesn't belong to any user.");
+    // auto &user = _users.get(to.value, "Error: User doesn't exist");
+    // check(user.game_data.prize.amount > 0, "Error: This prize doesn't belong to any user.");
 
     action{
         permission_level{_self, "active"_n},
         eosio_token,
         "transfer"_n,
-        std::make_tuple(_self, to, asset(prize, treasurehunt_symbol), std::string("Congratulations!!!"))}
+        std::make_tuple(_self, to, prize, std::string("Congratulations!!!"))}
         .send();
 }

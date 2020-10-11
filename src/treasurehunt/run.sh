@@ -7,6 +7,9 @@ PROJECT_NAME="Treasure Hunt"
 # Global ENV
 EXECUTE="> "
 
+# Cleos Wallet Password
+# PW5KgmdCJdBjcgfBazCCKvYB8Lbzgrs6AvMhXamKe7FvwQQWYxt1P
+
 UNLOCK_WALLET()
 {
     cleos wallet unlock
@@ -47,7 +50,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 INITIALIZE_GAME()
 {
     echo "${EXECUTE} Creating new game for \"user1\"..."
-    cleos push action treasurehunt intgame '["user1"]' -p user1@active
+    cleos push action treasurehunt initialize '["user1"]' -p user1@active
 }
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
@@ -66,7 +69,7 @@ SET_GAME_PANEL()
 SET_DESTINATION()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action treasurehunt destination '["user1", 1]' -p user1@active
+    cleos push action treasurehunt destination '["user1", 10]' -p user1@active
 }
 
 # Set Game Destination
@@ -80,13 +83,13 @@ SET_ENEMY()
 GAME_START()
 {
     echo "${EXECUTE} Trigger Set Sail Function..."
-    cleos push action treasurehunt gamestart '["user1", true]' -p user1@active
+    cleos push action treasurehunt gamestart '["user1", ]' -p user1@active
 }
 
 SELECT_TILE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action treasurehunt opentile '["user1", 14]' -p user1@active
+    cleos push action treasurehunt opentile '["user1", 1]' -p user1@active
 }
 
 TRANSFER()
@@ -104,6 +107,9 @@ GET_CURRENCY()
     cleos get currency balance eosio.token treasurehunt EOS
     cleos get currency balance eosio.token user1 EOS
 }
+
+# cleos set account permission treasurehunt active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "treasurehunt","permission":"eosio.code"},"weight":1}]}'
+
 # RENEW_MAP()
 # {
 #     echo "${EXECUTE} Trigger Renew Map Function..."
@@ -118,10 +124,9 @@ GET_CURRENCY()
 # SET_GAME_PANEL
 # SET_DESTINATION
 # SET_ENEMY
-# GAME_START
-# SELECT_TILE
-# REMOVE_EXISTING_GAME
 # TRANSFER
+# SELECT_TILE
 # WITHDRAW
-# GET_CURRENCY
+GET_CURRENCY
+# REMOVE_EXISTING_GAME
 # SHOW_EOSIO_CONTRACT_TABLE
