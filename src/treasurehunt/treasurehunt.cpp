@@ -5,13 +5,18 @@ ACTION treasurehunt::initialize(name username)
     require_auth(username);
     // Create a record in the table if the player doesn't exist in our app yet
     auto itr = _users.find(username.value);
+
+    users_table userstbl(_self, username.value);
+    uint64_t gameid = userstbl.available_primary_key();
+
     check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
 
     if (itr == _users.end())
     {
         _users.emplace(_self, [&](auto &new_users) {
             new_users.username = username;
-            new_users.game_id = generategameid(); // generate user game_id
+            new_users.game_id = gameid;
+            // new_users.game_id = generategameid(); // generate user game_id
         });
     }
 }
@@ -146,7 +151,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
             game_data.status = 2;
         }
 
-        std::string feedback = std::to_string(username.value) + " opened tile" + std::to_string(index) + ": " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
+        std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         eosio::print(feedback + "\n");
 
         modified_user.game_data = game_data;
@@ -168,7 +173,7 @@ ACTION treasurehunt::withdraw(name username)
     check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
     check(user->game_data.win_count > 0, "You have not found any treasure yet.");
 
-    std::string feedback = "Withdraw: " + std::to_string(username.value) + "recieved " + std::to_string(user->game_data.prize.amount);
+    std::string feedback = "Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(user->game_data.prize.amount);
 
     action{
         permission_level{_self, "active"_n},
