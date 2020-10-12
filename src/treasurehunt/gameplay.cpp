@@ -83,6 +83,10 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
 
     int random_result;
     int remaining_prizes = game_data.unopentile - game_data.enemy_count;
+    if (game_data.status == DONE)
+    {
+        remaining_prizes++;
+    }
     while (remaining_prizes > 0)
     {
         random_result = rng(15);
@@ -101,6 +105,6 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
             game_data.panel_set.at(i).isopen = 1;
         }
     }
-
+    game_data.unopentile = 0;
     return game_data;
 }

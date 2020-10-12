@@ -103,10 +103,11 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         game game_data = modified_user.game_data;
 
         // generate if treasure or pirate
-        float wintiles = 16 - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
+        game_data.panel_set.at(index).isopen = 1;
         uint8_t genres = rng(100);
-        float winchance = wintiles / (16 - game_data.win_count); // base on provided win chance calculations
-        if (genres < (winchance * 100))                          // out of 100, if generated result is lesser than win chance, it means win
+        float wintiles = 16 - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
+        float winchance = wintiles / (16 - game_data.win_count);           // base on provided win chance calculations
+        if (genres < (winchance * 100))                                    // out of 100, if generated result is lesser than win chance, it means win
         {
             double odds = (double)game_data.unopentile / ((double)game_data.unopentile - (double)game_data.enemy_count);
             float intprize = (game_data.prize.amount * odds) * 0.98;
@@ -118,13 +119,10 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         else
         {
             // game_data.tilelist.push(index);
-            game_data.enemy_count--;
-            game_data.prize.amount = 0;
-            game_data.unopentile--;
-            game_data.panel_set.at(index).isopen = 1;
-            game_data = showremainingtile(game_data);
             game_data.status = DONE;
-            game_data.enemy_count++;
+            game_data.unopentile--;
+            game_data = showremainingtile(game_data);
+            game_data.prize.amount = 0;
         }
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
