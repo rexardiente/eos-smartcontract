@@ -112,44 +112,21 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
 
             float intprize = (game_data.prize.amount * odds) * 0.98;
             game_data.panel_set.at(index).iswin = 1;
-            game_data.panel_set.at(index).isopen = 1;
-            game_data.unopentile--;
             game_data.win_count++; // count number of chest found
             game_data.prize.amount = roundoff(intprize);
         }
         else
         {
             // game_data.tilelist.push(index);
-            game_data.unopentile--;
             game_data.enemy_count--;
-            game_data.panel_set.at(index).isopen = 1;
             game_data.prize.amount = 0;
 
-            // remaining prizes
-            int random_result;
-            int remaining_prizes = game_data.unopentile - game_data.enemy_count;
-            while (remaining_prizes > 0)
-            {
-                random_result = rng(15);
-                if (game_data.panel_set.at(random_result).isopen == 0)
-                {
-                    game_data.panel_set.at(random_result).isopen = 1;
-                    game_data.panel_set.at(random_result).iswin = 1;
-                    remaining_prizes--;
-                }
-            }
-
-            // open all panels and show treasures and enemies
-            for (int i = 0; i < PANEL_SIZE; i++)
-            {
-                if (game_data.panel_set.at(i).isopen == 0 && game_data.panel_set.at(i).iswin == 0)
-                {
-                    game_data.panel_set.at(i).isopen = 1;
-                    // if (game_data.panel_set.at(i).iswin == 0)
-                }
-            }
-            game_data.status = 2;
+            game_data = showremainingtile(game_data);
+            game_data.status = DONE;
         }
+
+        game_data.unopentile--;
+        game_data.panel_set.at(index).isopen = 1;
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         eosio::print(feedback + "\n");
@@ -173,7 +150,7 @@ ACTION treasurehunt::withdraw(name username)
     check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
     check(user->game_data.win_count > 0, "You have not found any treasure yet.");
 
-    std::string feedback = "Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(user->game_data.prize.amount);
+    std::string feedback = "TH Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(user->game_data.prize.amount);
 
     action{
         permission_level{_self, "active"_n},
@@ -188,7 +165,10 @@ ACTION treasurehunt::settledpay(name username, asset prize, string memo)
     require_auth(_self);
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+
     _users.modify(user, username, [&](auto &modified_user) {
+        game game_data = modified_user.game_data;
+        modified_user.game_data = showremainingtile(game_data);
         modified_user.game_data.status = DONE;
     });
 

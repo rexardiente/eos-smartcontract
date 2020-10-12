@@ -76,11 +76,11 @@ private:
     users_table _users;
     seeds_table _seeds;
 
-    uint64_t generategameid();
     int rng(const int &range);
     float roundoff(float value);
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
+    game showremainingtile(game gamedata);
 
 public:
     using contract::contract;

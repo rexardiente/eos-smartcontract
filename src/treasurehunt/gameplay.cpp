@@ -8,8 +8,13 @@ void treasurehunt::ondeposit(name from,
 {
     if (from == _self)
     {
-        onsettledpay(to, quantity, memo);
-        return; // we're sending money, do nothing additional
+        if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
+        {
+            onsettledpay(to, quantity, memo);
+        }
+
+        // we're sending money, do nothing additional
+        return;
     }
     check(to == _self, "Not to our contract");
     check(quantity.symbol.is_valid(), "Invalid quantity");
@@ -41,16 +46,6 @@ void treasurehunt::gameready(name username, asset quantity)
         .send();
 }
 
-uint64_t treasurehunt::generategameid()
-{
-    // get current time
-    uint64_t current_time = current_time_point().elapsed._count;
-    // get current size of the table
-    int size = std::distance(_users.begin(), _users.end());
-
-    return (size + rng(1000)) + current_time;
-}
-
 int treasurehunt::rng(const int &range)
 {
     // Find the existing seed
@@ -80,4 +75,32 @@ float treasurehunt::roundoff(float value)
 {
     float result = (int)(value * 100 + .5);
     return (float)result / 100;
+}
+
+treasurehunt::game treasurehunt::showremainingtile(game gamedata)
+{
+    game game_data = gamedata;
+
+    int random_result;
+    int remaining_prizes = game_data.unopentile - game_data.enemy_count;
+    while (remaining_prizes > 0)
+    {
+        random_result = rng(15);
+        if (game_data.panel_set.at(random_result).isopen == 0)
+        {
+            game_data.panel_set.at(random_result).isopen = 1;
+            game_data.panel_set.at(random_result).iswin = 1;
+            remaining_prizes--;
+        }
+    }
+    // open all panels and show treasures and enemies
+    for (int i = 0; i < PANEL_SIZE; i++)
+    {
+        if (game_data.panel_set.at(i).isopen == 0 && game_data.panel_set.at(i).iswin == 0)
+        {
+            game_data.panel_set.at(i).isopen = 1;
+        }
+    }
+
+    return game_data;
 }
