@@ -109,24 +109,23 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         if (genres < (winchance * 100))                          // out of 100, if generated result is lesser than win chance, it means win
         {
             double odds = (double)game_data.unopentile / ((double)game_data.unopentile - (double)game_data.enemy_count);
-
             float intprize = (game_data.prize.amount * odds) * 0.98;
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found
             game_data.prize.amount = roundoff(intprize);
+            game_data.unopentile--;
         }
         else
         {
             // game_data.tilelist.push(index);
             game_data.enemy_count--;
             game_data.prize.amount = 0;
-
+            game_data.unopentile--;
+            game_data.panel_set.at(index).isopen = 1;
             game_data = showremainingtile(game_data);
             game_data.status = DONE;
+            game_data.enemy_count++;
         }
-
-        game_data.unopentile--;
-        game_data.panel_set.at(index).isopen = 1;
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         eosio::print(feedback + "\n");
