@@ -1,8 +1,6 @@
 #include "treasurehunt.hpp"
 #include <eosio/transaction.hpp>
 
-// Wallet Destination = {0:1, 1:10, 2:20}
-// memo must have "Selected Wallet Destination: 0"
 void treasurehunt::ondeposit(name from,
                              name to,
                              asset quantity,
@@ -10,6 +8,7 @@ void treasurehunt::ondeposit(name from,
 {
     if (from == _self)
     {
+        onsettledpay(to, quantity, memo);
         return; // we're sending money, do nothing additional
     }
     check(to == _self, "Not to our contract");
@@ -17,8 +16,18 @@ void treasurehunt::ondeposit(name from,
     check(quantity.amount > 0, "Only positive quantity allowed");
     check(quantity.symbol == treasurehunt_symbol, "Invalid EOS Token");
 
-    // eosio::print("Wallet Transfer Successful, ", _self);
     gameready(from, quantity);
+}
+
+void treasurehunt::onsettledpay(name username, asset quantity, string memo)
+{
+    require_auth(_self);
+    action(
+        permission_level{_self, "active"_n},
+        _self,
+        "settledpay"_n,
+        std::make_tuple(username, quantity, memo))
+        .send();
 }
 
 void treasurehunt::gameready(name username, asset quantity)

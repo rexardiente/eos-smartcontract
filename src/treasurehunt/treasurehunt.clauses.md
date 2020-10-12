@@ -33,7 +33,7 @@ Input parameters:
 Stub for setenemy action's ricardian contract parameters
 Input parameters:
 
-- `user` (uint8_t to include in the output)
+- `user` (string to include in the output)
 
 <h1 class="clause">setpanel</h1>
 Stub for setpanel action's ricardian contract parameters
@@ -45,4 +45,12 @@ Input parameters:
 Stub for withdraw action's ricardian contract parameters
 Input parameters:
 
-- `user` (vector<uint8_t> to include in the output)
+- `user` (string to include in the output)
+
+<h1 class="clause">settledpay</h1>
+Stub for settledpay action's ricardian contract parameters
+Input parameters:
+
+- `user` (string to include in the output)
+- `prize` (uint64_t to include in the output)
+- `memo` (string to include in the output)

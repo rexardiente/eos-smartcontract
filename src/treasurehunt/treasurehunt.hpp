@@ -80,6 +80,7 @@ private:
     int rng(const int &range);
     float roundoff(float value);
     void gameready(name username, asset quantity);
+    void onsettledpay(name to, asset quantity, string memo);
 
 public:
     using contract::contract;
@@ -95,7 +96,6 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    // ACTION gamestart(name username, asset quantity);
     ACTION setpanel(name username, vector<uint8_t> panelset);
     ACTION destination(name username, uint8_t destination);
     ACTION setenemy(name username, uint8_t enemy_count);
@@ -103,5 +103,5 @@ public:
     ACTION opentile(name username, uint8_t index);
     ACTION end(name username);
     ACTION withdraw(name username);
-    ACTION settlepay(name to, asset prize);
+    ACTION settledpay(name to, asset prize, string memo);
 };
