@@ -79,9 +79,9 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
-    float prizegen(game game_data);
-    float nextprizegen(game gamedata);
-    asset maxprizegen(game gamedata);
+    float generateprize(game game_data);
+    float nextprize(game gamedata);
+    asset maxprize(game gamedata);
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
     game showremainingtile(game gamedata);

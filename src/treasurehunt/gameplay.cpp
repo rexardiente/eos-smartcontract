@@ -103,7 +103,7 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
     return game_data;
 }
 
-float treasurehunt::prizegen(game game_data)
+float treasurehunt::generateprize(game game_data)
 {
     double rem_panel = (double)game_data.unopentile - (double)game_data.enemy_count;
     double odds = (double)game_data.unopentile / (double)rem_panel;
@@ -111,7 +111,7 @@ float treasurehunt::prizegen(game game_data)
     return current_prize_amount;
 }
 
-float treasurehunt::nextprizegen(game gamedata)
+float treasurehunt::nextprize(game gamedata)
 {
     double rem_panel = (double)gamedata.unopentile - (double)gamedata.enemy_count;
     double odds = ((double)gamedata.unopentile) / (double)rem_panel;
@@ -119,7 +119,7 @@ float treasurehunt::nextprizegen(game gamedata)
     return current_prize_amount;
 }
 
-asset treasurehunt::maxprizegen(game gamedata)
+asset treasurehunt::maxprize(game gamedata)
 {
     asset game_prize = gamedata.prize;
     float rem_panel = gamedata.panel_set.size() - gamedata.enemy_count;

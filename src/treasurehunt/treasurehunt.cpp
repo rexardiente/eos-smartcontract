@@ -88,8 +88,8 @@ ACTION treasurehunt::gamestart(name username, asset quantity)
     _users.modify(itr, username, [&](auto &modified_user) {
         modified_user.game_data.prize.amount = quantity.amount;
         modified_user.game_data.status = ONGOING;
-        modified_user.game_data.nextprize.amount = nextprizegen(modified_user.game_data);
-        modified_user.game_data.maxprize = maxprizegen(modified_user.game_data);
+        modified_user.game_data.nextprize.amount = nextprize(modified_user.game_data);
+        modified_user.game_data.maxprize = maxprize(modified_user.game_data);
     });
 }
 
@@ -113,7 +113,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         {
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found
-            game_data.prize.amount = prizegen(game_data);
+            game_data.prize.amount = generateprize(game_data);
             game_data.unopentile--;
         }
         else
@@ -127,7 +127,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
 
         if (game_data.status == 1)
         {
-            game_data.nextprize.amount = nextprizegen(game_data);
+            game_data.nextprize.amount = nextprize(game_data);
         }
         else
         {
