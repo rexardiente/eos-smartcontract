@@ -105,16 +105,16 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
 
 float treasurehunt::prizegen(game game_data)
 {
-    double rem = (double)game_data.unopentile - (double)game_data.enemy_count;
-    double odds = (double)game_data.unopentile / (double)rem;
+    double rem_panel = (double)game_data.unopentile - (double)game_data.enemy_count;
+    double odds = (double)game_data.unopentile / (double)rem_panel;
     float current_prize_amount = (game_data.prize.amount * odds) * 0.98;
     return current_prize_amount;
 }
 
 float treasurehunt::nextprizegen(game gamedata)
 {
-    double rem = (double)gamedata.unopentile - (double)gamedata.enemy_count;
-    double odds = ((double)gamedata.unopentile) / (double)rem;
+    double rem_panel = (double)gamedata.unopentile - (double)gamedata.enemy_count;
+    double odds = ((double)gamedata.unopentile) / (double)rem_panel;
     float current_prize_amount = (gamedata.prize.amount * odds) * 0.98;
     return current_prize_amount;
 }
@@ -122,10 +122,10 @@ float treasurehunt::nextprizegen(game gamedata)
 asset treasurehunt::maxprizegen(game gamedata)
 {
     asset game_prize = gamedata.prize;
-    float rem = gamedata.panel_set.size() - gamedata.enemy_count;
-    for (int i = 0; i < rem; i++)
+    float rem_panel = gamedata.panel_set.size() - gamedata.enemy_count;
+    for (int i = 0; i < rem_panel; i++)
     {
-        float odds = (float)(gamedata.panel_set.size() - i) / (float)(rem - i);
+        float odds = (float)(gamedata.panel_set.size() - i) / (float)(rem_panel - i);
         float current_prize_amount = (game_prize.amount * odds) * 0.98;
 
         game_prize.amount = current_prize_amount;
