@@ -47,6 +47,7 @@ private:
         asset prize = DEFAULT_ASSET;
         asset nextprize = DEFAULT_ASSET;
         asset maxprize = DEFAULT_ASSET;
+        double odds = EOS_DEFAULT;
     };
 
     struct [[eosio::table]] user
@@ -79,12 +80,13 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
-    float generateprize(game game_data);
-    float nextprize(game gamedata);
+    double calculateodds(game gamedata);
+    asset generateprize(game game_data);
     asset maxprize(game gamedata);
+    game showremainingtile(game gamedata);
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    game showremainingtile(game gamedata);
+    void gameupdate(name username);
 
 public:
     using contract::contract;

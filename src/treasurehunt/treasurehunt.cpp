@@ -86,11 +86,10 @@ ACTION treasurehunt::gamestart(name username, asset quantity)
     // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
 
     _users.modify(itr, username, [&](auto &modified_user) {
-        modified_user.game_data.prize.amount = quantity.amount;
-        modified_user.game_data.status = ONGOING;
-        modified_user.game_data.nextprize.amount = nextprize(modified_user.game_data);
-        modified_user.game_data.maxprize = maxprize(modified_user.game_data);
+        modified_user.game_data.prize = quantity;
     });
+
+    gameupdate(username);
 }
 
 ACTION treasurehunt::opentile(name username, uint8_t index)
@@ -101,6 +100,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
     check(user->game_data.win_count < (16 - user->game_data.enemy_count), "You already found all treasures.");
     check(user->game_data.status == ONGOING, "Either game has ended or not yet configured.");
     check(user->game_data.panel_set.at(index).isopen == UNOPENED, "Tile already opened!");
+
     _users.modify(user, username, [&](auto &modified_user) {
         game game_data = modified_user.game_data;
         // generate if treasure or pirate
@@ -113,39 +113,31 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         {
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found
-            game_data.prize.amount = generateprize(game_data);
+            game_data.prize = generateprize(game_data);
             game_data.unopentile--;
         }
         else
         {
-            // game_data.tilelist.push(index);
             game_data.status = DONE;
             game_data.unopentile--;
             game_data = showremainingtile(game_data);
             game_data.prize.amount = 0;
         }
 
-        if (game_data.status == 1)
-        {
-            game_data.nextprize.amount = nextprize(game_data);
-        }
-        else
-        {
-            game_data.nextprize.amount = 0;
-        }
+        modified_user.game_data = game_data;
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         eosio::print(feedback + "\n");
-
-        modified_user.game_data = game_data;
     });
+
+    gameupdate(username);
 }
 
 ACTION treasurehunt::end(name username)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
-    // check(user.game_data.status == DONE, "End your existing game first.");
+    check(user.game_data.status == DONE, "End your existing game first.");
     _users.erase(user);
 }
 
@@ -177,6 +169,4 @@ ACTION treasurehunt::settledpay(name username, asset prize, string memo)
         modified_user.game_data = showremainingtile(game_data);
         modified_user.game_data.status = DONE;
     });
-
-    // _users.erase(user);
 }

@@ -103,20 +103,19 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
     return game_data;
 }
 
-float treasurehunt::generateprize(game game_data)
+asset treasurehunt::generateprize(game gamedata)
 {
-    double rem_panel = (double)game_data.unopentile - (double)game_data.enemy_count;
-    double odds = (double)game_data.unopentile / (double)rem_panel;
-    float current_prize_amount = (game_data.prize.amount * odds) * 0.98;
-    return current_prize_amount;
+    asset game_prize = gamedata.prize;
+    double rem_panel = (double)gamedata.unopentile - (double)gamedata.enemy_count;
+    double odds = calculateodds(gamedata);
+    game_prize.amount = (game_prize.amount * odds) * 0.98;
+    return game_prize;
 }
 
-float treasurehunt::nextprize(game gamedata)
+double treasurehunt::calculateodds(game gamedata)
 {
     double rem_panel = (double)gamedata.unopentile - (double)gamedata.enemy_count;
-    double odds = ((double)gamedata.unopentile) / (double)rem_panel;
-    float current_prize_amount = (gamedata.prize.amount * odds) * 0.98;
-    return current_prize_amount;
+    return ((double)gamedata.unopentile) / (double)rem_panel;
 }
 
 asset treasurehunt::maxprize(game gamedata)
@@ -132,4 +131,30 @@ asset treasurehunt::maxprize(game gamedata)
     }
 
     return game_prize;
+}
+
+void treasurehunt::gameupdate(name username)
+{
+    auto &user = _users.get(username.value, "User Doesn't exist");
+
+    _users.modify(user, username, [&](auto &modified_user) {
+        game game_data = modified_user.game_data;
+
+        if (game_data.status == INITIALIZED)
+        {
+            game_data.maxprize = maxprize(game_data);
+            game_data.status = ONGOING;
+        }
+
+        if (game_data.status == ONGOING)
+        {
+            game_data.nextprize = generateprize(game_data);
+            game_data.odds = calculateodds(game_data);
+        }
+        else
+        {
+            game_data.nextprize = DEFAULT_ASSET;
+        }
+        modified_user.game_data = game_data;
+    });
 }
