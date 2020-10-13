@@ -108,3 +108,30 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
     game_data.unopentile = 0;
     return game_data;
 }
+
+float treasurehunt::prizegen(game game_data)
+{
+    double odds = (double)game_data.unopentile / ((double)game_data.unopentile - (double)game_data.enemy_count);
+    float intprize = (game_data.prize.amount * odds) * 0.98;
+    return roundoff(intprize);
+    game_data.unopentile--;
+}
+
+float treasurehunt::nextprizegen(game gamedata)
+{
+    double odds = ((double)gamedata.unopentile) / ((double)gamedata.unopentile - (double)gamedata.enemy_count);
+    float intprize = (gamedata.prize.amount * odds) * 0.98;
+    return roundoff(intprize);
+}
+float treasurehunt::maxprizegen(game gamedata)
+{
+
+    for (int i = 0; i < (gamedata.unopentile - gamedata.enemy_count); i++)
+    {
+        double odds = ((double)gamedata.unopentile) / ((double)gamedata.unopentile - (double)gamedata.enemy_count);
+        float intprize = (gamedata.prize.amount * odds) * 0.98;
+        gamedata.prize.amount += roundoff(intprize);
+        gamedata.unopentile--;
+    }
+    return gamedata.prize.amount;
+}

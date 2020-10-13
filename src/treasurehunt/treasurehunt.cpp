@@ -88,6 +88,8 @@ ACTION treasurehunt::gamestart(name username, asset quantity)
     _users.modify(itr, username, [&](auto &modified_user) {
         modified_user.game_data.prize.amount = quantity.amount;
         modified_user.game_data.status = ONGOING;
+        modified_user.game_data.nextprize.amount = nextprizegen(modified_user.game_data);
+        modified_user.game_data.maxprize.amount = maxprizegen(modified_user.game_data);
     });
 }
 
@@ -101,19 +103,17 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
     check(user->game_data.panel_set.at(index).isopen == UNOPENED, "Tile already opened!");
     _users.modify(user, username, [&](auto &modified_user) {
         game game_data = modified_user.game_data;
-
         // generate if treasure or pirate
+
         game_data.panel_set.at(index).isopen = 1;
         uint8_t genres = rng(100);
         float wintiles = 16 - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
         float winchance = wintiles / (16 - game_data.win_count);           // base on provided win chance calculations
         if (genres < (winchance * 100))                                    // out of 100, if generated result is lesser than win chance, it means win
         {
-            double odds = (double)game_data.unopentile / ((double)game_data.unopentile - (double)game_data.enemy_count);
-            float intprize = (game_data.prize.amount * odds) * 0.98;
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found
-            game_data.prize.amount = roundoff(intprize);
+            game_data.prize.amount = prizegen(game_data);
             game_data.unopentile--;
         }
         else
@@ -127,6 +127,15 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         eosio::print(feedback + "\n");
+        game gamedata = game_data;
+        if (gamedata.status == 1)
+        {
+            game_data.nextprize.amount = nextprizegen(gamedata);
+        }
+        else
+        {
+            game_data.nextprize.amount = 0;
+        }
 
         modified_user.game_data = game_data;
     });
