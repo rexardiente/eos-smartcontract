@@ -123,15 +123,18 @@ float treasurehunt::nextprizegen(game gamedata)
     float intprize = (gamedata.prize.amount * odds) * 0.98;
     return roundoff(intprize);
 }
-float treasurehunt::maxprizegen(game gamedata)
-{
 
-    for (int i = 0; i < (gamedata.unopentile - gamedata.enemy_count); i++)
+asset treasurehunt::maxprizegen(game gamedata)
+{
+    asset game_prize = gamedata.prize;
+
+    for (int i = 0; i < gamedata.panel_set.size() - gamedata.enemy_count; i++)
     {
-        double odds = ((double)gamedata.unopentile) / ((double)gamedata.unopentile - (double)gamedata.enemy_count);
-        float intprize = (gamedata.prize.amount * odds) * 0.98;
-        gamedata.prize.amount += roundoff(intprize);
-        gamedata.unopentile--;
+        float odds = (float)(gamedata.panel_set.size() - i) / (float)((gamedata.panel_set.size() - gamedata.enemy_count) - i);
+        float current_win_amount = (game_prize.amount * odds) * 0.98;
+
+        game_prize.amount = current_win_amount;
     }
-    return gamedata.prize.amount;
+
+    return game_prize;
 }
