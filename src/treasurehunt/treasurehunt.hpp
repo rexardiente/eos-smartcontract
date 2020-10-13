@@ -44,9 +44,9 @@ private:
         uint8_t destination = MAP_DEFAULT;
         uint8_t status = INITIALIZED;
         uint8_t enemy_count = ENEMY_DEFAULT;
-        asset prize = asset(0, symbol(MAIN_TOKEN, PRECISION));
-        asset nextprize = asset(0, symbol(MAIN_TOKEN, PRECISION));
-        asset maxprize = asset(0, symbol(MAIN_TOKEN, PRECISION));
+        asset prize = DEFAULT_ASSET;
+        asset nextprize = DEFAULT_ASSET;
+        asset maxprize = DEFAULT_ASSET;
     };
 
     struct [[eosio::table]] user
@@ -82,7 +82,7 @@ private:
     float roundoff(float value);
     float prizegen(game game_data);
     float nextprizegen(game gamedata);
-    float maxprizegen(game gamedata);
+    asset maxprizegen(game gamedata);
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
     game showremainingtile(game gamedata);
