@@ -71,12 +71,6 @@ int treasurehunt::rng(const int &range)
     return random_result;
 }
 
-float treasurehunt::roundoff(float value)
-{
-    float result = (int)(value * 100 + .5);
-    return (float)result / 100;
-}
-
 treasurehunt::game treasurehunt::showremainingtile(game gamedata)
 {
     game game_data = gamedata;
@@ -114,7 +108,7 @@ float treasurehunt::prizegen(game game_data)
     double rem = (double)game_data.unopentile - (double)game_data.enemy_count;
     double odds = (double)game_data.unopentile / (double)rem;
     float current_prize_amount = (game_data.prize.amount * odds) * 0.98;
-    return roundoff(current_prize_amount);
+    return current_prize_amount;
 }
 
 float treasurehunt::nextprizegen(game gamedata)
@@ -122,7 +116,7 @@ float treasurehunt::nextprizegen(game gamedata)
     double rem = (double)gamedata.unopentile - (double)gamedata.enemy_count;
     double odds = ((double)gamedata.unopentile) / (double)rem;
     float current_prize_amount = (gamedata.prize.amount * odds) * 0.98;
-    return roundoff(current_prize_amount);
+    return current_prize_amount;
 }
 
 asset treasurehunt::maxprizegen(game gamedata)

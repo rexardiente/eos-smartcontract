@@ -109,7 +109,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         uint8_t genres = rng(100);
         float wintiles = 16 - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
         float winchance = wintiles / (16 - game_data.win_count);           // base on provided win chance calculations
-        if (genres < (winchance * 100))                                    // out of 100, if generated result is lesser than win chance, it means win
+        if (genres < 100)                                                  // out of 100, if generated result is lesser than win chance, it means win
         {
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found

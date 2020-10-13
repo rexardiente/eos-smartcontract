@@ -79,7 +79,6 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
-    float roundoff(float value);
     float prizegen(game game_data);
     float nextprizegen(game gamedata);
     asset maxprizegen(game gamedata);
