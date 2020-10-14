@@ -51,7 +51,7 @@ ACTION treasurehunt::destination(name username, uint8_t destination)
     auto &user = _users.get(username.value, "User doesn't exist");
     // check if the user has existing game, else cancel start new game
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(user.game_data.destination == 0, "Game Destination Already Set.");
+    // check(user.game_data.destination == 0, "Game Destination Already Set.");
 
     _users.modify(user, username, [&](auto &modified_user) {
         modified_user.game_data.destination = destination;
@@ -62,9 +62,9 @@ ACTION treasurehunt::setenemy(name username, uint8_t enemy_count)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
-    // check if the user has existing game, else cancel start new game
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(user.game_data.enemy_count == 0, "Numbers of Enemies Already Set.");
+    // check if the user has existing game, else cancel start new game
+    check(user.game_data.destination > 0, "Set destination first.");
 
     _users.modify(user, username, [&](auto &modified_user) {
         modified_user.game_data.enemy_count = enemy_count;
