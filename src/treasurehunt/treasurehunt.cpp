@@ -123,7 +123,11 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
             game_data = showremainingtile(game_data);
             game_data.prize.amount = 0;
         }
-
+        if (game_data.win_count == (game_data.panel_set.size() - game_data.enemy_count)
+        {
+            game_data.status = DONE;
+        }
+        
         modified_user.game_data = game_data;
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
