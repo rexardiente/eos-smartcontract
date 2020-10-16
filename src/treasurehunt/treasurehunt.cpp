@@ -63,8 +63,8 @@ ACTION treasurehunt::setenemy(name username, uint8_t enemy_count)
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    // check if the user has existing game, else cancel start new game
     check(user.game_data.destination > 0, "Set destination first.");
+    check(user.game_data.enemy_count < 16, "Can't have enemy greater than or equal to 16");
 
     _users.modify(user, username, [&](auto &modified_user) {
         modified_user.game_data.enemy_count = enemy_count;
