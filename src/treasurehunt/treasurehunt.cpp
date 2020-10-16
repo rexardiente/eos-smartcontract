@@ -123,11 +123,11 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
             game_data = showremainingtile(game_data);
             game_data.prize.amount = 0;
         }
-        if (game_data.win_count == (game_data.panel_set.size() - game_data.enemy_count)
+        if (game_data.win_count == (game_data.panel_set.size() - game_data.enemy_count))
         {
             game_data.status = DONE;
         }
-        
+
         modified_user.game_data = game_data;
 
         std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
@@ -141,7 +141,7 @@ ACTION treasurehunt::end(name username)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == DONE, "End your existing game first.");
+    // check(user.game_data.status == DONE, "End your existing game first.");
     _users.erase(user);
 }
 
