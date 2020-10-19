@@ -120,9 +120,6 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         {
             game_data.status = DONE;
             game_data.unopentile--;
-            game_data.prize = DEFAULT_ASSET;
-            showremainingtile(modified_user);
-            modified_user.game_data.unopentile = EOS_DEFAULT; // reset unopentile to empty
         }
 
         if (game_data.win_count == (PANEL_SIZE - game_data.enemy_count))
