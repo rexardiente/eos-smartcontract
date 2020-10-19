@@ -1,5 +1,6 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include <eosio/transaction.hpp>
 #include "config.hpp"
 
 using namespace std;
@@ -24,9 +25,6 @@ private:
         DONE = 2,
         UNOPENED = 0, // for checking
         MAP_DEFAULT = 0,
-        MAP_1 = 1,
-        MAP_2 = 10,
-        MAP_3 = 20
     };
 
     struct tile

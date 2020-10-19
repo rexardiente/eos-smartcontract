@@ -1,5 +1,4 @@
 #include "treasurehunt.hpp"
-#include <eosio/transaction.hpp>
 
 void treasurehunt::ondeposit(name from,
                              name to,
@@ -139,12 +138,6 @@ void treasurehunt::gameupdate(name username)
 
     _users.modify(user, username, [&](auto &modified_user) {
         game game_data = modified_user.game_data;
-
-        if (game_data.status == INITIALIZED)
-        {
-            game_data.maxprize = maxprize(game_data);
-            game_data.status = ONGOING;
-        }
 
         if (game_data.status == ONGOING)
         {

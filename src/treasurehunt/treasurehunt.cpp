@@ -64,7 +64,7 @@ ACTION treasurehunt::setenemy(name username, uint8_t enemy_count)
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     check(user.game_data.destination > 0, "Set destination first.");
-    check(user.game_data.enemy_count < 16, "Can't have enemy greater than or equal to 16");
+    check(user.game_data.enemy_count < PANEL_SIZE, "Can't have enemy greater than or equal to 16");
 
     _users.modify(user, username, [&](auto &modified_user) {
         modified_user.game_data.enemy_count = enemy_count;
@@ -97,7 +97,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
     require_auth(username);
     auto user = _users.find(username.value);
     // check if game is started, game status and if tile is not open
-    check(user->game_data.win_count < (16 - user->game_data.enemy_count), "You already found all treasures.");
+    check(user->game_data.win_count < (PANEL_SIZE - user->game_data.enemy_count), "You already found all treasures.");
     check(user->game_data.status == ONGOING, "Either game has ended or not yet configured.");
     check(user->game_data.panel_set.at(index).isopen == UNOPENED, "Tile already opened!");
 
@@ -106,10 +106,10 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         // generate if treasure or pirate
 
         game_data.panel_set.at(index).isopen = 1;
-        uint8_t genres = rng(100);
-        float wintiles = 16 - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
-        float winchance = wintiles / (16 - game_data.win_count);           // base on provided win chance calculations
-        if (genres < 100)                                                  // out of 100, if generated result is lesser than win chance, it means win
+        uint8_t randomresult = rng(100);
+        float wintiles = PANEL_SIZE - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
+        float winchance = wintiles / (PANEL_SIZE - game_data.win_count);           // base on provided win chance calculations
+        if (randomresult < winchance)                                              // out of 100, if generated result is lesser than win chance, it means win
         {
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found
