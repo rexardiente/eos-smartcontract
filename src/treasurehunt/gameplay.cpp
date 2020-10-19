@@ -139,6 +139,12 @@ void treasurehunt::gameupdate(name username)
     _users.modify(user, username, [&](auto &modified_user) {
         game game_data = modified_user.game_data;
 
+        if (game_data.status == INITIALIZED)
+        {
+            game_data.maxprize = maxprize(game_data);
+            game_data.status = ONGOING;
+        }
+
         if (game_data.status == ONGOING)
         {
             game_data.nextprize = generateprize(game_data);
