@@ -81,10 +81,10 @@ private:
     double calculateodds(game gamedata);
     asset generateprize(game game_data);
     asset maxprize(game gamedata);
-    game showremainingtile(game gamedata);
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    void gameupdate(name username);
+    void showremainingtile(user & user_info);
+    void gameupdate(user & user_info);
 
 public:
     using contract::contract;

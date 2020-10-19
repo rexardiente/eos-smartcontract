@@ -70,19 +70,18 @@ int treasurehunt::rng(const int &range)
     return random_result;
 }
 
-treasurehunt::game treasurehunt::showremainingtile(game gamedata)
+void treasurehunt::showremainingtile(user &user_info)
 {
-    game game_data = gamedata;
+    check(user_info.game_data.status == DONE, "Game hasn't ended yet.");
+    game &game_data = user_info.game_data;
 
-    int random_result;
-    int remaining_prizes = game_data.unopentile - game_data.enemy_count;
-    if (game_data.status == DONE)
-    {
-        remaining_prizes++;
-    }
+    int remaining_prizes = (game_data.unopentile - game_data.enemy_count) + 1;
+
+    //  need optimization because if RNG number result is always OPENED status,
+    // then it will take time to finish
     while (remaining_prizes > 0)
     {
-        random_result = rng(15);
+        int random_result = rng(15);
         if (game_data.panel_set.at(random_result).isopen == 0)
         {
             game_data.panel_set.at(random_result).isopen = 1;
@@ -90,6 +89,7 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
             remaining_prizes--;
         }
     }
+
     // open all panels and show treasures and enemies
     for (int i = 0; i < PANEL_SIZE; i++)
     {
@@ -98,8 +98,6 @@ treasurehunt::game treasurehunt::showremainingtile(game gamedata)
             game_data.panel_set.at(i).isopen = 1;
         }
     }
-    game_data.unopentile = 0;
-    return game_data;
 }
 
 asset treasurehunt::generateprize(game gamedata)
@@ -132,28 +130,23 @@ asset treasurehunt::maxprize(game gamedata)
     return game_prize;
 }
 
-void treasurehunt::gameupdate(name username)
+void treasurehunt::gameupdate(user &user_info)
 {
-    auto &user = _users.get(username.value, "User Doesn't exist");
+    game &game_data = user_info.game_data;
 
-    _users.modify(user, username, [&](auto &modified_user) {
-        game game_data = modified_user.game_data;
+    if (game_data.status == INITIALIZED)
+    {
+        game_data.maxprize = maxprize(game_data);
+        game_data.status = ONGOING;
+    }
 
-        if (game_data.status == INITIALIZED)
-        {
-            game_data.maxprize = maxprize(game_data);
-            game_data.status = ONGOING;
-        }
-
-        if (game_data.status == ONGOING)
-        {
-            game_data.nextprize = generateprize(game_data);
-            game_data.odds = calculateodds(game_data);
-        }
-        else
-        {
-            game_data.nextprize = DEFAULT_ASSET;
-        }
-        modified_user.game_data = game_data;
-    });
+    if (game_data.status == ONGOING)
+    {
+        game_data.nextprize = generateprize(game_data);
+        game_data.odds = calculateodds(game_data);
+    }
+    else
+    {
+        game_data.nextprize = DEFAULT_ASSET;
+    }
 }

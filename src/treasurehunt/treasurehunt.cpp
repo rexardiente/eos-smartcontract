@@ -87,54 +87,53 @@ ACTION treasurehunt::gamestart(name username, asset quantity)
 
     _users.modify(itr, username, [&](auto &modified_user) {
         modified_user.game_data.prize = quantity;
+        gameupdate(modified_user);
     });
-
-    gameupdate(username);
 }
 
 ACTION treasurehunt::opentile(name username, uint8_t index)
 {
     require_auth(username);
     auto user = _users.find(username.value);
+
     // check if game is started, game status and if tile is not open
     check(user->game_data.win_count < (PANEL_SIZE - user->game_data.enemy_count), "You already found all treasures.");
     check(user->game_data.status == ONGOING, "Either game has ended or not yet configured.");
     check(user->game_data.panel_set.at(index).isopen == UNOPENED, "Tile already opened!");
 
     _users.modify(user, username, [&](auto &modified_user) {
-        game game_data = modified_user.game_data;
-        // generate if treasure or pirate
+        game &game_data = modified_user.game_data;
 
         game_data.panel_set.at(index).isopen = 1;
-        uint8_t randomresult = rng(100);
-        float wintiles = PANEL_SIZE - game_data.enemy_count - game_data.win_count; // base on provided win chance calculations
-        float winchance = wintiles / (PANEL_SIZE - game_data.win_count);           // base on provided win chance calculations
-        if (randomresult < winchance)                                              // out of 100, if generated result is lesser than win chance, it means win
+        float available = PANEL_SIZE - game_data.enemy_count - game_data.win_count;
+        float chance = available / (PANEL_SIZE - game_data.win_count) * 100;
+
+        // out of 100, if generated result is lesser than win chance, it means win
+        if (rng(100) < chance)
         {
+            game_data.prize = generateprize(game_data);
             game_data.panel_set.at(index).iswin = 1;
             game_data.win_count++; // count number of chest found
-            game_data.prize = generateprize(game_data);
             game_data.unopentile--;
         }
         else
         {
             game_data.status = DONE;
             game_data.unopentile--;
-            game_data = showremainingtile(game_data);
-            game_data.prize.amount = 0;
+            game_data.prize = DEFAULT_ASSET;
+            showremainingtile(modified_user);
+            modified_user.game_data.unopentile = EOS_DEFAULT; // reset unopentile to empty
         }
-        if (game_data.win_count == (game_data.panel_set.size() - game_data.enemy_count))
+
+        if (game_data.win_count == (PANEL_SIZE - game_data.enemy_count))
         {
             game_data.status = DONE;
         }
 
-        modified_user.game_data = game_data;
-
-        std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
-        eosio::print(feedback + "\n");
+        gameupdate(modified_user);
+        // std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
+        // eosio::print(feedback + "\n");
     });
-
-    gameupdate(username);
 }
 
 ACTION treasurehunt::end(name username)
@@ -169,8 +168,8 @@ ACTION treasurehunt::settledpay(name username, asset prize, string memo)
     check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
 
     _users.modify(user, username, [&](auto &modified_user) {
-        game game_data = modified_user.game_data;
-        modified_user.game_data = showremainingtile(game_data);
         modified_user.game_data.status = DONE;
+        modified_user.game_data.unopentile = EOS_DEFAULT;
+        showremainingtile(modified_user);
     });
 }
