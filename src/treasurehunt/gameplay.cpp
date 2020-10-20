@@ -70,14 +70,14 @@ int treasurehunt::rng(const int &range)
     return random_result;
 }
 
-void treasurehunt::showremainingtile(user &user_info)
+void treasurehunt::showremainingtile(game &game_data)
 {
-    check(user_info.game_data.status == DONE, "Game hasn't ended yet.");
-    game &game_data = user_info.game_data;
+    check(game_data.status == DONE, "Game hasn't ended yet.");
+    // game &game_data = user_info.game_data;
 
-    int available_tile = (game_data.unopentile - game_data.enemy_count) + 1;
+    int available_tile = game_data.unopentile - game_data.enemy_count;
 
-    //  need optimization because if RNG number result is always OPENED status,
+    // need optimization because if RNG result is always OPENED status,
     // then it will take time to finish
     while (available_tile > 0)
     {
@@ -130,9 +130,8 @@ asset treasurehunt::maxprize(game gamedata)
     return game_prize;
 }
 
-void treasurehunt::gameupdate(user &user_info)
+void treasurehunt::gameupdate(game &game_data)
 {
-    game &game_data = user_info.game_data;
 
     if (game_data.status == INITIALIZED)
     {
@@ -147,7 +146,7 @@ void treasurehunt::gameupdate(user &user_info)
     }
     else
     {
-        showremainingtile(user_info);
+        showremainingtile(game_data);
         game_data.prize = DEFAULT_ASSET;
         game_data.nextprize = DEFAULT_ASSET;
         game_data.unopentile = EOS_DEFAULT; // reset unopentile to empty

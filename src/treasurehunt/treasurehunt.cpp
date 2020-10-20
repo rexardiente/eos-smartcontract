@@ -86,8 +86,9 @@ ACTION treasurehunt::gamestart(name username, asset quantity)
     // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
 
     _users.modify(itr, username, [&](auto &modified_user) {
-        modified_user.game_data.prize = quantity;
-        gameupdate(modified_user);
+        game &game_data = modified_user.game_data;
+        game_data.prize = quantity;
+        gameupdate(game_data);
     });
 }
 
@@ -119,7 +120,6 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         else
         {
             game_data.status = DONE;
-            game_data.unopentile--;
         }
 
         if (game_data.win_count == (PANEL_SIZE - game_data.enemy_count))
@@ -127,7 +127,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
             game_data.status = DONE;
         }
 
-        gameupdate(modified_user);
+        gameupdate(game_data);
         // std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         // eosio::print(feedback + "\n");
     });
@@ -165,8 +165,10 @@ ACTION treasurehunt::settledpay(name username, asset prize, string memo)
     check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
 
     _users.modify(user, username, [&](auto &modified_user) {
-        modified_user.game_data.status = DONE;
-        modified_user.game_data.unopentile = EOS_DEFAULT;
-        showremainingtile(modified_user);
+        game &game_data = modified_user.game_data;
+        game_data.status = DONE;
+        gameupdate(game_data);
+        // showremainingtile(modified_user.game_data);
+        // modified_user.game_data.unopentile = EOS_DEFAULT;
     });
 }

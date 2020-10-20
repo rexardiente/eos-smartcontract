@@ -83,8 +83,8 @@ private:
     asset maxprize(game gamedata);
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    void showremainingtile(user & user_info);
-    void gameupdate(user & user_info);
+    void showremainingtile(game & game_data);
+    void gameupdate(game & game_data);
 
 public:
     using contract::contract;
