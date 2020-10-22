@@ -19,6 +19,7 @@ void ghostquest::ondeposit(name from,
     check(quantity.symbol.is_valid(), "Invalid quantity");
     check(quantity.amount > 0, "Only positive quantity allowed");
     check(quantity.symbol == ghostquest_symbol, "Invalid EOS Token");
+    gameready(from, quantity);
 }
 
 void ghostquest::gameready(name username, asset quantity)
@@ -27,9 +28,52 @@ void ghostquest::gameready(name username, asset quantity)
     action(
         permission_level{_self, "active"_n},
         _self,
-        "gamestart"_n,
+        "genmonst"_n,
         std::make_tuple(username, quantity))
         .send();
+}
+
+void ghostquest::onsettledpay(name username, asset quantity, string memo)
+{
+    require_auth(_self);
+    action(
+        permission_level{_self, "active"_n},
+        _self,
+        "settledpay"_n,
+        std::make_tuple(username, quantity, memo))
+        .send();
+}
+
+void ghostquest::genstat(ghost character)
+{
+    int overall_stat = 100 + character.ghost_level * 25;
+    switch (character.ghost_class)
+    {
+    case 1:
+        character.defense = (character.ghost_level * 5) + 10 + rng(10);
+        character.speed = (character.ghost_level * 5) + 10 + rng(10);
+        character.luck = (character.ghost_level * 5) + 10 + rng(10);
+        character.attack = overall_stat - (character.defense + character.speed + character.luck);
+        break;
+    case 2:
+        character.attack = (character.ghost_level * 5) + 10 + rng(10);
+        character.speed = (character.ghost_level * 5) + 10 + rng(10);
+        character.luck = (character.ghost_level * 5) + 10 + rng(10);
+        character.defense = overall_stat - (character.attack + character.speed + character.luck);
+        break;
+    case 3:
+        character.defense = (character.ghost_level * 5) + 10 + rng(10);
+        character.attack = (character.ghost_level * 5) + 10 + rng(10);
+        character.luck = (character.ghost_level * 5) + 10 + rng(10);
+        character.speed = overall_stat - (character.defense + character.attack + character.luck);
+        break;
+    case 4:
+        character.defense = (character.ghost_level * 5) + 10 + rng(10);
+        character.speed = (character.ghost_level * 5) + 10 + rng(10);
+        character.attack = (character.ghost_level * 5) + 10 + rng(10);
+        character.luck = overall_stat - (character.defense + character.speed + character.attack);
+        break;
+    }
 }
 
 int ghostquest::rng(const int &range)

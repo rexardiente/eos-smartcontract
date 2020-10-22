@@ -20,7 +20,8 @@ private:
         STAT_DEFAULT = 0,
         BL_DEFAULT = 0,
         LVL_DEFAULT = 0,
-        PANEL_SIZE = 16,
+        LMT_DEFAULT = 0,
+        CLASS_DEFAULT = 0,
         SUMMONED = 0,
         STANDBY = 1,
         BATTLE = 2,
@@ -35,23 +36,34 @@ private:
         string gameplay_log;
     };
 
-    struct stat
+    // struct stat
+    // {
+    //     uint64_t attack = STAT_DEFAULT;
+    //     uint64_t defense = STAT_DEFAULT;
+    //     uint64_t speed = STAT_DEFAULT;
+    //     uint64_t luck = STAT_DEFAULT;
+    // };
+
+    struct ghost
     {
+        uint8_t key;
+        uint64_t character_life = LIFE_DEFAULT;
+        uint64_t hitpoints = HP_DEFAULT;
+        uint64_t ghost_class = CLASS_DEFAULT;
+        uint64_t ghost_level = LVL_DEFAULT;
+        uint8_t status = GQ_DEFAULT;
         uint64_t attack = STAT_DEFAULT;
         uint64_t defense = STAT_DEFAULT;
         uint64_t speed = STAT_DEFAULT;
         uint64_t luck = STAT_DEFAULT;
-    };
-
-    struct ghost
-    {
-        uint64_t character_life = LIFE_DEFAULT;
-        uint64_t hitpoints = HP_DEFAULT;
-        uint64_t battle_limit = BL_DEFAULT;
-        uint64_t ghost_level = LVL_DEFAULT;
-        uint8_t status = GQ_DEFAULT;
-        vector<stat> ghost_stat;
+        // uint64_t battle_limit = LMT_DEFAULT;
+        // vector<stat> ghost_stat;
         vector<fight_log> battle_log;
+
+        // auto primary_key() const
+        // {
+        //     return key;
+        // }
     };
 
     struct game
@@ -59,6 +71,7 @@ private:
         vector<ghost> character;
         uint64_t summon_count = GQ_DEFAULT;
         uint8_t status = INITIALIZED;
+        asset prize = DEFAULT_ASSET;
     };
 
     struct [[eosio::table]] user
@@ -93,8 +106,8 @@ private:
     int rng(const int &range);
 
     void gameready(name username, asset quantity);
-    // ACTION genmonst(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
+    void genstat(ghost character);
 
 public:
     using contract::contract;
@@ -111,7 +124,9 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION summoncount(name username, uint64_t summoncount);
-    ACTION battlelimit(name username, uint64_t battlelimit);
-    ACTION gamestart(name username, asset quantity);
+    // ACTION battlelimit(name username, uint64_t battlelimit);
+    // ACTION gamestart(name username, asset quantity);
+    ACTION settledpay(name to, asset prize, string memo);
+    ACTION genmonst(name username, asset quantity);
     ACTION end(name username);
 };

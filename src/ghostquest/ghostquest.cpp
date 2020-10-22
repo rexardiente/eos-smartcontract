@@ -33,17 +33,17 @@ ACTION ghostquest::summoncount(name username, uint64_t summoncount)
     });
 }
 
-ACTION ghostquest::battlelimit(name username, uint64_t battlelimit)
-{
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(user.game_data.summon_count > 0, "Set number of summons first.");
+// ACTION ghostquest::battlelimit(name username, uint64_t battlelimit)
+// {
+//     require_auth(username);
+//     auto &user = _users.get(username.value, "User doesn't exist");
+//     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+//     check(user.game_data.summon_count > 0, "Set number of summons first.");
 
-    _users.modify(user, username, [&](auto &modified_user) {
-        modified_user.game_data.character.battle_limit = battlelimit;
-    });
-}
+//     _users.modify(user, username, [&](auto &modified_user) {
+//         modified_user.game_data.character.battle_limit = battlelimit;
+//     });
+// }
 
 ACTION ghostquest::genmonst(name username, asset quantity)
 {
@@ -54,14 +54,51 @@ ACTION ghostquest::genmonst(name username, asset quantity)
 
     check(itr != _users.end(), "Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(itr->game_data.destination == (quantity.amount / 10000), "Deposited amount does not match the selected destination.");
+    check(itr->game_data.summon_count == (quantity.amount / 10000), "Deposited amount does not match the selected number of summons.");
     // check(user.game_data.destination != MAP_DEFAULT, "Destination Not Set.");
     // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
 
     _users.modify(itr, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.prize = quantity;
-        gameupdate(game_data);
+        vector<ghost> new_character;
+
+        for (int i = 0; i < quantity.amount; i++)
+        {
+            ghost new_ghost;
+            new_ghost.key = i;
+            // new_ghost.battle_limit = quantity.amount;
+            do
+            {
+                new_ghost.ghost_class = rng(4);
+            } while (new_ghost.ghost_class == 0);
+            do
+            {
+                new_ghost.ghost_level = rng(4);
+            } while (new_ghost.ghost_level == 0);
+            genstat(new_ghost);
+            new_character.insert(new_character.end(), new_ghost);
+        }
+        modified_user.game_data = game_data;
+        // for (int i = 0; i < quantity; i++)
+        // {
+        //     int type = rng(3);
+        //     genstat(type);
+        // }
+    });
+}
+
+ACTION ghostquest::settledpay(name username, asset prize, string memo)
+{
+    require_auth(_self);
+    auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.status = DONE;
+        // gameupdate(game_data);
+        // showremainingtile(modified_user.game_data);
+        // modified_user.game_data.unopentile = EOS_DEFAULT;
     });
 }
 
