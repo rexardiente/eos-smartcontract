@@ -62,14 +62,14 @@ REMOVE_EXISTING_GAME()
 SET_GAME_PANEL()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Panel Set."
-    cleos push action treasurehunt setpanel '["user1", [1,0,2,3,4,5,6,7,
+    cleos push action treasurehunt setpanel '["user1", [0,1,2,3,4,5,6,7,
         8,9,10,11,12,13,14,15]]' -p user1@active
 }
 # Set Game Destination
 SET_DESTINATION()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action treasurehunt destination '["user1", 10]' -p user1@active
+    cleos push action treasurehunt destination '["user1", 1]' -p user1@active
 }
 
 # Set Game Destination
@@ -89,12 +89,12 @@ GAME_START()
 SELECT_TILE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action treasurehunt opentile '["user1", 1]' -p user1@active
+    cleos push action treasurehunt opentile '["user1", 10]' -p user1@active
 }
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "treasurehunt", "10.0000 EOS", "m" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user1", "treasurehunt", "1.0000 EOS", "m" ]' -p user1@active
 }
 
 WITHDRAW()
@@ -108,25 +108,24 @@ GET_CURRENCY()
     cleos get currency balance eosio.token user1 EOS
 }
 
-# cleos set account permission treasurehunt active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "treasurehunt","permission":"eosio.code"},"weight":1}]}'
-
-# RENEW_MAP()
-# {
-#     echo "${EXECUTE} Trigger Renew Map Function..."
-#     cleos push action treasurev2 renew '["user1"]' -p user1@active
-# }
+AUTOPLAY()
+{
+    echo "${EXECUTE} Trigger AutoPlay Function..."
+    cleos push action treasurehunt autoplay '["user1", [1,5]]' -p user1@active
+}
 
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
-# COMPILE_CONTRACT
-# DEPLOY_CONTRACT
+COMPILE_CONTRACT
+DEPLOY_CONTRACT 
 # INITIALIZE_GAME
-# SET_GAME_PANEL
 # SET_DESTINATION
+# SET_GAME_PANEL
 # SET_ENEMY
 # TRANSFER
+# AUTOPLAY
 # SELECT_TILE
 # WITHDRAW
-GET_CURRENCY
+# GET_CURRENCY
+SHOW_EOSIO_CONTRACT_TABLE
 # REMOVE_EXISTING_GAME
-# SHOW_EOSIO_CONTRACT_TABLE
