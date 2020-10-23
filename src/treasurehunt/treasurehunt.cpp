@@ -109,6 +109,7 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
             game_data.prize = generateprize(game_data);
             tile.iswin = 1;
             game_data.win_count++; // count number of chest found
+            game_data.unopentile--;
         }
         else
         {
@@ -116,7 +117,6 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
         }
 
         gameupdate(game_data);
-        game_data.unopentile--;
         // std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         // eosio::print(feedback + "\n");
     });
@@ -196,9 +196,9 @@ ACTION treasurehunt::autoplay(name username, vector<uint8_t> to_open_panel)
                     game_data.odds = DEFAULT_ASSET.amount;
                     break;
                 }
+                game_data.unopentile--;
                 game_data.odds = calculateodds(game_data);
                 game_data.nextprize = generateprize(game_data);
-                game_data.unopentile--;
             }
         }
     });
