@@ -16,8 +16,8 @@ private:
     {
         EOS_DEFAULT = 0,
         PANEL_SIZE = 16,
-        IS_OPEN_PANEL = 0, // for default value
-        IS_WIN_PANEL = 0,  // for default value
+        IS_OPEN_PANEL = 0,
+        IS_WIN_PANEL = 0,
         PRIZE_DEFAULT = 0,
         ENEMY_DEFAULT = 0,
         INITIALIZED = 0,
@@ -43,9 +43,9 @@ private:
         uint8_t status = INITIALIZED;
         uint8_t enemy_count = ENEMY_DEFAULT;
         asset prize = DEFAULT_ASSET;
+        double odds = EOS_DEFAULT;
         asset nextprize = DEFAULT_ASSET;
         asset maxprize = DEFAULT_ASSET;
-        double odds = EOS_DEFAULT;
     };
 
     struct [[eosio::table]] user
@@ -108,4 +108,5 @@ public:
     ACTION end(name username);
     ACTION withdraw(name username);
     ACTION settledpay(name to, asset prize, string memo);
+    ACTION autoplay(name username, vector<uint8_t> panelset);
 };

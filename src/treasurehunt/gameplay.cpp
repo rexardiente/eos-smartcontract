@@ -103,7 +103,6 @@ void treasurehunt::showremainingtile(game &game_data)
 asset treasurehunt::generateprize(game gamedata)
 {
     asset game_prize = gamedata.prize;
-    double rem_panel = (double)gamedata.unopentile - (double)gamedata.enemy_count;
     double odds = calculateodds(gamedata);
     game_prize.amount = (game_prize.amount * odds) * 0.98;
     return game_prize;
@@ -149,6 +148,7 @@ void treasurehunt::gameupdate(game &game_data)
         showremainingtile(game_data);
         game_data.prize = DEFAULT_ASSET;
         game_data.nextprize = DEFAULT_ASSET;
+        game_data.odds = DEFAULT_ASSET.amount;
         game_data.unopentile = EOS_DEFAULT; // reset unopentile to empty
     }
 }
