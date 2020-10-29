@@ -58,7 +58,7 @@ private:
         uint64_t luck = STAT_DEFAULT;
         // uint64_t battle_limit = LMT_DEFAULT;
         // vector<stat> ghost_stat;
-        vector<fight_log> battle_log;
+        // vector<fight_log> battle_log;
 
         // auto primary_key() const
         // {
@@ -107,7 +107,7 @@ private:
 
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    void genstat(ghost character);
+    void genstat(game & game_data);
 
 public:
     using contract::contract;
@@ -127,6 +127,6 @@ public:
     // ACTION battlelimit(name username, uint64_t battlelimit);
     // ACTION gamestart(name username, asset quantity);
     ACTION settledpay(name to, asset prize, string memo);
-    ACTION genmonst(name username, asset quantity);
+    ACTION getstat(name username, asset quantity);
     ACTION end(name username);
 };

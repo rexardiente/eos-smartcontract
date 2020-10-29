@@ -69,7 +69,7 @@ REMOVE_EXISTING_GAME()
 SET_SUMMON_COUNT()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action ghostquest summoncount '["user1", 10]' -p user1@active
+    cleos push action ghostquest summoncount '["user1", 5]' -p user1@active
 }
 
 # Set Game Destination
@@ -94,12 +94,12 @@ SET_SUMMON_COUNT()
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "ghostquest", "10.0000 EOS", "m" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "m" ]' -p user1@active
 }
 
 WITHDRAW()
 {
-    cleos push action ghostquest genmonst '["user1", "10.0000 EOS"]' -p user1@active
+    cleos push action ghostquest genmonst '[ "user1", "ghostquest", "5.0000 EOS", "m" ]' -p user1@active
 }
 
 GET_CURRENCY()
@@ -120,13 +120,10 @@ GET_CURRENCY()
 # CREATE_ACCOUNT_WALLET
 # COMPILE_CONTRACT
 # DEPLOY_CONTRACT
-# INITIALIZE_GAME
-# SET_GAME_PANEL
-# SET_DESTINATION
-# SET_ENEMY
+INITIALIZE_GAME
+SET_SUMMON_COUNT
 # TRANSFER
-# SELECT_TILE
 # WITHDRAW
-# GET_CURRENCY
+# GET_CURRENCY 
 # REMOVE_EXISTING_GAME
-# SHOW_EOSIO_CONTRACT_TABLE
+SHOW_EOSIO_CONTRACT_TABLE

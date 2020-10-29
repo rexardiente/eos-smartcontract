@@ -1,5 +1,6 @@
 #include "gameplay.cpp"
 
+// function for initializing the a game
 ACTION ghostquest::initialize(name username)
 {
     require_auth(username);
@@ -21,15 +22,53 @@ ACTION ghostquest::initialize(name username)
     }
 }
 
+// function for setting number of summons of monster
 ACTION ghostquest::summoncount(name username, uint64_t summoncount)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    // check(user.game_data.destination > 0, "Set destination first.");
 
     _users.modify(user, username, [&](auto &modified_user) {
-        modified_user.game_data.summon_count = summoncount;
+        game &game_data = modified_user.game_data;
+        game_data.summon_count = summoncount;
+        vector<ghost> new_character;          // summon monster/monsters
+        for (int i = 0; i < summoncount; i++) // summon monster/monsters, set level and hitpoints
+        {
+
+            ghost new_ghost;
+            new_ghost.key = i;
+            int rndmlvl = rng(99) + 1;
+            new_ghost.ghost_class = rng(3) + 1;
+            print(rndmlvl);
+            if (rndmlvl < 15)
+            {
+                new_ghost.ghost_level = 1;
+                new_ghost.hitpoints = 110;
+            }
+            else if (rndmlvl > 14 && rndmlvl < 45)
+            {
+                new_ghost.ghost_level = 2;
+                new_ghost.hitpoints = 120;
+            }
+            else if (rndmlvl > 44 && rndmlvl < 85)
+            {
+                new_ghost.ghost_level = 3;
+                new_ghost.hitpoints = 130;
+            }
+            else if (rndmlvl > 84 && rndmlvl < 96)
+            {
+                new_ghost.ghost_level = 4;
+                new_ghost.hitpoints = 140;
+            }
+            else
+            {
+                new_ghost.ghost_level = 5;
+                new_ghost.hitpoints = 150;
+            }
+            new_character.insert(new_character.end(), new_ghost);
+        }
+        game_data.character = new_character;
     });
 }
 
@@ -45,7 +84,7 @@ ACTION ghostquest::summoncount(name username, uint64_t summoncount)
 //     });
 // }
 
-ACTION ghostquest::genmonst(name username, asset quantity)
+ACTION ghostquest::getstat(name username, asset quantity) // generate stats of monsters after transfer transaction
 {
     require_auth(_self);
 
@@ -55,35 +94,11 @@ ACTION ghostquest::genmonst(name username, asset quantity)
     check(itr != _users.end(), "Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     check(itr->game_data.summon_count == (quantity.amount / 10000), "Deposited amount does not match the selected number of summons.");
-    // check(user.game_data.destination != MAP_DEFAULT, "Destination Not Set.");
-    // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
 
     _users.modify(itr, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        vector<ghost> new_character;
-
-        for (int i = 0; i < quantity.amount; i++)
-        {
-            ghost new_ghost;
-            new_ghost.key = i;
-            // new_ghost.battle_limit = quantity.amount;
-            do
-            {
-                new_ghost.ghost_class = rng(4);
-            } while (new_ghost.ghost_class == 0);
-            do
-            {
-                new_ghost.ghost_level = rng(4);
-            } while (new_ghost.ghost_level == 0);
-            genstat(new_ghost);
-            new_character.insert(new_character.end(), new_ghost);
-        }
-        modified_user.game_data = game_data;
-        // for (int i = 0; i < quantity; i++)
-        // {
-        //     int type = rng(3);
-        //     genstat(type);
-        // }
+        game_data.status = ONGOING;
+        genstat(game_data);
     });
 }
 
@@ -96,9 +111,6 @@ ACTION ghostquest::settledpay(name username, asset prize, string memo)
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.status = DONE;
-        // gameupdate(game_data);
-        // showremainingtile(modified_user.game_data);
-        // modified_user.game_data.unopentile = EOS_DEFAULT;
     });
 }
 

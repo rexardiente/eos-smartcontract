@@ -28,7 +28,7 @@ void ghostquest::gameready(name username, asset quantity)
     action(
         permission_level{_self, "active"_n},
         _self,
-        "genmonst"_n,
+        "getstat"_n,
         std::make_tuple(username, quantity))
         .send();
 }
@@ -44,35 +44,38 @@ void ghostquest::onsettledpay(name username, asset quantity, string memo)
         .send();
 }
 
-void ghostquest::genstat(ghost character)
+void ghostquest::genstat(game &game_data) // function for generating monster/s status
 {
-    int overall_stat = 100 + character.ghost_level * 25;
-    switch (character.ghost_class)
+    for (int i = 0; i < game_data.summon_count; i++)
     {
-    case 1:
-        character.defense = (character.ghost_level * 5) + 10 + rng(10);
-        character.speed = (character.ghost_level * 5) + 10 + rng(10);
-        character.luck = (character.ghost_level * 5) + 10 + rng(10);
-        character.attack = overall_stat - (character.defense + character.speed + character.luck);
-        break;
-    case 2:
-        character.attack = (character.ghost_level * 5) + 10 + rng(10);
-        character.speed = (character.ghost_level * 5) + 10 + rng(10);
-        character.luck = (character.ghost_level * 5) + 10 + rng(10);
-        character.defense = overall_stat - (character.attack + character.speed + character.luck);
-        break;
-    case 3:
-        character.defense = (character.ghost_level * 5) + 10 + rng(10);
-        character.attack = (character.ghost_level * 5) + 10 + rng(10);
-        character.luck = (character.ghost_level * 5) + 10 + rng(10);
-        character.speed = overall_stat - (character.defense + character.attack + character.luck);
-        break;
-    case 4:
-        character.defense = (character.ghost_level * 5) + 10 + rng(10);
-        character.speed = (character.ghost_level * 5) + 10 + rng(10);
-        character.attack = (character.ghost_level * 5) + 10 + rng(10);
-        character.luck = overall_stat - (character.defense + character.speed + character.attack);
-        break;
+        int level = game_data.character.at(i).ghost_level - 1;
+        switch (game_data.character.at(i).ghost_class)
+        {
+        case 1:
+            game_data.character.at(i).defense = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).speed = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).luck = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).attack = 25 + (rng(3) + 7) + (10 * level);
+            break;
+        case 2:
+            game_data.character.at(i).attack = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).speed = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).luck = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).defense = 25 + (rng(3) + 7) + (10 * level);
+            break;
+        case 3:
+            game_data.character.at(i).defense = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).attack = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).luck = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).speed = 25 + (rng(3) + 7) + (10 * level);
+            break;
+        case 4:
+            game_data.character.at(i).defense = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).speed = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).attack = 25 + rng(7) + (10 * level);
+            game_data.character.at(i).luck = 25 + (rng(3) + 7) + (10 * level);
+            break;
+        }
     }
 }
 
