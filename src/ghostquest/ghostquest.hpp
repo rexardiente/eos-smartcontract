@@ -25,7 +25,9 @@ private:
         SUMMONED = 0,
         STANDBY = 1,
         BATTLE = 2,
-        ELIMINATED = 3,
+        WIN = 3,
+        LOSE = 4,
+        ELIMINATED = 5,
         INITIALIZED = 0,
         ONGOING = 1,
         DONE = 2
@@ -46,12 +48,13 @@ private:
 
     struct ghost
     {
+        name ghost_id;
         uint8_t key;
         uint64_t character_life = LIFE_DEFAULT;
-        uint64_t hitpoints = HP_DEFAULT;
+        int hitpoints = HP_DEFAULT;
         uint64_t ghost_class = CLASS_DEFAULT;
         uint64_t ghost_level = LVL_DEFAULT;
-        uint8_t status = GQ_DEFAULT;
+        uint64_t status = GQ_DEFAULT;
         uint64_t attack = STAT_DEFAULT;
         uint64_t defense = STAT_DEFAULT;
         uint64_t speed = STAT_DEFAULT;
@@ -69,6 +72,7 @@ private:
     struct game
     {
         vector<ghost> character;
+        uint64_t monster_count = GQ_DEFAULT;
         uint64_t summon_count = GQ_DEFAULT;
         uint8_t status = INITIALIZED;
         asset prize = DEFAULT_ASSET;
@@ -107,7 +111,9 @@ private:
 
     void gameready(name username, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    void genstat(game & game_data);
+    void genstat(ghost & initghost);
+    void battle(ghost & ghost1, ghost & ghost2);
+    void damage_step(ghost & ghost1, ghost & ghost2);
 
 public:
     using contract::contract;
@@ -124,7 +130,7 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION summoncount(name username, uint64_t summoncount);
-    // ACTION battlelimit(name username, uint64_t battlelimit);
+    ACTION findmatch(name username);
     // ACTION gamestart(name username, asset quantity);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION getstat(name username, asset quantity);

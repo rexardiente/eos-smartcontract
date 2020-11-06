@@ -99,12 +99,12 @@ TRANSFER()
 
 WITHDRAW()
 {
-    cleos push action ghostquest genmonst '[ "user1", "ghostquest", "5.0000 EOS", "m" ]' -p user1@active
+    cleos push action ghostquest findmatch '[ "user1"]' -p user1@active
 }
 
 GET_CURRENCY()
 {
-    cleos get currency balance eosio.token ghostquest EOS
+    cleos get currency balance eosio.token ghostquest EOS 
     cleos get currency balance eosio.token user1 EOS
 }
 
@@ -120,10 +120,10 @@ GET_CURRENCY()
 # CREATE_ACCOUNT_WALLET
 # COMPILE_CONTRACT
 # DEPLOY_CONTRACT
-INITIALIZE_GAME
-SET_SUMMON_COUNT
+# INITIALIZE_GAME
+# SET_SUMMON_COUNT
 # TRANSFER
-# WITHDRAW
+WITHDRAW
 # GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

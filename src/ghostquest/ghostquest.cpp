@@ -27,62 +27,49 @@ ACTION ghostquest::summoncount(name username, uint64_t summoncount)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    // check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
 
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.summon_count = summoncount;
-        vector<ghost> new_character;          // summon monster/monsters
-        for (int i = 0; i < summoncount; i++) // summon monster/monsters, set level and hitpoints
+        // vector<ghost> new_character;                                                            // summon monster/monsters
+        for (int i = game_data.monster_count + 1; i < (1 + game_data.monster_count + summoncount); i++) // summon monster/monsters and hitpoints
         {
 
             ghost new_ghost;
-            new_ghost.key = i;
-            int rndmlvl = rng(99) + 1;
-            new_ghost.ghost_class = rng(3) + 1;
-            print(rndmlvl);
-            if (rndmlvl < 15)
-            {
-                new_ghost.ghost_level = 1;
-                new_ghost.hitpoints = 110;
-            }
-            else if (rndmlvl > 14 && rndmlvl < 45)
-            {
-                new_ghost.ghost_level = 2;
-                new_ghost.hitpoints = 120;
-            }
-            else if (rndmlvl > 44 && rndmlvl < 85)
-            {
-                new_ghost.ghost_level = 3;
-                new_ghost.hitpoints = 130;
-            }
-            else if (rndmlvl > 84 && rndmlvl < 96)
-            {
-                new_ghost.ghost_level = 4;
-                new_ghost.hitpoints = 140;
-            }
-            else
-            {
-                new_ghost.ghost_level = 5;
-                new_ghost.hitpoints = 150;
-            }
-            new_character.insert(new_character.end(), new_ghost);
+            new_ghost.ghost_id = user.username;
+            new_ghost.hitpoints = 100 + (rng(49) + 1);
+            // int rndmlvl = rng(99) + 1;
+            // new_ghost.ghost_class = rng(3) + 1;
+            // if (rndmlvl < 15)
+            // {
+            //     new_ghost.ghost_level = 1;
+            //     new_ghost.status = 201 + rng(24);
+            // }
+            // else if (rndmlvl > 14 && rndmlvl < 45)
+            // {
+            //     new_ghost.ghost_level = 2;
+            //     new_ghost.status = 226 + rng(74);
+            // }
+            // else if (rndmlvl > 44 && rndmlvl < 85)
+            // {
+            //     new_ghost.ghost_level = 3;
+            //     new_ghost.status = 301 + rng(74);
+            // }
+            // else if (rndmlvl > 84 && rndmlvl < 96)
+            // {
+            //     new_ghost.ghost_level = 4;
+            //     new_ghost.status = 376 + rng(49);
+            // }
+            // else
+            // {
+            //     new_ghost.ghost_level = 5;
+            //     new_ghost.status = 426 + rng(24);
+            // }
+            game_data.character.insert(game_data.character.end(), new_ghost);
         }
-        game_data.character = new_character;
     });
 }
-
-// ACTION ghostquest::battlelimit(name username, uint64_t battlelimit)
-// {
-//     require_auth(username);
-//     auto &user = _users.get(username.value, "User doesn't exist");
-//     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-//     check(user.game_data.summon_count > 0, "Set number of summons first.");
-
-//     _users.modify(user, username, [&](auto &modified_user) {
-//         modified_user.game_data.character.battle_limit = battlelimit;
-//     });
-// }
 
 ACTION ghostquest::getstat(name username, asset quantity) // generate stats of monsters after transfer transaction
 {
@@ -97,8 +84,25 @@ ACTION ghostquest::getstat(name username, asset quantity) // generate stats of m
 
     _users.modify(itr, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.status = ONGOING;
-        genstat(game_data);
+        for (int i = game_data.monster_count; i < (game_data.monster_count + game_data.summon_count); i++)
+        {
+            game_data.character.at(i).key = i + 1;
+            genstat(game_data.character.at(i));
+        }
+        game_data.monster_count += game_data.summon_count;
+    });
+}
+
+ACTION ghostquest::findmatch(name username)
+{
+    require_auth(username);
+    auto &user = _users.get(username.value, "User doesn't exist");
+
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.character.at(1).status = 1;
+        game_data.character.at(2).status = 1;
+        battle(game_data.character.at(1), game_data.character.at(2));
     });
 }
 
