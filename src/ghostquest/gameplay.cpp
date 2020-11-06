@@ -151,8 +151,8 @@ void ghostquest::battle(ghost &ghost1, ghost &ghost2) // function for generating
             if (ghost2.hitpoints <= 0)
             {
                 ghost2.hitpoints = 0;
-                ghost2.status = 3;
-                ghost1.status = 2;
+                ghost2.status = LOSER;
+                ghost1.status = WINNER;
             }
             numberofrounds++;
             print(numberofrounds);
@@ -165,8 +165,8 @@ void ghostquest::battle(ghost &ghost1, ghost &ghost2) // function for generating
             if (ghost1.hitpoints <= 0)
             {
                 ghost1.hitpoints = 0;
-                ghost1.status = 3;
-                ghost2.status = 2;
+                ghost1.status = LOSER;
+                ghost2.status = WINNER;
             }
             numberofrounds++;
             print(numberofrounds);
@@ -182,8 +182,8 @@ void ghostquest::battle(ghost &ghost1, ghost &ghost2) // function for generating
             if (ghost1.hitpoints <= 0)
             {
                 ghost1.hitpoints = 0;
-                ghost1.status = 3;
-                ghost2.status = 2;
+                ghost1.status = LOSER;
+                ghost2.status = WINNER;
             }
             numberofrounds++;
             print(numberofrounds);
@@ -196,8 +196,8 @@ void ghostquest::battle(ghost &ghost1, ghost &ghost2) // function for generating
             if (ghost2.hitpoints <= 0)
             {
                 ghost2.hitpoints = 0;
-                ghost2.status = 3;
-                ghost1.status = 2;
+                ghost2.status = LOSER;
+                ghost1.status = WINNER;
             }
             numberofrounds++;
             print(numberofrounds);

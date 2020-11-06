@@ -38,6 +38,7 @@ ACTION ghostquest::summoncount(name username, uint64_t summoncount)
 
             ghost new_ghost;
             new_ghost.ghost_id = user.username;
+            new_ghost.status = SUMMONED;
             new_ghost.hitpoints = 100 + (rng(49) + 1);
             // int rndmlvl = rng(99) + 1;
             // new_ghost.ghost_class = rng(3) + 1;
@@ -87,6 +88,7 @@ ACTION ghostquest::getstat(name username, asset quantity) // generate stats of m
         for (int i = game_data.monster_count; i < (game_data.monster_count + game_data.summon_count); i++)
         {
             game_data.character.at(i).key = i + 1;
+            game_data.character.at(i).status = STANDBY;
             genstat(game_data.character.at(i));
         }
         game_data.monster_count += game_data.summon_count;
@@ -100,8 +102,8 @@ ACTION ghostquest::findmatch(name username)
 
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character.at(1).status = 1;
-        game_data.character.at(2).status = 1;
+        game_data.character.at(1).status = INBATTLE;
+        game_data.character.at(2).status = INBATTLE;
         battle(game_data.character.at(1), game_data.character.at(2));
     });
 }
