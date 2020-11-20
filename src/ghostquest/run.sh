@@ -69,7 +69,7 @@ REMOVE_EXISTING_GAME()
 SET_SUMMON_COUNT()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action ghostquest summoncount '["user1", 5]' -p user1@active
+    cleos push action ghostquest summoncount '["user1", 5, 10]' -p user1@active
 }
 
 # Set Game Destination
@@ -123,7 +123,7 @@ GET_CURRENCY()
 # INITIALIZE_GAME
 # SET_SUMMON_COUNT
 # TRANSFER
-WITHDRAW
+# WITHDRAW
 # GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

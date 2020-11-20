@@ -1,4 +1,5 @@
 #include "gameplay.cpp"
+// #include <chrono>
 
 // function for initializing the a game
 ACTION ghostquest::initialize(name username)
@@ -23,7 +24,7 @@ ACTION ghostquest::initialize(name username)
 }
 
 // function for setting number of summons of monster
-ACTION ghostquest::summoncount(name username, uint64_t summoncount)
+ACTION ghostquest::summoncount(name username, uint64_t summoncount, uint64_t battlelimit)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
@@ -38,35 +39,11 @@ ACTION ghostquest::summoncount(name username, uint64_t summoncount)
 
             ghost new_ghost;
             new_ghost.ghost_id = user.username;
+            new_ghost.prize.amount = 10000;
+            new_ghost.battle_limit = battlelimit;
             new_ghost.status = SUMMONED;
-            new_ghost.hitpoints = 100 + (rng(49) + 1);
-            // int rndmlvl = rng(99) + 1;
-            // new_ghost.ghost_class = rng(3) + 1;
-            // if (rndmlvl < 15)
-            // {
-            //     new_ghost.ghost_level = 1;
-            //     new_ghost.status = 201 + rng(24);
-            // }
-            // else if (rndmlvl > 14 && rndmlvl < 45)
-            // {
-            //     new_ghost.ghost_level = 2;
-            //     new_ghost.status = 226 + rng(74);
-            // }
-            // else if (rndmlvl > 44 && rndmlvl < 85)
-            // {
-            //     new_ghost.ghost_level = 3;
-            //     new_ghost.status = 301 + rng(74);
-            // }
-            // else if (rndmlvl > 84 && rndmlvl < 96)
-            // {
-            //     new_ghost.ghost_level = 4;
-            //     new_ghost.status = 376 + rng(49);
-            // }
-            // else
-            // {
-            //     new_ghost.ghost_level = 5;
-            //     new_ghost.status = 426 + rng(24);
-            // }
+            new_ghost.character_life = 1;
+            new_ghost.initial_hp = 100 + rng(50);
             game_data.character.insert(game_data.character.end(), new_ghost);
         }
     });
@@ -103,8 +80,12 @@ ACTION ghostquest::findmatch(name username)
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.character.at(1).status = INBATTLE;
-        game_data.character.at(2).status = INBATTLE;
-        battle(game_data.character.at(1), game_data.character.at(2));
+        game_data.character.at(1).hitpoints = game_data.character.at(1).initial_hp;
+        game_data.character.at(4).status = INBATTLE;
+        game_data.character.at(4).hitpoints = game_data.character.at(4).initial_hp;
+        battle(game_data.character.at(1), game_data.character.at(4));
+        // game_data.character.at(1).last_battle = std::chrono::high_resolution_clock::now();
+        // game_data.character.at(2).last_battle = std::chrono::high_resolution_clock::now();
     });
 }
 

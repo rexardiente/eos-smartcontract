@@ -2,6 +2,7 @@
 #include <eosio/asset.hpp>
 #include <eosio/transaction.hpp>
 #include "config.hpp"
+// #include <chrono>
 
 using namespace std;
 using namespace eosio;
@@ -33,24 +34,17 @@ private:
         DONE = 2
     };
 
-    struct fight_log
-    {
-        string gameplay_log;
-    };
-
-    // struct stat
+    // struct fight_log
     // {
-    //     uint64_t attack = STAT_DEFAULT;
-    //     uint64_t defense = STAT_DEFAULT;
-    //     uint64_t speed = STAT_DEFAULT;
-    //     uint64_t luck = STAT_DEFAULT;
+    //     string gameplay_log;
     // };
 
     struct ghost
     {
         name ghost_id;
-        uint8_t key;
+        uint8_t key = GQ_DEFAULT;
         uint64_t character_life = LIFE_DEFAULT;
+        int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
         uint64_t ghost_class = CLASS_DEFAULT;
         uint64_t ghost_level = LVL_DEFAULT;
@@ -59,8 +53,10 @@ private:
         uint64_t defense = STAT_DEFAULT;
         uint64_t speed = STAT_DEFAULT;
         uint64_t luck = STAT_DEFAULT;
-        // uint64_t battle_limit = LMT_DEFAULT;
-        // vector<stat> ghost_stat;
+        asset prize = DEFAULT_ASSET;
+        uint64_t battle_limit = LMT_DEFAULT;
+        uint64_t battle_count = GQ_DEFAULT;
+        // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
         // auto primary_key() const
@@ -75,7 +71,6 @@ private:
         uint64_t monster_count = GQ_DEFAULT;
         uint64_t summon_count = GQ_DEFAULT;
         uint8_t status = INITIALIZED;
-        asset prize = DEFAULT_ASSET;
     };
 
     struct [[eosio::table]] user
@@ -129,7 +124,7 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION summoncount(name username, uint64_t summoncount);
+    ACTION summoncount(name username, uint64_t summoncount, uint64_t battlelimit);
     ACTION findmatch(name username);
     // ACTION gamestart(name username, asset quantity);
     ACTION settledpay(name to, asset prize, string memo);
