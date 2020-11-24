@@ -72,18 +72,18 @@ ACTION ghostquest::getstat(name username, asset quantity) // generate stats of m
     });
 }
 
-ACTION ghostquest::findmatch(name username)
+ACTION ghostquest::findmatch(name username, uint64_t char1, uint64_t char2)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
 
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character.at(1).status = INBATTLE;
-        game_data.character.at(1).hitpoints = game_data.character.at(1).initial_hp;
-        game_data.character.at(4).status = INBATTLE;
-        game_data.character.at(4).hitpoints = game_data.character.at(4).initial_hp;
-        battle(game_data.character.at(1), game_data.character.at(4));
+        // game_data.character.at(char1).status = 3;
+        // game_data.character.at(char2).status = 3;
+        game_data.character.at(char1).hitpoints = game_data.character.at(char1).initial_hp;
+        game_data.character.at(char2).hitpoints = game_data.character.at(char2).initial_hp;
+        battle(game_data.character.at(char1), game_data.character.at(char2));
         // game_data.character.at(1).last_battle = std::chrono::high_resolution_clock::now();
         // game_data.character.at(2).last_battle = std::chrono::high_resolution_clock::now();
     });
@@ -99,6 +99,24 @@ ACTION ghostquest::settledpay(name username, asset prize, string memo)
         game &game_data = modified_user.game_data;
         game_data.status = DONE;
     });
+}
+
+ACTION ghostquest::withdraw(name username, uint64_t idx)
+{
+    require_auth(username);
+    auto user = _users.find(username.value);
+    // check(user->game_data.win_count > 0, "You have not found any treasure yet.");
+    check(user->game_data.character.at(idx).prize.amount > 0, "Ghost doesn't exist.");
+    // check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+
+    std::string feedback = "GQ Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(user->game_data.character.at(idx).prize.amount);
+
+    action{
+        permission_level{_self, "active"_n},
+        eosio_token,
+        "transfer"_n,
+        std::make_tuple(_self, username, user->game_data.character.at(idx).prize, feedback)}
+        .send();
 }
 
 ACTION ghostquest::end(name username)

@@ -108,7 +108,8 @@ private:
     void onsettledpay(name to, asset quantity, string memo);
     void genstat(ghost & initghost);
     void battle(ghost & ghost1, ghost & ghost2);
-    void damage_step(ghost & ghost1, ghost & ghost2);
+    void damage_step(ghost & ghost1, ghost & ghost2, int round);
+    void calculate_prize(ghost & ghost);
 
 public:
     using contract::contract;
@@ -125,8 +126,8 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION summoncount(name username, uint64_t summoncount, uint64_t battlelimit);
-    ACTION findmatch(name username);
-    // ACTION gamestart(name username, asset quantity);
+    ACTION findmatch(name username, uint64_t char1, uint64_t char2);
+    ACTION withdraw(name username, uint64_t idx);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION getstat(name username, asset quantity);
     ACTION end(name username);

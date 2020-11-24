@@ -97,11 +97,15 @@ TRANSFER()
     cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "m" ]' -p user1@active
 }
 
-WITHDRAW()
+FINDMATCH()
 {
-    cleos push action ghostquest findmatch '[ "user1"]' -p user1@active
+    cleos push action ghostquest findmatch '[ "user1", 2, 1]' -p user1@active
 }
 
+WITHDRAW()
+{
+    cleos push action ghostquest withdraw '[ "user1", 1]' -p user1@active
+}
 GET_CURRENCY()
 {
     cleos get currency balance eosio.token ghostquest EOS 
@@ -123,7 +127,8 @@ GET_CURRENCY()
 # INITIALIZE_GAME
 # SET_SUMMON_COUNT
 # TRANSFER
-# WITHDRAW
+# FINDMATCH
+WITHDRAW
 # GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
