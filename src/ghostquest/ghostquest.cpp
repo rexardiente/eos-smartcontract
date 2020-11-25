@@ -93,11 +93,11 @@ ACTION ghostquest::settledpay(name username, asset prize, string memo)
 {
     require_auth(_self);
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+    // check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
 
     _users.modify(user, username, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.status = DONE;
+        // game &game_data = modified_user.game_data;
+        // game_data.status = DONE;
     });
 }
 
@@ -105,10 +105,7 @@ ACTION ghostquest::withdraw(name username, uint64_t idx)
 {
     require_auth(username);
     auto user = _users.find(username.value);
-    // check(user->game_data.win_count > 0, "You have not found any treasure yet.");
     check(user->game_data.character.at(idx).prize.amount > 0, "Ghost doesn't exist.");
-    // check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
-
     std::string feedback = "GQ Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(user->game_data.character.at(idx).prize.amount);
 
     action{
@@ -117,6 +114,10 @@ ACTION ghostquest::withdraw(name username, uint64_t idx)
         "transfer"_n,
         std::make_tuple(_self, username, user->game_data.character.at(idx).prize, feedback)}
         .send();
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.character.at(idx).status = ELIMINATED;
+    });
 }
 
 ACTION ghostquest::end(name username)
