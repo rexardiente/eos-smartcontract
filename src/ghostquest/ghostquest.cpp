@@ -116,7 +116,7 @@ ACTION ghostquest::withdraw(name username, uint64_t idx)
         .send();
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character.at(idx).status = ELIMINATED;
+        eliminated_withdrawn(game_data.character.at(idx));
     });
 }
 

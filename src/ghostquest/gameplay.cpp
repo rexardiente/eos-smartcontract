@@ -230,13 +230,13 @@ void ghostquest::calculate_prize(ghost &ghost)
     ghost.prize.amount = init_prize - house_edge;
 }
 
-void ghostquest::result_step(ghost &ghost1, ghost &ghost2) // function for generating monster/s status
+void ghostquest::result_step(ghost &ghost1, ghost &ghost2)
 {
     ghost1.status = LOSER;
     if (ghost1.character_life == 1)
     {
         ghost1.status = ELIMINATED;
-        ghost1.character_life = 0;
+        eliminated_withdrawn(ghost1);
     }
     else
     {
@@ -246,6 +246,21 @@ void ghostquest::result_step(ghost &ghost1, ghost &ghost2) // function for gener
     ghost2.character_life += 1;
     ghost1.battle_count += 1;
     ghost2.battle_count += 1;
+}
+
+void ghostquest::eliminated_withdrawn(ghost &ghost)
+{
+    ghost.status = 6;
+    ghost.character_life = 0;
+    ghost.initial_hp = 0;
+    ghost.hitpoints = 0;
+    ghost.ghost_class = 0;
+    ghost.ghost_level = 0;
+    ghost.attack = 0;
+    ghost.defense = 0;
+    ghost.speed = 0;
+    ghost.luck = 0;
+    ghost.prize.amount = 0;
 }
 
 int ghostquest::rng(const int &range)
