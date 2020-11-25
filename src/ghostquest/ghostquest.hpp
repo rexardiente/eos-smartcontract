@@ -109,6 +109,7 @@ private:
     void genstat(ghost & initghost);
     void battle(ghost & ghost1, ghost & ghost2);
     void damage_step(ghost & ghost1, ghost & ghost2, int round);
+    void result_step(ghost & ghost1, ghost & ghost2);
     void calculate_prize(ghost & ghost);
 
 public:

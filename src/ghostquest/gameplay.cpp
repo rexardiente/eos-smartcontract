@@ -107,121 +107,44 @@ void ghostquest::genstat(ghost &initghost) // function for generating monster/s 
 void ghostquest::battle(ghost &ghost1, ghost &ghost2) // function for generating monster/s status
 {
     int numberofrounds = 1;
-    ghost1.status = 3;
-    ghost2.status = 3;
+    check(ghost1.character_life > 0 && ghost2.character_life > 0, "Your or your enemy character can not battle.");
     while (ghost1.hitpoints > 0 && ghost2.hitpoints > 0)
     {
         if (ghost1.speed > ghost2.speed)
         {
-            check(ghost2.hitpoints >= 1, "Your or your enemy[2] character no longer have hitpoints.[1]");
-            check(ghost1.status != 5 && ghost1.status != 6, "Your enemy already lost.[1]");
             damage_step(ghost1, ghost2, numberofrounds);
-            if (ghost2.hitpoints <= 0)
+            numberofrounds += 1;
+            if (ghost2.hitpoints > 0)
             {
-                ghost2.hitpoints = 0;
-                ghost2.status = LOSER;
-                if (ghost2.character_life == 1)
+                damage_step(ghost2, ghost1, numberofrounds);
+                numberofrounds += 1;
+                if (ghost1.hitpoints == 0)
                 {
-                    ghost2.status = ELIMINATED;
-                    ghost2.character_life = 0;
+                    result_step(ghost1, ghost2);
                 }
-                else
-                {
-                    ghost2.character_life -= 1;
-                }
-                ghost1.status = WINNER;
-                ghost1.character_life += 1;
-                ghost1.battle_count += 1;
-                ghost2.battle_count += 1;
             }
             else
             {
-                ghost2.status = 3;
+                result_step(ghost2, ghost1);
             }
-            numberofrounds += 1;
-            print(ghost2.status);
-            check(ghost1.hitpoints >= 1, "Your or your enemy[1] character no longer have hitpoints.[2]");
-            check(ghost2.status != 5 && ghost2.status != 6, "Your enemy already lost.[2]");
-            damage_step(ghost2, ghost1, numberofrounds);
-            if (ghost1.hitpoints <= 0)
-            {
-                ghost1.hitpoints = 0;
-                ghost1.status = LOSER;
-                if (ghost1.character_life == 1)
-                {
-                    ghost1.status = ELIMINATED;
-                    ghost1.character_life = 0;
-                }
-                else
-                {
-                    ghost1.character_life -= 1;
-                }
-                ghost2.status = WINNER;
-                ghost2.character_life += 1;
-                ghost1.battle_count += 1;
-                ghost2.battle_count += 1;
-            }
-            else
-            {
-                ghost1.status = 3;
-            }
-            numberofrounds += 1;
         }
         else
         {
-            check(ghost1.hitpoints >= 1, "Your or your enemy[1] character no longer have hitpoints.[3]");
-            check(ghost2.status != 5 && ghost2.status != 6, "Your enemy already lost.[3]");
             damage_step(ghost2, ghost1, numberofrounds);
-            if (ghost1.hitpoints <= 0)
+            numberofrounds += 1;
+            if (ghost1.hitpoints > 0)
             {
-                ghost1.hitpoints = 0;
-                ghost1.status = LOSER;
-                if (ghost1.character_life == 1)
+                damage_step(ghost1, ghost2, numberofrounds);
+                numberofrounds += 1;
+                if (ghost2.hitpoints == 0)
                 {
-                    ghost1.status = ELIMINATED;
-                    ghost1.character_life = 0;
+                    result_step(ghost2, ghost1);
                 }
-                else
-                {
-                    ghost1.character_life -= 1;
-                }
-                ghost2.status = WINNER;
-                ghost2.character_life += 1;
-                ghost1.battle_count += 1;
-                ghost2.battle_count += 1;
             }
             else
             {
-                ghost1.status = 3;
+                result_step(ghost1, ghost2);
             }
-            numberofrounds += 1;
-            print(ghost1.status);
-            check(ghost2.hitpoints >= 1, "Your or your enemy[2] character no longer have hitpoints.[4]");
-            check(ghost1.status != 5 && ghost1.status != 6, "Your enemy already lost.[4]");
-            damage_step(ghost1, ghost2, numberofrounds);
-            if (ghost2.hitpoints <= 0)
-            {
-                ghost2.hitpoints = 0;
-                ghost2.status = LOSER;
-                if (ghost2.character_life == 1)
-                {
-                    ghost2.status = ELIMINATED;
-                    ghost2.character_life = 0;
-                }
-                else
-                {
-                    ghost2.character_life -= 1;
-                }
-                ghost1.status = WINNER;
-                ghost1.character_life += 1;
-                ghost1.battle_count += 1;
-                ghost2.battle_count += 1;
-            }
-            else
-            {
-                ghost2.status = 3;
-            }
-            numberofrounds += 1;
         }
     }
     calculate_prize(ghost1);
@@ -259,17 +182,21 @@ void ghostquest::damage_step(ghost &ghost1, ghost &ghost2, int round) // functio
             fnldmg = ghost1.attack - dmgred - dmgwdt;
         }
     }
-    ghost2.hitpoints = ghost2.hitpoints - fnldmg;
-    print("Character of");
+    ghost2.hitpoints = ((ghost2.hitpoints - fnldmg) < 0) ? 0 : ghost2.hitpoints - fnldmg;
+    print("Round#");
+    print(round);
+    print("->");
+    print("Characterof");
     print(ghost2.ghost_id);
-    print("at key");
+    print("atkey");
     print(ghost2.key);
     print("took");
     print(fnldmg);
-    print("damage from character of");
+    print("damagefromcharacterof");
     print(ghost1.ghost_id);
-    print("at key");
+    print("atkey");
     print(ghost1.key);
+    print("...");
     // std::string battle_log = "Round " + to_string(round) + " : Character of " + std::to_string(ghost2.ghost_id) + " took " + std::to_string(fnldmg) + " amount of damage from character of " + std::to_string(ghost1.ghost_id);
     // print(battle_log);
     // std::string battle_log = ghost2.ghost_id + std::to_string(ghost2.key) + " took " + std::to_string(fnldmg) + " damage from" + std::to_string(ghost1.ghost_id) + std::to_string(ghost1.key);
@@ -302,6 +229,25 @@ void ghostquest::calculate_prize(ghost &ghost)
     }
     ghost.prize.amount = init_prize - house_edge;
 }
+
+void ghostquest::result_step(ghost &ghost1, ghost &ghost2) // function for generating monster/s status
+{
+    ghost1.status = LOSER;
+    if (ghost1.character_life == 1)
+    {
+        ghost1.status = ELIMINATED;
+        ghost1.character_life = 0;
+    }
+    else
+    {
+        ghost1.character_life -= 1;
+    }
+    ghost2.status = WINNER;
+    ghost2.character_life += 1;
+    ghost1.battle_count += 1;
+    ghost2.battle_count += 1;
+}
+
 int ghostquest::rng(const int &range)
 {
     // Find the existing seed

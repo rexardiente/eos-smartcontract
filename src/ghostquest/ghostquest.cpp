@@ -79,8 +79,8 @@ ACTION ghostquest::findmatch(name username, uint64_t char1, uint64_t char2)
 
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        // game_data.character.at(char1).status = 3;
-        // game_data.character.at(char2).status = 3;
+        game_data.character.at(char1).status = 3;
+        game_data.character.at(char2).status = 3;
         game_data.character.at(char1).hitpoints = game_data.character.at(char1).initial_hp;
         game_data.character.at(char2).hitpoints = game_data.character.at(char2).initial_hp;
         battle(game_data.character.at(char1), game_data.character.at(char2));
