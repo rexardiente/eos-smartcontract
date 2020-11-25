@@ -84,6 +84,8 @@ ACTION ghostquest::findmatch(name username, uint64_t char1, uint64_t char2)
         game_data.character.at(char1).hitpoints = game_data.character.at(char1).initial_hp;
         game_data.character.at(char2).hitpoints = game_data.character.at(char2).initial_hp;
         battle(game_data.character.at(char1), game_data.character.at(char2));
+        game_data.character.at(char1).last_match = current_time_point().elapsed._count;
+        game_data.character.at(char2).last_match = current_time_point().elapsed._count;
         // game_data.character.at(1).last_battle = std::chrono::high_resolution_clock::now();
         // game_data.character.at(2).last_battle = std::chrono::high_resolution_clock::now();
     });

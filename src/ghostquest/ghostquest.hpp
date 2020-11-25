@@ -56,6 +56,7 @@ private:
         asset prize = DEFAULT_ASSET;
         uint64_t battle_limit = LMT_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
+        uint64_t last_match = GQ_DEFAULT;
         // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
