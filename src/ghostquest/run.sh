@@ -23,6 +23,12 @@ CREATE_ACCOUNT_WALLET()
     cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
     cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 }
+
+SET_PERMISSION() 
+{
+    echo "${EXECUTE} Setting Permission for [\"ghostquest\"] with PUBLICK_KEY=\"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV\""
+    cleos set account permission ghostquest active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
+}
 # Compile Contract
 COMPILE_CONTRACT() 
 {
@@ -49,7 +55,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 # Create user and game_defaults
 INITIALIZE_GAME()
 {
-    echo "${EXECUTE} Creating new game for \"user1\"..."
+    echo "${EXECUTE} Creating new game for \"user1, user2\"..."
     cleos push action ghostquest initialize '["user1"]' -p user1@active #for user1
     cleos push action ghostquest initialize '["user2"]' -p user2@active #for user2
     
@@ -57,7 +63,7 @@ INITIALIZE_GAME()
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
 {
-    echo "${EXECUTE} Deleting existing game for \"user1\"..."
+    echo "${EXECUTE} Deleting existing game for \"user1, user2\"..."
     cleos push action ghostquest end '["user1"]' -p user1@active #for user1
     cleos push action ghostquest end '["user2"]' -p user2@active #for user2
 }
@@ -95,15 +101,16 @@ GET_CURRENCY()
 # cleos set account permission ghostquest active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
 
 
-# UNLOCK_WALLET
-# CREATE_ACCOUNT_WALLET
-# COMPILE_CONTRACT
-# DEPLOY_CONTRACT
-# INITIALIZE_GAME
-# SET_SUMMON_COUNT
-# TRANSFER
+#UNLOCK_WALLET
+#CREATE_ACCOUNT_WALLET
+#SET_PERMISSION
+COMPILE_CONTRACT
+DEPLOY_CONTRACT
+INITIALIZE_GAME
+SET_SUMMON_COUNT
+TRANSFER
 # BATTLE
-WITHDRAW
-GET_CURRENCY 
+# WITHDRAW
+# GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
