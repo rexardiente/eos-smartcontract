@@ -68,17 +68,19 @@ REMOVE_EXISTING_GAME()
     cleos push action ghostquest end '["user2"]' -p user2@active #for user2
 }
 
-SET_SUMMON_COUNT()
-{
-    echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action ghostquest summoncount '["user1", 4, 10]' -p user1@active #for user1
-    cleos push action ghostquest summoncount '["user2", 4, 10]' -p user2@active #for user2
-}
+# SET_SUMMON_COUNT()
+# {
+#     echo "${EXECUTE} Configuring \"user1\" Game Destination."
+#     cleos push action ghostquest summoncount '["user1", 4, 10]' -p user1@active #for user1
+#     cleos push action ghostquest summoncount '["user2", 4, 10]' -p user2@active #for user2
+# }
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "ghostquest", "4.0000 EOS", "10" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "ghostquest", "4.0000 EOS", "10" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
+    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "ADD_LIFE=2" ]' -p user2@active
 }
 
 
@@ -104,13 +106,12 @@ GET_CURRENCY()
 #UNLOCK_WALLET
 #CREATE_ACCOUNT_WALLET
 #SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
-INITIALIZE_GAME
-SET_SUMMON_COUNT
-TRANSFER
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
+# INITIALIZE_GAME
+# TRANSFER   # note : transfer has two types, for summon and for add life
 # BATTLE
 # WITHDRAW
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
-SHOW_EOSIO_CONTRACT_TABLE
+REMOVE_EXISTING_GAME
+# SHOW_EOSIO_CONTRACT_TABLE

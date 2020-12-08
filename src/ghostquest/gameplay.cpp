@@ -1,4 +1,5 @@
 #include "ghostquest.hpp"
+#include <string>
 
 void ghostquest::ondeposit(name from,
                            name to,
@@ -20,10 +21,21 @@ void ghostquest::ondeposit(name from,
     check(quantity.amount > 0, "Only positive quantity allowed");
     check(quantity.symbol == ghostquest_symbol, "Invalid EOS Token");
 
-    gameready(from, quantity);
+    std::size_t pos = memo.find("=");
+    std::string str = memo.substr(pos += 1);
+    if (memo.find("ADD_LIFE") != std::string::npos)
+    {
+        int key = stoi(str);
+        setaddlife(from, quantity, key);
+    }
+    else
+    {
+        int limit = stoi(str);
+        gameready(from, quantity, limit);
+    }
 }
 
-void ghostquest::gameready(name username, asset quantity)
+void ghostquest::gameready(name username, asset quantity, int limit)
 {
     require_auth(username);
 
@@ -31,7 +43,19 @@ void ghostquest::gameready(name username, asset quantity)
         permission_level{_self, "active"_n},
         _self,
         "getstat"_n,
-        std::make_tuple(username, quantity))
+        std::make_tuple(username, quantity, limit))
+        .send();
+}
+
+void ghostquest::setaddlife(name username, asset quantity, int key)
+{
+    require_auth(username);
+
+    action(
+        permission_level{_self, "active"_n},
+        _self,
+        "addlife"_n,
+        std::make_tuple(username, quantity, key))
         .send();
 }
 
