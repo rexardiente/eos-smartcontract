@@ -17,11 +17,5 @@ There are 5 sub-directroies that house resources for contracts offering differen
 4. **payable** - _withdraw and deposit mechanics associated with  treasure hunt._ (contains `payable.cpp`)
 5. **token_files** - contracts and code associated with token generation and transactions on the platform. (contains `donut.token.cpp` & `donut.token.hpp`)
 
-### Developers
-A total of 3 developers worked on this repo. Their profiles can be found below:
-1. Tata ([tata-prog](https://github.com/tata-prog))
-2. Rex ([rexardiente](https://github.com/rexardiente))
-3. Brett ([brett-harvey](https://github.com/brett-harvey))
-
 ### Future plans and troubleshooting
 This repo is tentative and subject to change based upon the direction of the company, objective of the app, and the developer team.
