@@ -50,7 +50,7 @@ ACTION ghostquest::getstat(name username, asset quantity) // generate stats of m
         for (int i = game_data.monster_count + 1; i < (1 + game_data.monster_count + game_data.summon_count); i++) // summon monster/monsters and hitpoints
         {
             ghost new_ghost;
-            new_ghost.ghost_id = user.username;
+            new_ghost.owner = user.username;
             new_ghost.prize.amount = 10000;
             // new_ghost.battle_limit = 5;
             new_ghost.status = SUMMONED;

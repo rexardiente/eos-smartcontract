@@ -185,8 +185,8 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
         }
     }
     defender->second.hitpoints = ((defender->second.hitpoints - fnldmg) < 0) ? 0 : defender->second.hitpoints - fnldmg;
-    // print("Round " + std::to_string(round) + " character of " + std::to_string(defender->second.ghost_id) + " at key " + std::to_string(defender->second.key) + " took " + std::to_string(fnldmg) + " damage from character of " + std::to_string(attacker->second.ghost_id) + " at key " + std::to_string(attacker->second.key) + " .. ");
-    print("Round " + std::to_string(round) + ". Character of " + name{defender->second.ghost_id}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.ghost_id}.to_string() + " .. ");
+    // print("Round " + std::to_string(round) + " character of " + std::to_string(defender->second.owner) + " at key " + std::to_string(defender->second.key) + " took " + std::to_string(fnldmg) + " damage from character of " + std::to_string(attacker->second.owner) + " at key " + std::to_string(attacker->second.key) + " .. ");
+    print("Round " + std::to_string(round) + ". Character of " + name{defender->second.owner}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.owner}.to_string() + " .. ");
 }
 
 // void ghostquest::addlife(name username, ghost &ghostsel, asset quantity)
