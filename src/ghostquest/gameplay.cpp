@@ -26,28 +26,29 @@ void ghostquest::ondeposit(name from,
     if (memo.find("ADD_LIFE") != std::string::npos)
     {
         int key = stoi(str);
-        setaddlife(from, quantity, key);
+        set_add_life(from, quantity, key);
     }
     else
     {
         int limit = stoi(str);
-        gameready(from, quantity, limit);
+        game_ready(from, quantity, limit);
     }
 }
 
-void ghostquest::gameready(name username, asset quantity, int limit)
+void ghostquest::game_ready(name username, asset quantity, int limit)
 {
+    // print("HI");
     require_auth(username);
 
     action(
         permission_level{_self, "active"_n},
         _self,
-        "getstat"_n,
+        "genchar"_n,
         std::make_tuple(username, quantity, limit))
         .send();
 }
 
-void ghostquest::setaddlife(name username, asset quantity, int key)
+void ghostquest::set_add_life(name username, asset quantity, int key)
 {
     require_auth(username);
 
@@ -70,9 +71,8 @@ void ghostquest::onsettledpay(name username, asset quantity, string memo)
         .send();
 }
 
-void ghostquest::genstat(ghost &initial_ghost) // function for generating monster/s status
+void ghostquest::gen_stat(ghost &initial_ghost) // function for generating monster/s status
 {
-
     initial_ghost.attack = 25 + rng(50);
     initial_ghost.defense = 25 + rng(50);
     initial_ghost.speed = 25 + rng(50);
@@ -220,7 +220,7 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
 
 void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::iterator &winner)
 {
-    // print("HI");
+
     loser->second.status = LOSER;
     if (loser->second.character_life == 1)
     {
@@ -284,7 +284,7 @@ uint64_t ghostquest::genghostid()
     // get current time
     uint64_t current_time = current_time_point().elapsed._count;
 
-    return rng(1000) + current_time;
+    return current_time;
 }
 
 int ghostquest::rng(const int &range)

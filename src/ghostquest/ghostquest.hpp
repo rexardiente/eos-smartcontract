@@ -71,8 +71,6 @@ private:
     struct game
     {
         map<int, ghost> character;
-        uint64_t monster_count = GQ_DEFAULT;
-        uint64_t summon_count = GQ_DEFAULT;
         uint8_t status = INITIALIZED;
     };
 
@@ -107,13 +105,13 @@ private:
 
     int rng(const int &range);
     uint64_t genghostid();
-    void gameready(name username, asset quantity, int limit);
+    void game_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
-    void genstat(ghost & initghost);
+    void gen_stat(ghost & initghost);
     void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2);
     void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round);
     void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner);
-    void setaddlife(name username, asset quantity, int key);
+    void set_add_life(name username, asset quantity, int key);
     void calculate_prize(map<int, ghost>::iterator & ghost);
     void eliminated_withdrawn(map<int, ghost>::iterator & ghost);
 
@@ -131,10 +129,10 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION battle(name username1, name username2, int ghost1_key, int ghost2_key);
+    ACTION battle(name username1, int ghost1_key, name username2, int ghost2_key);
     ACTION withdraw(name username, int key);
     ACTION settledpay(name to, asset prize, string memo);
-    ACTION getstat(name username, asset quantity, int limit);
+    ACTION genchar(name username, asset quantity, int limit);
     ACTION addlife(name username, asset quantity, int key);
     ACTION end(name username);
 };
