@@ -3,7 +3,6 @@
 #include <eosio/transaction.hpp>
 #include <map>
 #include "config.hpp"
-// #include <chrono>
 
 using namespace std;
 using namespace eosio;
@@ -43,7 +42,7 @@ private:
 
     struct ghost
     {
-        name ghost_id;
+        name owner;
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
