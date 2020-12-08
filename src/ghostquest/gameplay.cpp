@@ -279,6 +279,14 @@ void ghostquest::eliminated_withdrawn(map<int, ghost>::iterator &ghost)
     ghost->second.prize.amount = 0;
 }
 
+uint64_t ghostquest::genghostid()
+{
+    // get current time
+    uint64_t current_time = current_time_point().elapsed._count;
+
+    return rng(1000) + current_time;
+}
+
 int ghostquest::rng(const int &range)
 {
     // Find the existing seed

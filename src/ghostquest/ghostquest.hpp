@@ -43,6 +43,7 @@ private:
     struct ghost
     {
         name owner;
+        uint64_t ghost_id;
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
@@ -57,6 +58,7 @@ private:
         int battle_limit = LMT_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
         uint64_t last_match = GQ_DEFAULT;
+        map<uint64_t, name> enemy_fought;
         // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
@@ -104,7 +106,7 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
-
+    uint64_t genghostid();
     void gameready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
     void genstat(ghost & initghost);

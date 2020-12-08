@@ -38,6 +38,7 @@ ACTION ghostquest::getstat(name username, asset quantity, int limit) // generate
         for (int i = game_data.monster_count + 1; i < (1 + game_data.monster_count + game_data.summon_count); i++) // summon monster/monsters and hitpoints
         {
             ghost new_ghost;
+            new_ghost.ghost_id = genghostid();
             new_ghost.owner = user.username;
             new_ghost.prize.amount = 10000;
             new_ghost.battle_limit = limit;
@@ -79,11 +80,19 @@ ACTION ghostquest::battle(name username1, name username2, int ghost1_key, int gh
     map<int, ghost>::iterator itr1 = characters1.find(ghost1_key);
     auto characters2 = user2.game_data.character;
     map<int, ghost>::iterator itr2 = characters2.find(ghost2_key);
+
     itr1->second.hitpoints = itr1->second.initial_hp;
     itr2->second.hitpoints = itr2->second.initial_hp;
+    check(itr1->second.enemy_fought.find(itr2->second.ghost_id) == itr1->second.enemy_fought.end(), "Enemy already fought before.");
+    check(itr2->second.enemy_fought.find(itr1->second.ghost_id) == itr2->second.enemy_fought.end(), "Enemy already fought before.");
+    check(itr1->second.character_life == itr2->second.character_life, "Match not allowed.");
+    check(itr1->second.battle_count <= itr1->second.battle_limit, "Battle limit reached.");
+    check(itr2->second.battle_count <= itr2->second.battle_limit, "Battle limit reached.");
     battle_step(itr1, itr2);
     itr1->second.last_match = current_time_point().elapsed._count;
     itr2->second.last_match = current_time_point().elapsed._count;
+    itr1->second.enemy_fought.insert(itr1->second.enemy_fought.end(), pair<uint64_t, name>(itr2->second.ghost_id, itr2->second.owner));
+    itr2->second.enemy_fought.insert(itr2->second.enemy_fought.end(), pair<uint64_t, name>(itr1->second.ghost_id, itr1->second.owner));
     _users.modify(user1, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
 
@@ -127,7 +136,7 @@ ACTION ghostquest::withdraw(name username, int key)
 {
     require_auth(username);
     auto user = _users.find(username.value);
-    // check(user->game_data.character.at(idx).prize.amount > 0, "Ghost doesn't exist.");
+    check(user->game_data.character.find(key)->second.character_life > 0, "Ghost doesn't exist.");
     std::string feedback = "GQ Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.character.find(key)->second.prize.amount);
     action{
         permission_level{_self, "active"_n},
