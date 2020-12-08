@@ -134,5 +134,6 @@ public:
     ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(name username, asset quantity, int limit);
     ACTION addlife(name username, asset quantity, int key);
+    ACTION eliminate(name username, int key);
     ACTION end(name username);
 };

@@ -93,6 +93,12 @@ WITHDRAW()
 {
     cleos push action ghostquest withdraw '[ "user1", 1]' -p user1@active
 }
+
+ELIMINATE()
+{
+    cleos push action ghostquest eliminate '[ "user1", 1]' -p user1@active
+}
+
 GET_CURRENCY()
 {
     cleos get currency balance eosio.token ghostquest EOS 
@@ -106,12 +112,13 @@ GET_CURRENCY()
 #UNLOCK_WALLET
 #CREATE_ACCOUNT_WALLET
 #SET_PERMISSION
-# COMPILE_CONTRACT
-# DEPLOY_CONTRACT
+COMPILE_CONTRACT
+DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER   # note : transfer has two types, for summon and for add life
 # BATTLE
-WITHDRAW
+# WITHDRAW
+# ELIMINATE
 # GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

@@ -130,6 +130,19 @@ ACTION ghostquest::withdraw(name username, int key)
     });
 }
 
+ACTION ghostquest::eliminate(name username, int key) // generate stats of monsters after transfer transaction
+{
+    require_auth(_self);
+
+    auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.character.at(key).status != 3, "Character in battle.");
+
+    _users.modify(user, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.character.erase(key);
+    });
+}
+
 ACTION ghostquest::end(name username)
 {
     require_auth(username);
