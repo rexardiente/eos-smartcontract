@@ -78,9 +78,9 @@ REMOVE_EXISTING_GAME()
 TRANSFER()
 {
     # cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
-    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
-    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "ADD_LIFE=2" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
 }
 
 
@@ -92,6 +92,7 @@ BATTLE()
 WITHDRAW()
 {
     cleos push action ghostquest withdraw '[ "user1", 1]' -p user1@active
+    cleos push action ghostquest withdraw '[ "user2", 1]' -p user2@active
 }
 
 ELIMINATE()
@@ -112,13 +113,13 @@ GET_CURRENCY()
 #UNLOCK_WALLET
 #CREATE_ACCOUNT_WALLET
 #SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER   # note : transfer has two types, for summon and for add life
 # BATTLE
 # WITHDRAW
 # ELIMINATE
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

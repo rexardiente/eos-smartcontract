@@ -43,7 +43,7 @@ private:
     struct ghost
     {
         name owner;
-        uint64_t ghost_id;
+        // uint64_t ghost_id;
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
@@ -104,8 +104,7 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
-    uint64_t genghostid();
-    void game_ready(name username, asset quantity, int limit);
+    void summon_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
     void gen_stat(ghost & initghost);
     void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2);
