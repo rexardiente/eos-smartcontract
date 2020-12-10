@@ -7,16 +7,15 @@ ACTION ghostquest::initialize(name username)
     // Create a record in the table if the player doesn't exist in our app yet
     auto itr = _users.find(username.value);
 
-    users_table userstbl(_self, username.value);
-    // uint64_t gameid = userstbl.available_primary_key();
-
+    // users_table userstbl(_self, username.value);
+    // uint64_t gameid = _users.available_primary_key();
     check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
 
     if (itr == _users.end())
     {
         _users.emplace(_self, [&](auto &new_users) {
             new_users.username = username;
-            new_users.game_id = current_time_point().elapsed._count + rng(100);
+            new_users.game_id = _users.available_primary_key();
             // new_users.game_id = generategameid(); // generate user game_id
         });
     }
@@ -35,7 +34,7 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
-            new_ghost.ghost_id = current_time_point().elapsed._count + i + modified_user.game_id;
+            new_ghost.ghost_id = modified_user.game_id + i;
             new_ghost.owner = user.username;
             new_ghost.prize.amount = 10000;
             new_ghost.battle_limit = limit;
