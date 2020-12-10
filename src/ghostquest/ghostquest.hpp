@@ -43,6 +43,7 @@ private:
     struct ghost
     {
         name owner;
+        // uint64_t ghost_id;
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
@@ -54,9 +55,10 @@ private:
         uint64_t speed = STAT_DEFAULT;
         uint64_t luck = STAT_DEFAULT;
         asset prize = DEFAULT_ASSET;
-        uint64_t battle_limit = LMT_DEFAULT;
+        int battle_limit = LMT_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
         uint64_t last_match = GQ_DEFAULT;
+        map<uint64_t, name> enemy_fought;
         // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
@@ -69,9 +71,6 @@ private:
     struct game
     {
         map<int, ghost> character;
-        uint64_t monster_count = GQ_DEFAULT;
-        uint64_t summon_count = GQ_DEFAULT;
-        uint64_t temp_add_life = GQ_DEFAULT;
         uint8_t status = INITIALIZED;
     };
 
@@ -105,14 +104,13 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
-
-    void gameready(name username, asset quantity);
+    void summon_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
-    void genstat(ghost & initghost);
+    void gen_stat(ghost & initghost);
     void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2);
     void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round);
     void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner);
-    // void addlife(name username, map<int, ghost>::iterator & map<int, ghost>::iteratorsel, asset quantity);
+    void set_add_life(name username, asset quantity, int key);
     void calculate_prize(map<int, ghost>::iterator & ghost);
     void eliminated_withdrawn(map<int, ghost>::iterator & ghost);
 
@@ -130,11 +128,11 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION summoncount(name username, uint64_t summoncount, uint64_t battlelimit);
-    ACTION battle(name username1, name username2, int ghost1_key, int ghost2_key);
+    ACTION battle(name username1, int ghost1_key, name username2, int ghost2_key);
     ACTION withdraw(name username, int key);
     ACTION settledpay(name to, asset prize, string memo);
-    ACTION getstat(name username, asset quantity);
-    // ACTION setaddlife(name username, ghost & ghostsel, int life_to_add);
+    ACTION genchar(name username, asset quantity, int limit);
+    ACTION addlife(name username, asset quantity, int key);
+    ACTION eliminate(name username, int key);
     ACTION end(name username);
 };

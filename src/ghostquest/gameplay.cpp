@@ -1,4 +1,5 @@
 #include "ghostquest.hpp"
+#include <string>
 
 void ghostquest::ondeposit(name from,
                            name to,
@@ -20,18 +21,40 @@ void ghostquest::ondeposit(name from,
     check(quantity.amount > 0, "Only positive quantity allowed");
     check(quantity.symbol == ghostquest_symbol, "Invalid EOS Token");
 
-    gameready(from, quantity);
+    std::string str = memo.substr(9);
+    if (memo.find("ADD_LIFE") != std::string::npos)
+    {
+        int key = stoi(str);
+        set_add_life(from, quantity, key);
+    }
+    else
+    {
+        int limit = stoi(str);
+        summon_ready(from, quantity, limit);
+    }
 }
 
-void ghostquest::gameready(name username, asset quantity)
+void ghostquest::summon_ready(name username, asset quantity, int limit) // trigger summoning after transfer transaction
 {
     require_auth(username);
 
-    action(
+    action( //generate characters
         permission_level{_self, "active"_n},
         _self,
-        "getstat"_n,
-        std::make_tuple(username, quantity))
+        "genchar"_n,
+        std::make_tuple(username, quantity, limit))
+        .send();
+}
+
+void ghostquest::set_add_life(name username, asset quantity, int key) // trigger adding life after transfer transaction
+{
+    require_auth(username);
+
+    action( // add life
+        permission_level{_self, "active"_n},
+        _self,
+        "addlife"_n,
+        std::make_tuple(username, quantity, key))
         .send();
 }
 
@@ -46,9 +69,8 @@ void ghostquest::onsettledpay(name username, asset quantity, string memo)
         .send();
 }
 
-void ghostquest::genstat(ghost &initial_ghost) // function for generating monster/s status
+void ghostquest::gen_stat(ghost &initial_ghost) // function for generating monster/s status
 {
-
     initial_ghost.attack = 25 + rng(50);
     initial_ghost.defense = 25 + rng(50);
     initial_ghost.speed = 25 + rng(50);
@@ -106,63 +128,63 @@ void ghostquest::genstat(ghost &initial_ghost) // function for generating monste
     }
 }
 
-void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>::iterator &ghost2)
+void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>::iterator &ghost2) // battle process
 {
     check(ghost1->second.character_life > 0 && ghost2->second.character_life > 0, "Your or your enemy character can not battle.");
     int numberofrounds = 1;
     while (ghost1->second.hitpoints > 0 && ghost2->second.hitpoints > 0)
     {
-        if (ghost1->second.speed > ghost2->second.speed)
+        if (ghost1->second.speed > ghost2->second.speed) // determine which monster attack first
         {
-            damage_step(ghost1, ghost2, numberofrounds);
+            damage_step(ghost1, ghost2, numberofrounds); // perform damage calculation
             numberofrounds += 1;
             if (ghost2->second.hitpoints > 0)
             {
-                damage_step(ghost2, ghost1, numberofrounds);
+                damage_step(ghost2, ghost1, numberofrounds); // perform damage calculation
                 numberofrounds += 1;
                 if (ghost1->second.hitpoints == 0)
                 {
-                    result_step(ghost1, ghost2);
+                    result_step(ghost1, ghost2); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
                 }
             }
             else
             {
-                result_step(ghost2, ghost1);
+                result_step(ghost2, ghost1); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
             }
         }
         else
         {
-            damage_step(ghost2, ghost1, numberofrounds);
+            damage_step(ghost2, ghost1, numberofrounds); // perform damage calculation
             numberofrounds += 1;
             if (ghost1->second.hitpoints > 0)
             {
-                damage_step(ghost1, ghost2, numberofrounds);
+                damage_step(ghost1, ghost2, numberofrounds); // perform damage calculation
                 numberofrounds += 1;
                 if (ghost2->second.hitpoints == 0)
                 {
-                    result_step(ghost2, ghost1);
+                    result_step(ghost2, ghost1); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
                 }
             }
             else
             {
-                result_step(ghost1, ghost2);
+                result_step(ghost1, ghost2); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
             }
         }
     }
-    calculate_prize(ghost1);
-    calculate_prize(ghost2);
+    calculate_prize(ghost1); // calculate prize after battle
+    calculate_prize(ghost2); // calculate prize after battle
 }
 
-void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost>::iterator &defender, int round) // function for generating monster/s status
+void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost>::iterator &defender, int round) // perform damage calculation
 {
-    // print("hIiiiii");
+
     int chance = attacker->second.luck / 4;
     int luck = rng(99) + 1;
     int fnldmg = 0;
     int getdmgwdt = attacker->second.attack / 16 + 1;
     int dmgwdt = rng(getdmgwdt);
     int dmgred = (attacker->second.attack * defender->second.defense) / 100;
-    if (luck <= chance)
+    if (luck <= chance) // determine critical and damage width for final damage dealt
     {
         if (luck % 2 == 0)
         {
@@ -184,19 +206,13 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
             fnldmg = attacker->second.attack - dmgred - dmgwdt;
         }
     }
-    defender->second.hitpoints = ((defender->second.hitpoints - fnldmg) < 0) ? 0 : defender->second.hitpoints - fnldmg;
-    // print("Round " + std::to_string(round) + " character of " + std::to_string(defender->second.owner) + " at key " + std::to_string(defender->second.key) + " took " + std::to_string(fnldmg) + " damage from character of " + std::to_string(attacker->second.owner) + " at key " + std::to_string(attacker->second.key) + " .. ");
+    defender->second.hitpoints = ((defender->second.hitpoints - fnldmg) < 0) ? 0 : defender->second.hitpoints - fnldmg; // Hitpoints reduction
     print("Round " + std::to_string(round) + ". Character of " + name{defender->second.owner}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.owner}.to_string() + " .. ");
 }
 
-// void ghostquest::addlife(name username, ghost &ghostsel, asset quantity)
-// {
-//     ghostsel.character_life += (quantity.amount * 10000);
-// }
-
-void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::iterator &winner)
+void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::iterator &winner) // modify status and other data values for both characters
 {
-    // print("HI");
+
     loser->second.status = LOSER;
     if (loser->second.character_life == 1)
     {
@@ -213,7 +229,7 @@ void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::
     winner->second.battle_count += 1;
 }
 
-void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost)
+void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost) // generate prize after battle
 {
     float house_edge;
     float init_prize = ghost->second.character_life * 10000;
@@ -240,7 +256,7 @@ void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost)
     ghost->second.prize.amount = init_prize - house_edge;
 }
 
-void ghostquest::eliminated_withdrawn(map<int, ghost>::iterator &ghost)
+void ghostquest::eliminated_withdrawn(map<int, ghost>::iterator &ghost) // disable characters by removing stats
 {
     ghost->second.status = 6;
     ghost->second.character_life = 0;

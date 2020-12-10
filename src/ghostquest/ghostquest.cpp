@@ -22,69 +22,50 @@ ACTION ghostquest::initialize(name username)
     }
 }
 
-// function for setting number of summons of monster
-ACTION ghostquest::summoncount(name username, uint64_t summoncount, uint64_t battlelimit)
-{
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-
-    _users.modify(user, username, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.summon_count = summoncount;
-    });
-}
-
-ACTION ghostquest::getstat(name username, asset quantity) // generate stats of monsters after transfer transaction
+ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate characters after transfer transaction
 {
     require_auth(_self);
 
     auto &user = _users.get(username.value, "User doesn't exist");
     auto itr = _users.find(username.value);
-
+    int counter = user.game_data.character.size();
     check(itr != _users.end(), "Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(itr->game_data.summon_count == (quantity.amount / 10000), "Deposited amount does not match the selected number of summons.");
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        // vector<ghost> new_character;                                                            // summon monster/monsters
-        for (int i = game_data.monster_count + 1; i < (1 + game_data.monster_count + game_data.summon_count); i++) // summon monster/monsters and hitpoints
+        for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
             new_ghost.owner = user.username;
             new_ghost.prize.amount = 10000;
-            // new_ghost.battle_limit = 5;
+            new_ghost.battle_limit = limit;
             new_ghost.status = SUMMONED;
             new_ghost.character_life = 1;
             new_ghost.status = STANDBY;
             new_ghost.initial_hp = 100 + rng(50);
-            genstat(new_ghost);
-            game_data.character.insert(game_data.character.end(), pair<int, ghost>(i, new_ghost));
+            gen_stat(new_ghost); // generate status for character
+            game_data.character.insert(game_data.character.end(), pair<int, ghost>(i + 1, new_ghost));
         }
-
-        game_data.monster_count += game_data.summon_count;
-        game_data.summon_count = 0;
     });
 }
 
-// ACTION ghostquest::setaddlife(name username, ghost &ghostsel, int life_to_add) // generate stats of monsters after transfer transaction
-// {
-//     require_auth(_self);
+ACTION ghostquest::addlife(name username, asset quantity, int key) // add life/lives after transfer transaction
+{
+    require_auth(_self);
 
-//     auto &user = _users.get(username.value, "User doesn't exist");
-//     auto itr = _users.find(username.value);
+    auto &user = _users.get(username.value, "User doesn't exist");
+    auto characters = user.game_data.character;
+    map<int, ghost>::iterator itr = characters.find(key);
+    check(itr->second.character_life > 0, "Character cease to exist.");
+    itr->second.character_life += quantity.amount / 10000;
 
-//     check(itr != _users.end(), "Game Doesn't Exist.");
-//     check(ghostsel.character_life > 0, "Character cease to exist..");
-//     check(ghostsel.status == IDLE, "Character cease to exist or currently in battle.");
-//     // check(life_to_add == (quantity.amount / 10000), "Deposited amount does not match the desired life to add..");
+    _users.modify(user, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.character = characters;
+    });
+}
 
-//     _users.modify(itr, username, [&](auto &modified_user) {
-//         game &game_data = modified_user.game_data;
-//         game_data.temp_add_life = life_to_add;
-//     });
-// }
-
-ACTION ghostquest::battle(name username1, name username2, int ghost1_key, int ghost2_key) // function for generating monster/s status
+ACTION ghostquest::battle(name username1, int ghost1_key, name username2, int ghost2_key) // battle action
 {
     require_auth(_self);
     auto &user1 = _users.get(username1.value, "User doesn't exist.");
@@ -93,35 +74,26 @@ ACTION ghostquest::battle(name username1, name username2, int ghost1_key, int gh
     map<int, ghost>::iterator itr1 = characters1.find(ghost1_key);
     auto characters2 = user2.game_data.character;
     map<int, ghost>::iterator itr2 = characters2.find(ghost2_key);
+
     itr1->second.hitpoints = itr1->second.initial_hp;
     itr2->second.hitpoints = itr2->second.initial_hp;
-    battle_step(itr1, itr2);
-    itr1->second.last_match = current_time_point().elapsed._count;
-    itr2->second.last_match = current_time_point().elapsed._count;
+    check(itr1->second.enemy_fought.find(itr2->first) == itr1->second.enemy_fought.end(), "Enemy already fought before.");
+    check(itr2->second.enemy_fought.find(itr1->first) == itr2->second.enemy_fought.end(), "Enemy already fought before.");
+    check(itr1->second.character_life == itr2->second.character_life, "Match not allowed.");
+    check(itr1->second.battle_count <= itr1->second.battle_limit, "Battle limit reached.");
+    check(itr2->second.battle_count <= itr2->second.battle_limit, "Battle limit reached.");
+    battle_step(itr1, itr2);                                                                                                  // whole battle step
+    itr1->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
+    itr2->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
+    itr1->second.enemy_fought.insert(itr1->second.enemy_fought.end(), pair<uint64_t, name>(itr2->first, itr2->second.owner)); // insert enemy fought into history
+    itr2->second.enemy_fought.insert(itr2->second.enemy_fought.end(), pair<uint64_t, name>(itr1->first, itr1->second.owner)); // insert enemy fought into history
     _users.modify(user1, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-
         game_data.character = characters1;
-        if (itr1->second.status == ELIMINATED)
-        {
-            game_data.monster_count -= 1;
-        }
-        else
-        {
-            game_data.monster_count = game_data.monster_count;
-        }
     });
     _users.modify(user2, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.character = characters2;
-        if (itr2->second.status == ELIMINATED)
-        {
-            game_data.monster_count -= 1;
-        }
-        else
-        {
-            game_data.monster_count = game_data.monster_count;
-        }
     });
 }
 
@@ -130,19 +102,16 @@ ACTION ghostquest::settledpay(name username, asset prize, string memo)
     require_auth(_self);
     auto &user = _users.get(username.value, "User doesn't exist");
     // check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
-
-    _users.modify(user, username, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.monster_count -= 1;
-    });
 }
 
 ACTION ghostquest::withdraw(name username, int key)
 {
     require_auth(username);
     auto user = _users.find(username.value);
-    // check(user->game_data.character.at(idx).prize.amount > 0, "Ghost doesn't exist.");
-    std::string feedback = "GQ Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.character.find(key)->second.prize.amount);
+    check(user->game_data.character.find(key)->second.character_life > 0, "Ghost doesn't exist.");
+    check(user->game_data.character.find(key)->second.status != 3, "Ghost is currently in battle.");
+    check(user->game_data.character.find(key)->second.battle_count > 0, "Ghost has not been in a battle.");
+    std::string feedback = "GQ Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.character.find(key)->second.prize.amount); // transfer funds to user
     action{
         permission_level{_self, "active"_n},
         eosio_token,
@@ -151,10 +120,23 @@ ACTION ghostquest::withdraw(name username, int key)
         .send();
     auto characters = user->game_data.character;
     map<int, ghost>::iterator itr = characters.find(key);
-    eliminated_withdrawn(itr);
+    eliminated_withdrawn(itr); // modify withdrawn character
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.character = characters;
+    });
+}
+
+ACTION ghostquest::eliminate(name username, int key) // generate stats of monsters after transfer transaction
+{
+    require_auth(_self);
+
+    auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.character.at(key).status != 3, "Character in battle.");
+
+    _users.modify(user, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.character.erase(key);
     });
 }
 
