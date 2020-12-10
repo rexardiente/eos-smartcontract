@@ -66,6 +66,8 @@ REMOVE_EXISTING_GAME()
     echo "${EXECUTE} Deleting existing game for \"user1, user2\"..."
     cleos push action ghostquest end '["user1"]' -p user1@active #for user1
     cleos push action ghostquest end '["user2"]' -p user2@active #for user2
+        cleos push action ghostquest end '["user3"]' -p user3@active #for user1
+    cleos push action ghostquest end '["user4"]' -p user4@active #for user2
 }
 
 # SET_SUMMON_COUNT()
@@ -77,16 +79,16 @@ REMOVE_EXISTING_GAME()
 
 TRANSFER()
 {
-    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
-    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
-    cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
+    cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
+    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
 }
 
 
 BATTLE()
 {
-    cleos push action ghostquest battle '[ "user1", 1, "user2", 1]' -p ghostquest@active
+    cleos push action ghostquest battle '[ "user1", , "user2", 1]' -p ghostquest@active
 }
 
 WITHDRAW()

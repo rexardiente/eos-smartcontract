@@ -178,8 +178,14 @@ void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>:
 
 void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost>::iterator &defender, int round, battle_history &current_battle) // perform damage calculation
 {
-
-    int chance = attacker->second.luck / 4;
+    if (attack->second.ghost_class == 4)
+    {
+        int chance = attacker->second.luck / 3;
+    }
+    else
+    {
+        int chance = attacker->second.luck / 4;
+    }
     int luck = rng(99) + 1;
     int fnldmg = 0;
     int getdmgwdt = attacker->second.attack / 16 + 1;
@@ -208,7 +214,7 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
         }
     }
     defender->second.hitpoints = ((defender->second.hitpoints - fnldmg) < 0) ? 0 : defender->second.hitpoints - fnldmg; // Hitpoints reduction
-    std::string battlelog = "Round " + std::to_string(round) + " : Character of " + name{defender->second.owner}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.owner}.to_string() + " .. ";
+    std::string battlelog = "Round " + std::to_string(round) + " : Character of " + name{defender->second.owner}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.owner}.to_string() + ".";
     current_battle.gameplay_log.push_back(battlelog);
 }
 
@@ -228,7 +234,7 @@ void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::
     winner->second.character_life += 1;
     loser->second.battle_count += 1;
     winner->second.battle_count += 1;
-    std::string victorylog = " Character of " + name{winner->second.owner}.to_string() + " won against " + name{loser->second.owner}.to_string();
+    std::string victorylog = " Battle Outcome : Character of " + name{winner->second.owner}.to_string() + " won against character of" + name{loser->second.owner}.to_string();
     current_battle.gameplay_log.push_back(victorylog);
 }
 
