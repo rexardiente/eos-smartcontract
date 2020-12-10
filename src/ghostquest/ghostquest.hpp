@@ -35,15 +35,18 @@ private:
         DONE = 2
     };
 
-    // struct fight_log
-    // {
-    //     string gameplay_log;
-    // };
+    struct battle_history
+    {
+        uint64_t time_start;
+        uint64_t time_end;
+        vector<string> gameplay_log = {};
+        bool isWin;
+    };
 
     struct ghost
     {
         name owner;
-        // uint64_t ghost_id;
+        uint64_t ghost_id;
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
@@ -58,7 +61,7 @@ private:
         int battle_limit = LMT_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
         uint64_t last_match = GQ_DEFAULT;
-        map<uint64_t, name> enemy_fought;
+        map<uint64_t, battle_history> match_history;
         // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
@@ -71,7 +74,7 @@ private:
     struct game
     {
         map<int, ghost> character;
-        uint8_t status = INITIALIZED;
+        // uint8_t status = INITIALIZED;
     };
 
     struct [[eosio::table]] user
@@ -107,9 +110,9 @@ private:
     void summon_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
     void gen_stat(ghost & initghost);
-    void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2);
-    void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round);
-    void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner);
+    void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2, battle_history & current_battle);
+    void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round, battle_history &current_battle);
+    void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner, battle_history & current_battle);
     void set_add_life(name username, asset quantity, int key);
     void calculate_prize(map<int, ghost>::iterator & ghost);
     void eliminated_withdrawn(map<int, ghost>::iterator & ghost);
