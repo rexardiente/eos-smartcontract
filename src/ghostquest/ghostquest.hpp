@@ -37,6 +37,8 @@ private:
 
     struct battle_history
     {
+        string game_id;
+        name enemy;
         uint64_t time_start;
         uint64_t time_end;
         vector<string> gameplay_log = {};
@@ -80,7 +82,6 @@ private:
     struct [[eosio::table]] user
     {
         name username;
-        uint64_t game_id;
         game game_data;
 
         auto primary_key() const
@@ -131,7 +132,7 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION battle(name username1, int ghost1_key, name username2, int ghost2_key);
+    ACTION battle(vector<pair<int, name>> & players, string gameid);
     ACTION withdraw(name username, int key);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(name username, asset quantity, int limit);

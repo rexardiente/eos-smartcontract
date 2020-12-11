@@ -15,7 +15,7 @@ ACTION ghostquest::initialize(name username)
     {
         _users.emplace(_self, [&](auto &new_users) {
             new_users.username = username;
-            new_users.game_id = _users.available_primary_key();
+            // new_users.game_id = _users.available_primary_key();
             // new_users.game_id = generategameid(); // generate user game_id
         });
     }
@@ -34,7 +34,7 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
-            new_ghost.ghost_id = modified_user.game_id + i;
+            // new_ghost.ghost_id = modified_user.game_id + i;
             new_ghost.owner = user.username;
             new_ghost.prize.amount = 10000;
             new_ghost.battle_limit = limit;
@@ -64,47 +64,61 @@ ACTION ghostquest::addlife(name username, asset quantity, int key) // add life/l
     });
 }
 
-ACTION ghostquest::battle(name username1, int ghost1_key, name username2, int ghost2_key) // battle action
+ACTION ghostquest::battle(vector<pair<int, name>> &players, string gameid) // battle action
 {
     require_auth(_self);
+
     battle_history current_battle;
-    auto &user1 = _users.get(username1.value, "User doesn't exist.");
-    auto &user2 = _users.get(username2.value, "User doesn't exist.");
-    auto characters1 = user1.game_data.character;
-    map<int, ghost>::iterator itr1 = characters1.find(ghost1_key);
-    auto characters2 = user2.game_data.character;
-    map<int, ghost>::iterator itr2 = characters2.find(ghost2_key);
-    itr1->second.hitpoints = itr1->second.initial_hp;
-    itr2->second.hitpoints = itr2->second.initial_hp;
-    check(itr1->second.match_history.find(itr2->second.ghost_id) == itr1->second.match_history.end(), "Enemy already fought before.");
-    check(itr2->second.match_history.find(itr1->second.ghost_id) == itr2->second.match_history.end(), "Enemy already fought before.");
-    check(itr1->second.character_life == itr2->second.character_life, "Match not allowed.");
-    check(itr1->second.battle_count <= itr1->second.battle_limit, "Battle limit reached.");
-    check(itr2->second.battle_count <= itr2->second.battle_limit, "Battle limit reached.");
+    auto &player1 = _users.get(players[0].second.value, "User doesn't exist.");
+    auto &player2 = _users.get(players[1].second.value, "User doesn't exist.");
+
+    map<int, ghost> player1_characters = player1.game_data.character;
+    map<int, ghost> player2_characters = player2.game_data.character;
+
+    vector<map<int, ghost>::iterator> itr{player1_characters.find(players[0].first), player2_characters.find(players[1].first)};
+    itr[0]->second.hitpoints = itr[0]->second.initial_hp;
+    itr[1]->second.hitpoints = itr[1]->second.initial_hp;
+
+    check(itr[0]->second.match_history.find(itr[1]->second.ghost_id) == itr[0]->second.match_history.end(), "Enemy already fought before.");
+    check(itr[1]->second.match_history.find(itr[0]->second.ghost_id) == itr[1]->second.match_history.end(), "Enemy already fought before.");
+    check(itr[0]->second.character_life == itr[1]->second.character_life, "Match not allowed.");
+    check(itr[0]->second.battle_count <= itr[0]->second.battle_limit, "Battle limit reached.");
+    check(itr[1]->second.battle_count <= itr[1]->second.battle_limit, "Battle limit reached.");
+
+    current_battle.game_id = gameid;
     current_battle.time_start = current_time_point().elapsed._count;
-    battle_step(itr1, itr2, current_battle);
+    battle_step(itr[0], itr[1], current_battle);
     current_battle.time_end = current_time_point().elapsed._count;
-    itr1->second.match_history.insert(itr1->second.match_history.end(), pair<uint64_t, battle_history>(itr2->second.ghost_id, current_battle)); // insert enemy into battle history
-    itr2->second.match_history.insert(itr2->second.match_history.end(), pair<uint64_t, battle_history>(itr1->second.ghost_id, current_battle)); // insert enemy into battle history
-    if (itr1->second.character_life > user1.game_data.character.at(ghost1_key).character_life)
+    // update each players battle history..
+    for_each(itr.begin(), itr.end(), [&](map<int, ghost>::iterator &n) {
+        n->second.match_history.insert(n->second.match_history.end(), pair<uint64_t, battle_history>(n->second.ghost_id == itr[0]->second.ghost_id ? itr[1]->second.ghost_id : itr[0]->second.ghost_id, current_battle));
+    });
+
+    // update each history's enemy
+    itr[0]->second.match_history.at(itr[1]->second.ghost_id).enemy = players[1].second;
+    itr[1]->second.match_history.at(itr[0]->second.ghost_id).enemy = players[0].second;
+
+    if (itr[0]->second.character_life > player1.game_data.character.at(players[0].first).character_life)
     {
-        itr1->second.match_history.at(itr2->second.ghost_id).isWin = true;
-        itr2->second.match_history.at(itr1->second.ghost_id).isWin = false;
+        itr[0]->second.match_history.at(itr[1]->second.ghost_id).isWin = true;
+        itr[1]->second.match_history.at(itr[0]->second.ghost_id).isWin = false;
     }
     else
     {
-        itr2->second.match_history.at(itr1->second.ghost_id).isWin = true;
-        itr1->second.match_history.at(itr2->second.ghost_id).isWin = false;
+        itr[1]->second.match_history.at(itr[0]->second.ghost_id).isWin = true;
+        itr[0]->second.match_history.at(itr[1]->second.ghost_id).isWin = false;
     }
-    itr1->second.last_match = current_time_point().elapsed._count; // time of the last match
-    itr2->second.last_match = current_time_point().elapsed._count; // time of the last match
-    _users.modify(user1, _self, [&](auto &modified_user) {
+
+    itr[0]->second.last_match = current_time_point().elapsed._count; // time of the last match
+    itr[1]->second.last_match = current_time_point().elapsed._count; // time of the last match
+
+    _users.modify(player1, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character = characters1;
+        game_data.character = player1_characters;
     });
-    _users.modify(user2, _self, [&](auto &modified_user) {
+    _users.modify(player2, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character = characters2;
+        game_data.character = player2_characters;
     });
 }
 
