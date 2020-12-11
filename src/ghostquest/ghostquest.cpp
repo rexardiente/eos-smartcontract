@@ -82,7 +82,7 @@ ACTION ghostquest::battle(vector<pair<int, name>> &players, string gameid) // ba
 
     check(itr[0]->second.match_history.find(itr[1]->second.ghost_id) == itr[0]->second.match_history.end(), "Enemy already fought before.");
     check(itr[1]->second.match_history.find(itr[0]->second.ghost_id) == itr[1]->second.match_history.end(), "Enemy already fought before.");
-    check(itr[0]->second.character_life == itr[1]->second.character_life, "Match not allowed.");
+    // check(itr[0]->second.character_life == itr[1]->second.character_life, "Match not allowed.");
     check(itr[0]->second.battle_count <= itr[0]->second.battle_limit, "Battle limit reached.");
     check(itr[1]->second.battle_count <= itr[1]->second.battle_limit, "Battle limit reached.");
 
