@@ -178,14 +178,7 @@ void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>:
 
 void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost>::iterator &defender, int round, battle_history &current_battle) // perform damage calculation
 {
-    if (attack->second.ghost_class == 4)
-    {
-        int chance = attacker->second.luck / 3;
-    }
-    else
-    {
-        int chance = attacker->second.luck / 4;
-    }
+    int chance = attacker->second.ghost_class == 4 ? (attacker->second.luck / 3) : (attacker->second.luck / 4);
     int luck = rng(99) + 1;
     int fnldmg = 0;
     int getdmgwdt = attacker->second.attack / 16 + 1;
@@ -221,15 +214,8 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
 void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::iterator &winner, battle_history &current_battle) // modify status and other data values for both characters
 {
     loser->second.status = LOSER;
-    if (loser->second.character_life == 1)
-    {
-        loser->second.status = ELIMINATED;
-        eliminated_withdrawn(loser);
-    }
-    else
-    {
-        loser->second.character_life -= 1;
-    }
+    (loser->second.character_life == 1) ? ({loser->second.status = ELIMINATED; eliminated_withdrawn(loser); })
+                                        : ({ loser->second.character_life -= 1; return; });
     winner->second.status = WINNER;
     winner->second.character_life += 1;
     loser->second.battle_count += 1;
