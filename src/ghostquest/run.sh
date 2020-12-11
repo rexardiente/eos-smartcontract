@@ -66,8 +66,8 @@ REMOVE_EXISTING_GAME()
     echo "${EXECUTE} Deleting existing game for \"user1, user2\"..."
     cleos push action ghostquest end '["user1"]' -p user1@active #for user1
     cleos push action ghostquest end '["user2"]' -p user2@active #for user2
-        cleos push action ghostquest end '["user3"]' -p user3@active #for user1
-    cleos push action ghostquest end '["user4"]' -p user4@active #for user2
+    #     cleos push action ghostquest end '["user3"]' -p user3@active #for user1
+    # cleos push action ghostquest end '["user4"]' -p user4@active #for user2
 }
 
 # SET_SUMMON_COUNT()
@@ -79,8 +79,8 @@ REMOVE_EXISTING_GAME()
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
     # cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
     # cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
 }
@@ -88,7 +88,8 @@ TRANSFER()
 
 BATTLE()
 {
-    cleos push action ghostquest battle '[ "user1", , "user2", 1]' -p ghostquest@active
+    cleos push action ghostquest battle '[ [[1,"user1"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097b"]' -p ghostquest@active
+    cleos push action ghostquest battle '[ [[2,"user1"], [2,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097c"]' -p ghostquest@active
 }
 
 WITHDRAW()
@@ -114,14 +115,14 @@ GET_CURRENCY()
 
 #UNLOCK_WALLET
 #CREATE_ACCOUNT_WALLET
-#SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# SET_PERMISSION
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER   # note : transfer has two types, for summon and for add life
 # BATTLE
 # WITHDRAW
 # ELIMINATE
 # GET_CURRENCY 
+# SHOW_EOSIO_CONTRACT_TABLE
 # REMOVE_EXISTING_GAME
-SHOW_EOSIO_CONTRACT_TABLE
