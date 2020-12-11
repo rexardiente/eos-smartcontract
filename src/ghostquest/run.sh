@@ -58,16 +58,18 @@ INITIALIZE_GAME()
     echo "${EXECUTE} Creating new game for \"user1, user2\"..."
     cleos push action ghostquest initialize '["user1"]' -p user1@active #for user1
     cleos push action ghostquest initialize '["user2"]' -p user2@active #for user2
+    cleos push action ghostquest initialize '["user3"]' -p user3@active #for user1
+    cleos push action ghostquest initialize '["user4"]' -p user4@active #for user2
     
 }
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
 {
     echo "${EXECUTE} Deleting existing game for \"user1, user2\"..."
-    cleos push action ghostquest end '["user1"]' -p user1@active #for user1
-    cleos push action ghostquest end '["user2"]' -p user2@active #for user2
-    #     cleos push action ghostquest end '["user3"]' -p user3@active #for user1
-    # cleos push action ghostquest end '["user4"]' -p user4@active #for user2
+    # cleos push action ghostquest end '["user1"]' -p user1@active #for user1
+    # cleos push action ghostquest end '["user2"]' -p user2@active #for user2
+    cleos push action ghostquest end '["user3"]' -p user3@active #for user1
+    cleos push action ghostquest end '["user4"]' -p user4@active #for user2
 }
 
 # SET_SUMMON_COUNT()
@@ -79,17 +81,23 @@ REMOVE_EXISTING_GAME()
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
+    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user3", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user3@active
+    # cleos push action eosio.token transfer '[ "user4", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user4@active
     # cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
-    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
+    # cleos push action eosio.token transfer '[ "user3", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user3@active
+    cleos push action eosio.token transfer '[ "user4", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user4@active
 }
 
 
 BATTLE()
 {
-    cleos push action ghostquest battle '[ [[1,"user1"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097b"]' -p ghostquest@active
-    cleos push action ghostquest battle '[ [[2,"user1"], [2,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097c"]' -p ghostquest@active
+    # cleos push action ghostquest battle '[ [[1,"user1"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097b"]' -p ghostquest@active
+    # cleos push action ghostquest battle '[ [[1,"user3"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097c"]' -p ghostquest@active
+    # cleos push action ghostquest battle '[ [[1,"user4"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097d"]' -p ghostquest@active
+    cleos push action ghostquest battle '[ [[2,"user4"], [2,"user3"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097e"]' -p ghostquest@active
 }
 
 WITHDRAW()
@@ -108,6 +116,8 @@ GET_CURRENCY()
     cleos get currency balance eosio.token ghostquest EOS 
     cleos get currency balance eosio.token user1 EOS
     cleos get currency balance eosio.token user2 EOS
+    cleos get currency balance eosio.token user3 EOS
+    cleos get currency balance eosio.token user4 EOS
 }
 
 # cleos set account permission ghostquest active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
@@ -124,5 +134,5 @@ GET_CURRENCY()
 # WITHDRAW
 # ELIMINATE
 # GET_CURRENCY 
-# SHOW_EOSIO_CONTRACT_TABLE
+SHOW_EOSIO_CONTRACT_TABLE
 # REMOVE_EXISTING_GAME
