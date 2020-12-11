@@ -69,6 +69,7 @@ ACTION ghostquest::battle(vector<pair<int, name>> &players, string gameid) // ba
     require_auth(_self);
 
     battle_history current_battle;
+    const uint64_t time_executed = current_time_point().elapsed._count; // track current time of execution..
     auto &player1 = _users.get(players[0].second.value, "User doesn't exist.");
     auto &player2 = _users.get(players[1].second.value, "User doesn't exist.");
 
@@ -86,17 +87,13 @@ ACTION ghostquest::battle(vector<pair<int, name>> &players, string gameid) // ba
     check(itr[1]->second.battle_count <= itr[1]->second.battle_limit, "Battle limit reached.");
 
     current_battle.game_id = gameid;
-    current_battle.time_start = current_time_point().elapsed._count;
+    current_battle.time_executed = time_executed;
     battle_step(itr[0], itr[1], current_battle);
-    current_battle.time_end = current_time_point().elapsed._count;
     // update each players battle history..
     for_each(itr.begin(), itr.end(), [&](map<int, ghost>::iterator &n) {
         n->second.match_history.insert(n->second.match_history.end(), pair<uint64_t, battle_history>(n->second.ghost_id == itr[0]->second.ghost_id ? itr[1]->second.ghost_id : itr[0]->second.ghost_id, current_battle));
+        n->second.last_match = time_executed;
     });
-
-    // update each history's enemy
-    itr[0]->second.match_history.at(itr[1]->second.ghost_id).enemy = players[1].second;
-    itr[1]->second.match_history.at(itr[0]->second.ghost_id).enemy = players[0].second;
 
     if (itr[0]->second.character_life > player1.game_data.character.at(players[0].first).character_life)
     {
@@ -108,9 +105,15 @@ ACTION ghostquest::battle(vector<pair<int, name>> &players, string gameid) // ba
         itr[1]->second.match_history.at(itr[0]->second.ghost_id).isWin = true;
         itr[0]->second.match_history.at(itr[1]->second.ghost_id).isWin = false;
     }
-
-    itr[0]->second.last_match = current_time_point().elapsed._count; // time of the last match
-    itr[1]->second.last_match = current_time_point().elapsed._count; // time of the last match
+    itr[0]->second.match_history.at(itr[1]->second.ghost_id).enemy = players[1].second;
+    itr[1]->second.match_history.at(itr[0]->second.ghost_id).enemy = players[0].second;
+    // itr[0]->second.last_match = current_time_point().elapsed._count; // time of the last match
+    // itr[1]->second.last_match = current_time_point().elapsed._count; // time of the last match
+    // itr[1]->second.ghost_id
+    // if (n->second.ghost_id == itr[0]->second.ghost_id)
+    //     n->second.match_history.at(itr[1]->second.ghost_id).enemy = players[1].second;
+    // else
+    //     n->second.match_history.at(itr[0]->second.ghost_id).enemy = players[0].second;
 
     _users.modify(player1, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;

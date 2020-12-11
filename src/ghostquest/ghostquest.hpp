@@ -39,8 +39,7 @@ private:
     {
         string game_id;
         name enemy;
-        uint64_t time_start;
-        uint64_t time_end;
+        uint64_t time_executed;
         vector<string> gameplay_log = {};
         bool isWin;
     };
