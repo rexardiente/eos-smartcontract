@@ -6,17 +6,12 @@ ACTION ghostquest::initialize(name username)
     require_auth(username);
     // Create a record in the table if the player doesn't exist in our app yet
     auto itr = _users.find(username.value);
-
-    // users_table userstbl(_self, username.value);
-    // uint64_t gameid = _users.available_primary_key();
-    check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
+    check(itr == _users.end(), "Either User has Initialized a Game or has an Existing Game");
 
     if (itr == _users.end())
     {
         _users.emplace(_self, [&](auto &new_users) {
             new_users.username = username;
-            // new_users.game_id = _users.available_primary_key();
-            // new_users.game_id = generategameid(); // generate user game_id
         });
     }
 }
@@ -24,18 +19,16 @@ ACTION ghostquest::initialize(name username)
 ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate characters after transfer transaction
 {
     require_auth(_self);
-
-    auto &user = _users.get(username.value, "User doesn't exist");
     auto itr = _users.find(username.value);
-    int counter = user.game_data.character.size();
-    check(itr != _users.end(), "Game Doesn't Exist.");
+    check(itr != _users.end(), "User or Game Doesn't Exist.");
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
+        int counter = game_data.character.size();
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
             new_ghost.ghost_id = current_time_point().elapsed.count() + rng(100);
-            new_ghost.owner = user.username;
+            new_ghost.owner = modified_user.username;
             new_ghost.prize.amount = 10000;
             new_ghost.battle_limit = limit;
             new_ghost.status = SUMMONED;
@@ -107,13 +100,6 @@ ACTION ghostquest::battle(vector<pair<int, name>> &players, string gameid) // ba
     }
     itr[0]->second.match_history.at(itr[1]->second.ghost_id).enemy = players[1].second;
     itr[1]->second.match_history.at(itr[0]->second.ghost_id).enemy = players[0].second;
-    // itr[0]->second.last_match = current_time_point().elapsed._count; // time of the last match
-    // itr[1]->second.last_match = current_time_point().elapsed._count; // time of the last match
-    // itr[1]->second.ghost_id
-    // if (n->second.ghost_id == itr[0]->second.ghost_id)
-    //     n->second.match_history.at(itr[1]->second.ghost_id).enemy = players[1].second;
-    // else
-    //     n->second.match_history.at(itr[0]->second.ghost_id).enemy = players[0].second;
 
     _users.modify(player1, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;

@@ -1,7 +1,8 @@
+#include <map>
+#include <string>
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 #include <eosio/transaction.hpp>
-#include <map>
 #include "config.hpp"
 
 using namespace std;
