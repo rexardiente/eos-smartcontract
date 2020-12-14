@@ -19,9 +19,11 @@ UNLOCK_WALLET()
 CREATE_ACCOUNT_WALLET() 
 {   
     echo "${EXECUTE} Creating Wallet [\"treasurev2\",\"user1\",\"user2\"] with PRIVATE_KEY=\"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV\""
-    cleos create account eosio ghostquest EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    # cleos create account eosio ghostquest EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
     cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
     cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user3 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user4 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 }
 
 SET_PERMISSION() 
@@ -58,8 +60,8 @@ INITIALIZE_GAME()
     echo "${EXECUTE} Creating new game for \"user1, user2\"..."
     cleos push action ghostquest initialize '["user1"]' -p user1@active #for user1
     cleos push action ghostquest initialize '["user2"]' -p user2@active #for user2
-    cleos push action ghostquest initialize '["user3"]' -p user3@active #for user1
-    cleos push action ghostquest initialize '["user4"]' -p user4@active #for user2
+    cleos push action ghostquest initialize '["user3"]' -p user3@active #for user3
+    cleos push action ghostquest initialize '["user4"]' -p user4@active #for user4
     
 }
 # Create user and game_defaults
@@ -85,9 +87,9 @@ TRANSFER()
     # cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
     # cleos push action eosio.token transfer '[ "user3", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user3@active
     # cleos push action eosio.token transfer '[ "user4", "ghostquest", "2.0000 EOS", "BTTL_LMT=10" ]' -p user4@active
-    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
+    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
     # cleos push action eosio.token transfer '[ "user2", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
-    # cleos push action eosio.token transfer '[ "user3", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user3@active
+    cleos push action eosio.token transfer '[ "user3", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user3@active
     cleos push action eosio.token transfer '[ "user4", "ghostquest", "1.0000 EOS", "ADD_LIFE=1" ]' -p user4@active
 }
 
@@ -95,9 +97,9 @@ TRANSFER()
 BATTLE()
 {
     # cleos push action ghostquest battle '[ [[1,"user1"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097b"]' -p ghostquest@active
-    # cleos push action ghostquest battle '[ [[1,"user3"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097c"]' -p ghostquest@active
+    cleos push action ghostquest battle '[ [[1,"user3"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097c"]' -p ghostquest@active
     # cleos push action ghostquest battle '[ [[1,"user4"], [1,"user2"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097d"]' -p ghostquest@active
-    cleos push action ghostquest battle '[ [[2,"user4"], [2,"user3"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097e"]' -p ghostquest@active
+    # cleos push action ghostquest battle '[ [[2,"user4"], [2,"user3"]], "ba8b8ba1-3512-467f-bc6d-5172efe4097e"]' -p ghostquest@active
 }
 
 WITHDRAW()
@@ -124,13 +126,13 @@ GET_CURRENCY()
 
 
 #UNLOCK_WALLET
-#CREATE_ACCOUNT_WALLET
+# CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
 # COMPILE_CONTRACT
 # DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER   # note : transfer has two types, for summon and for add life
-# BATTLE
+BATTLE
 # WITHDRAW
 # ELIMINATE
 # GET_CURRENCY 
