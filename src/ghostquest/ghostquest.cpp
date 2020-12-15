@@ -27,7 +27,7 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
-            uint64_t key = current_time_point().elapsed.count() + rng(100);
+            uint64_t key = (current_time_point().elapsed.count() / 2) + rng(100);
             // new_ghost.ghost_id = current_time_point().elapsed.count() + rng(100);
             new_ghost.owner = modified_user.username;
             new_ghost.prize.amount = 10000;
