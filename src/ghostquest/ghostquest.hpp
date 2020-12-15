@@ -38,8 +38,8 @@ private:
 
     struct battle_history
     {
-        string game_id;
         name enemy;
+        uint64_t enemy_id;
         uint64_t time_executed;
         vector<string> gameplay_log = {};
         bool isWin;
@@ -48,7 +48,7 @@ private:
     struct ghost
     {
         name owner;
-        uint64_t ghost_id;
+        // uint64_t ghost_id; move as ID Key
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
@@ -63,7 +63,7 @@ private:
         int battle_limit = LMT_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
         uint64_t last_match = GQ_DEFAULT;
-        map<uint64_t, battle_history> match_history;
+        map<string, battle_history> match_history;
         // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
@@ -75,7 +75,7 @@ private:
 
     struct game
     {
-        map<int, ghost> character;
+        map<uint64_t, ghost> character;
         // uint8_t status = INITIALIZED;
     };
 
@@ -111,12 +111,12 @@ private:
     void summon_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
     void gen_stat(ghost & initghost);
-    void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2, battle_history & current_battle);
-    void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round, battle_history &current_battle);
-    void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner, battle_history & current_battle);
+    void battle_step(map<uint64_t, ghost>::iterator & ghost1, map<uint64_t, ghost>::iterator & ghost2, battle_history & current_battle);
+    void damage_step(map<uint64_t, ghost>::iterator & attacker, map<uint64_t, ghost>::iterator & defender, int round, battle_history &current_battle);
+    void result_step(map<uint64_t, ghost>::iterator & loser, map<uint64_t, ghost>::iterator & winner, battle_history & current_battle);
     void set_add_life(name username, asset quantity, int key);
-    void calculate_prize(map<int, ghost>::iterator & ghost);
-    void eliminated_withdrawn(map<int, ghost>::iterator & ghost);
+    void calculate_prize(map<uint64_t, ghost>::iterator & ghost);
+    void eliminated_withdrawn(map<uint64_t, ghost>::iterator & ghost);
 
 public:
     using contract::contract;
@@ -132,11 +132,11 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION battle(vector<pair<int, name>> & players, string gameid);
+    ACTION battle(vector<pair<uint64_t, name>> & players, string gameid);
     ACTION withdraw(name username, int key);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(name username, asset quantity, int limit);
-    ACTION addlife(name username, asset quantity, int key);
+    ACTION addlife(name username, asset quantity, uint64_t key);
     ACTION eliminate(name username, int key);
     ACTION end(name username);
 };

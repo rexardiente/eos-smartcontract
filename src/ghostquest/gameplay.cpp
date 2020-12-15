@@ -128,7 +128,7 @@ void ghostquest::gen_stat(ghost &initial_ghost) // function for generating monst
     }
 }
 
-void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>::iterator &ghost2, battle_history &current_battle) // battle process
+void ghostquest::battle_step(map<uint64_t, ghost>::iterator &ghost1, map<uint64_t, ghost>::iterator &ghost2, battle_history &current_battle) // battle process
 {
 
     check(ghost1->second.character_life > 0 && ghost2->second.character_life > 0, "Your or your enemy character can not battle.");
@@ -176,7 +176,7 @@ void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>:
     calculate_prize(ghost2); // calculate prize after battle
 }
 
-void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost>::iterator &defender, int round, battle_history &current_battle) // perform damage calculation
+void ghostquest::damage_step(map<uint64_t, ghost>::iterator &attacker, map<uint64_t, ghost>::iterator &defender, int round, battle_history &current_battle) // perform damage calculation
 {
     int chance = attacker->second.ghost_class == 4 ? (attacker->second.luck / 3) : (attacker->second.luck / 4);
     int luck = rng(99) + 1;
@@ -211,7 +211,7 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
     current_battle.gameplay_log.push_back(battlelog);
 }
 
-void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::iterator &winner, battle_history &current_battle) // modify status and other data values for both characters
+void ghostquest::result_step(map<uint64_t, ghost>::iterator &loser, map<uint64_t, ghost>::iterator &winner, battle_history &current_battle) // modify status and other data values for both characters
 {
     loser->second.status = LOSER;
     (loser->second.character_life == 1) ? ({loser->second.status = ELIMINATED; eliminated_withdrawn(loser); })
@@ -224,7 +224,7 @@ void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::
     current_battle.gameplay_log.push_back(victorylog);
 }
 
-void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost) // generate prize after battle
+void ghostquest::calculate_prize(map<uint64_t, ghost>::iterator &ghost) // generate prize after battle
 {
     float house_edge;
     float init_prize = ghost->second.character_life * 10000;
@@ -251,7 +251,7 @@ void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost) // generate p
     ghost->second.prize.amount = init_prize - house_edge;
 }
 
-void ghostquest::eliminated_withdrawn(map<int, ghost>::iterator &ghost) // disable characters by removing stats
+void ghostquest::eliminated_withdrawn(map<uint64_t, ghost>::iterator &ghost) // disable characters by removing stats
 {
     ghost->second.status = 6;
     ghost->second.character_life = 0;
