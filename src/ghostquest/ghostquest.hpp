@@ -3,6 +3,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 #include <eosio/transaction.hpp>
+#include <eosio/crypto.hpp>
 #include "config.hpp"
 
 using namespace std;
@@ -39,7 +40,7 @@ private:
     struct battle_history
     {
         name enemy;
-        uint64_t enemy_id;
+        string enemy_id;
         uint64_t time_executed;
         vector<string> gameplay_log = {};
         bool isWin;
@@ -75,7 +76,7 @@ private:
 
     struct game
     {
-        map<uint64_t, ghost> character;
+        map<string, ghost> character;
         // uint8_t status = INITIALIZED;
     };
 
@@ -111,12 +112,12 @@ private:
     void summon_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
     void gen_stat(ghost & initghost);
-    void battle_step(map<uint64_t, ghost>::iterator & ghost1, map<uint64_t, ghost>::iterator & ghost2, battle_history & current_battle);
-    void damage_step(map<uint64_t, ghost>::iterator & attacker, map<uint64_t, ghost>::iterator & defender, int round, battle_history &current_battle);
-    void result_step(map<uint64_t, ghost>::iterator & loser, map<uint64_t, ghost>::iterator & winner, battle_history & current_battle);
-    void set_add_life(name username, asset quantity, int key);
-    void calculate_prize(map<uint64_t, ghost>::iterator & ghost);
-    void eliminated_withdrawn(map<uint64_t, ghost>::iterator & ghost);
+    void battle_step(map<string, ghost>::iterator & ghost1, map<string, ghost>::iterator & ghost2, battle_history & current_battle);
+    void damage_step(map<string, ghost>::iterator & attacker, map<string, ghost>::iterator & defender, int round, battle_history &current_battle);
+    void result_step(map<string, ghost>::iterator & loser, map<string, ghost>::iterator & winner, battle_history & current_battle);
+    void set_add_life(name username, asset quantity, string key);
+    void calculate_prize(map<string, ghost>::iterator & ghost);
+    void eliminated_withdrawn(map<string, ghost>::iterator & ghost);
 
 public:
     using contract::contract;
@@ -132,11 +133,11 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION battle(vector<pair<uint64_t, name>> & players, string gameid);
-    ACTION withdraw(name username, uint64_t key);
+    ACTION battle(vector<pair<string, name>> & players, string gameid);
+    ACTION withdraw(name username, string key);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(name username, asset quantity, int limit);
-    ACTION addlife(name username, asset quantity, uint64_t key);
-    ACTION eliminate(name username, uint64_t key);
+    ACTION addlife(name username, asset quantity, string key);
+    ACTION eliminate(name username, string key);
     ACTION end(name username);
 };

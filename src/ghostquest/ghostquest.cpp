@@ -21,13 +21,25 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
     require_auth(_self);
     auto itr = _users.find(username.value);
     check(itr != _users.end(), "User or Game Doesn't Exist.");
+    uint64_t id = 0;
+    auto size = transaction_size();
+    char buf[size];
+    uint32_t read = read_transaction(buf, size);
+    check(size == read, "read_transaction failed");
+    checksum256 h = sha256(buf, size);
+    auto hbytes = h.extract_as_byte_array();
+    for (int i = 0; i < 4; i++)
+    {
+        id <<= 8;
+        id |= hbytes[i];
+    }
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         int counter = game_data.character.size();
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
-            uint64_t key = (current_time_point().elapsed.count() / 2) + rng(100);
+            string key = std::to_string(id) + "0000" + std::to_string(i);
             // new_ghost.ghost_id = current_time_point().elapsed.count() + rng(100);
             new_ghost.owner = modified_user.username;
             new_ghost.prize.amount = 10000;
@@ -37,18 +49,18 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
             new_ghost.status = STANDBY;
             new_ghost.initial_hp = 100 + rng(50);
             gen_stat(new_ghost); // generate status for character
-            game_data.character.insert(game_data.character.end(), pair<uint64_t, ghost>(key, new_ghost));
+            game_data.character.insert(game_data.character.end(), pair<string, ghost>(key, new_ghost));
         }
     });
 }
 
-ACTION ghostquest::addlife(name username, asset quantity, uint64_t key) // add life/lives after transfer transaction
+ACTION ghostquest::addlife(name username, asset quantity, string key) // add life/lives after transfer transaction
 {
     require_auth(_self);
 
     auto &user = _users.get(username.value, "User doesn't exist");
     auto characters = user.game_data.character;
-    map<uint64_t, ghost>::iterator itr = characters.find(key);
+    map<string, ghost>::iterator itr = characters.find(key);
     check(itr->second.character_life > 0, "Character cease to exist.");
     itr->second.character_life += quantity.amount / 10000;
 
@@ -58,7 +70,7 @@ ACTION ghostquest::addlife(name username, asset quantity, uint64_t key) // add l
     });
 }
 
-ACTION ghostquest::battle(vector<pair<uint64_t, name>> &players, string gameid) // battle action
+ACTION ghostquest::battle(vector<pair<string, name>> &players, string gameid) // battle action
 {
     require_auth(_self);
     check(players[0].first != players[1].first, "Match not allowed.");
@@ -69,10 +81,10 @@ ACTION ghostquest::battle(vector<pair<uint64_t, name>> &players, string gameid) 
     auto &player1 = _users.get(players[0].second.value, "User doesn't exist.");
     auto &player2 = _users.get(players[1].second.value, "User doesn't exist.");
 
-    map<uint64_t, ghost> player1_characters = player1.game_data.character;
-    map<uint64_t, ghost> player2_characters = player2.game_data.character;
+    map<string, ghost> player1_characters = player1.game_data.character;
+    map<string, ghost> player2_characters = player2.game_data.character;
 
-    vector<map<uint64_t, ghost>::iterator> itr{player1_characters.find(players[0].first), player2_characters.find(players[1].first)};
+    vector<map<string, ghost>::iterator> itr{player1_characters.find(players[0].first), player2_characters.find(players[1].first)};
     itr[0]->second.hitpoints = itr[0]->second.initial_hp;
     itr[1]->second.hitpoints = itr[1]->second.initial_hp;
 
@@ -85,7 +97,7 @@ ACTION ghostquest::battle(vector<pair<uint64_t, name>> &players, string gameid) 
     current_battle.time_executed = time_executed;
     battle_step(itr[0], itr[1], current_battle);
     // update each players battle history..
-    for_each(itr.begin(), itr.end(), [&](map<uint64_t, ghost>::iterator &n) {
+    for_each(itr.begin(), itr.end(), [&](map<string, ghost>::iterator &n) {
         map<string, battle_history>::iterator it;
         for (it = n->second.match_history.begin(); it != n->second.match_history.end(); it++)
         {
@@ -130,7 +142,7 @@ ghostquest::settledpay(name username, asset prize, string memo)
     // check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
 }
 
-ACTION ghostquest::withdraw(name username, uint64_t key)
+ACTION ghostquest::withdraw(name username, string key)
 {
     require_auth(username);
     auto user = _users.find(username.value);
@@ -145,7 +157,7 @@ ACTION ghostquest::withdraw(name username, uint64_t key)
         std::make_tuple(_self, username, user->game_data.character.find(key)->second.prize, feedback)}
         .send();
     auto characters = user->game_data.character;
-    map<uint64_t, ghost>::iterator itr = characters.find(key);
+    map<string, ghost>::iterator itr = characters.find(key);
     eliminated_withdrawn(itr); // modify withdrawn character
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
@@ -153,7 +165,7 @@ ACTION ghostquest::withdraw(name username, uint64_t key)
     });
 }
 
-ACTION ghostquest::eliminate(name username, uint64_t key) // generate stats of monsters after transfer transaction
+ACTION ghostquest::eliminate(name username, string key) // generate stats of monsters after transfer transaction
 {
     require_auth(_self);
 
