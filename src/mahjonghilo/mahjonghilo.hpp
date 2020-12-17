@@ -8,69 +8,25 @@
 using namespace std;
 using namespace eosio;
 
-class [[eosio::contract("ghostquest")]] ghostquest : public eosio::contract
+class [[eosio::contract("mahjonghilo")]] mahjonghilo : public eosio::contract
 {
 private:
-    const symbol ghostquest_symbol;
+    const symbol mahjonghilo_symbol;
     const name eosio_token;
 
     enum Defaults : int64_t
     {
-        GQ_DEFAULT = 0,
-        LIFE_DEFAULT = 0,
-        HP_DEFAULT = 0,
-        STAT_DEFAULT = 0,
-        BL_DEFAULT = 0,
-        LVL_DEFAULT = 0,
-        LMT_DEFAULT = 0,
-        CLASS_DEFAULT = 0,
-        SUMMONED = 1,
-        STANDBY = 2,
-        INBATTLE = 3,
-        WINNER = 4,
-        LOSER = 5,
-        ELIMINATED = 6,
-        IDLE = 7,
+        MAHJONGHILO_DEFAULT = 0,
         INITIALIZED = 0,
         ONGOING = 1,
         DONE = 2
     };
 
-    struct battle_history
+    struct tile
     {
-        name enemy;
-        uint64_t enemy_id;
-        uint64_t time_executed;
-        vector<string> gameplay_log = {};
-        bool isWin;
-    };
-
-    struct ghost
-    {
-        name owner;
-        // uint64_t ghost_id; move as ID Key
-        uint64_t character_life = LIFE_DEFAULT;
-        int initial_hp = HP_DEFAULT;
-        int hitpoints = HP_DEFAULT;
-        uint64_t ghost_class = CLASS_DEFAULT;
-        uint64_t ghost_level = LVL_DEFAULT;
-        uint64_t status = GQ_DEFAULT;
-        uint64_t attack = STAT_DEFAULT;
-        uint64_t defense = STAT_DEFAULT;
-        uint64_t speed = STAT_DEFAULT;
-        uint64_t luck = STAT_DEFAULT;
-        asset prize = DEFAULT_ASSET;
-        int battle_limit = LMT_DEFAULT;
-        uint64_t battle_count = GQ_DEFAULT;
-        uint64_t last_match = GQ_DEFAULT;
-        map<string, battle_history> match_history;
-        // std::chrono::time_point<std::chrono::steady_clock> last_battle;
-        // vector<fight_log> battle_log;
-
-        // auto primary_key() const
-        // {
-        //     return key;
-        // }
+        int hi_lo_value;
+        name tile_class;
+        uint8_t status;
     };
 
     struct game
@@ -121,11 +77,11 @@ private:
 public:
     using contract::contract;
 
-    ghostquest(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
-                                                                        eosio_token(MAIN_CONTRACT),
-                                                                        ghostquest_symbol(MAIN_TOKEN, PRECISION),
-                                                                        _users(receiver, receiver.value),
-                                                                        _seeds(receiver, receiver.value) {}
+    mahjonghilo(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
+                                                                         eosio_token(MAIN_CONTRACT),
+                                                                         mahjonghilo_symbol(MAIN_TOKEN, PRECISION),
+                                                                         _users(receiver, receiver.value),
+                                                                         _seeds(receiver, receiver.value) {}
 
     [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
                                                                  name to,
@@ -133,10 +89,10 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION battle(vector<pair<uint64_t, name>> & players, string gameid);
-    ACTION withdraw(name username, uint64_t key);
+    ACTION withdraw(name username, int key);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(name username, asset quantity, int limit);
     ACTION addlife(name username, asset quantity, uint64_t key);
-    ACTION eliminate(name username, uint64_t key);
+    ACTION eliminate(name username, int key);
     ACTION end(name username);
 };

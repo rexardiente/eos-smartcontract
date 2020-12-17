@@ -130,7 +130,7 @@ ghostquest::settledpay(name username, asset prize, string memo)
     // check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
 }
 
-ACTION ghostquest::withdraw(name username, int key)
+ACTION ghostquest::withdraw(name username, uint64_t key)
 {
     require_auth(username);
     auto user = _users.find(username.value);
@@ -153,7 +153,7 @@ ACTION ghostquest::withdraw(name username, int key)
     });
 }
 
-ACTION ghostquest::eliminate(name username, int key) // generate stats of monsters after transfer transaction
+ACTION ghostquest::eliminate(name username, uint64_t key) // generate stats of monsters after transfer transaction
 {
     require_auth(_self);
 
