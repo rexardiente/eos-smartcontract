@@ -93,12 +93,12 @@ ACTION ghostquest::battle(vector<pair<string, name>> &players, string gameid) //
     battle_step(itr[0], itr[1], current_battle);
     // update each players battle history..
     for_each(itr.begin(), itr.end(), [&](map<string, ghost>::iterator &n) {
-        map<string, battle_history>::iterator it;
-        for (it = n->second.match_history.begin(); it != n->second.match_history.end(); it++)
-        {
-            check(it->second.enemy_id == itr[0]->first, "Enemy already fought before.");
-            check(it->second.enemy_id == itr[1]->first, "Enemy already fought before.");
-        }
+        // map<string, battle_history>::iterator it;
+        // for (it = n->second.match_history.begin(); it != n->second.match_history.end(); it++)
+        // {
+        //     check(it->second.enemy_id == itr[0]->first, "Enemy already fought before.");
+        //     check(it->second.enemy_id == itr[1]->first, "Enemy already fought before.");
+        // }
         // n->second.match_history.insert(n->second.match_history.end(), pair<uint64_t, battle_history>(n->second.ghost_id == itr[0]->second.ghost_id ? itr[1]->second.ghost_id : itr[0]->second.ghost_id, current_battle));
         n->second.match_history.insert(n->second.match_history.end(), pair<string, battle_history>(gameid, current_battle));
         n->second.last_match = time_executed;
