@@ -118,6 +118,7 @@ private:
     void set_add_life(name username, asset quantity, string key);
     void calculate_prize(map<string, ghost>::iterator & ghost);
     void eliminated_withdrawn(map<string, ghost>::iterator & ghost);
+    string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 
 public:
     using contract::contract;

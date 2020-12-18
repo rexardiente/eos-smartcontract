@@ -1,6 +1,17 @@
 #include "ghostquest.hpp"
 #include <string>
 
+string ghostquest::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size)
+{
+    std::string r;
+    const char *to_hex = "0123456789abcdef";
+    for (uint32_t i = 0; i < arr.size(); ++i)
+    {
+        (r += to_hex[(arr[i] >> 4)]) += to_hex[(arr[i] & 0x0f)];
+    }
+    return r;
+}
+
 void ghostquest::ondeposit(name from,
                            name to,
                            asset quantity,

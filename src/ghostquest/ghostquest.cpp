@@ -24,23 +24,18 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
     uint64_t id = 0;
     auto size = transaction_size();
     char buf[size];
-    uint32_t read = read_transaction(buf, size);
-    check(size == read, "read_transaction failed");
+    check(size == read_transaction(buf, size), "read_transaction failed");
     checksum256 h = sha256(buf, size);
     auto hbytes = h.extract_as_byte_array();
-    for (int i = 0; i < 4; i++)
-    {
-        id <<= 8;
-        id |= hbytes[i];
-    }
+    string hash_string = checksum256_to_string(hbytes, hbytes.size()); // convert txID arr to string
+
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         int counter = game_data.character.size();
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
-            string key = std::to_string(id) + "0000" + std::to_string(i);
-            // new_ghost.ghost_id = current_time_point().elapsed.count() + rng(100);
+            string key = hash_string.substr(0, 30) + to_string(i);
             new_ghost.owner = modified_user.username;
             new_ghost.prize.amount = 10000;
             new_ghost.battle_limit = limit;
