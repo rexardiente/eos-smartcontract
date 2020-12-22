@@ -80,8 +80,6 @@ ACTION ghostquest::battle(vector<pair<string, name>> &players, string gameid) //
     map<string, ghost> player2_characters = player2.game_data.character;
 
     vector<map<string, ghost>::iterator> itr{player1_characters.find(players[0].first), player2_characters.find(players[1].first)};
-    itr[0]->second.hitpoints = itr[0]->second.initial_hp;
-    itr[1]->second.hitpoints = itr[1]->second.initial_hp;
 
     // check(itr[0]->second.match_history.find(itr[1]->second.ghost_id) == itr[0]->second.match_history.end(), "Enemy already fought before.");
     // check(itr[1]->second.match_history.find(itr[0]->second.ghost_id) == itr[1]->second.match_history.end(), "Enemy already fought before.");
@@ -114,8 +112,10 @@ ACTION ghostquest::battle(vector<pair<string, name>> &players, string gameid) //
         itr[1]->second.match_history.at(gameid).isWin = true;
         itr[0]->second.match_history.at(gameid).isWin = false;
     }
+    itr[0]->second.battle_count += 1;
     itr[0]->second.match_history.at(gameid).enemy = players[1].second;
     itr[0]->second.match_history.at(gameid).enemy_id = players[1].first;
+    itr[1]->second.battle_count += 1;
     itr[1]->second.match_history.at(gameid).enemy = players[0].second;
     itr[1]->second.match_history.at(gameid).enemy_id = players[0].first;
 

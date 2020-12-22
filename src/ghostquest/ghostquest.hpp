@@ -52,7 +52,6 @@ private:
         // uint64_t ghost_id; move as ID Key
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
-        int hitpoints = HP_DEFAULT;
         uint64_t ghost_class = CLASS_DEFAULT;
         uint64_t ghost_level = LVL_DEFAULT;
         uint64_t status = GQ_DEFAULT;
@@ -113,7 +112,7 @@ private:
     void onsettledpay(name to, asset quantity, string memo);
     void gen_stat(ghost & initghost);
     void battle_step(map<string, ghost>::iterator & ghost1, map<string, ghost>::iterator & ghost2, battle_history & current_battle);
-    void damage_step(map<string, ghost>::iterator & attacker, map<string, ghost>::iterator & defender, int round, battle_history &current_battle);
+    void damage_step(map<string, ghost>::iterator & attacker, map<string, ghost>::iterator & defender, int round, battle_history &current_battle, int damage);
     void result_step(map<string, ghost>::iterator & loser, map<string, ghost>::iterator & winner, battle_history & current_battle);
     void set_add_life(name username, asset quantity, string key);
     void calculate_prize(map<string, ghost>::iterator & ghost);
