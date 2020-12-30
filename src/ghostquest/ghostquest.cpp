@@ -129,8 +129,7 @@ ACTION ghostquest::battle(vector<pair<string, name>> &players, string gameid) //
     });
 }
 
-ACTION
-ghostquest::settledpay(name username, asset prize, string memo)
+ACTION ghostquest::settledpay(name username, asset prize, string memo)
 {
     require_auth(_self);
     auto &user = _users.get(username.value, "User doesn't exist");
