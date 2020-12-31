@@ -33,8 +33,10 @@ ACTION mahjonghilo::startgame(name username)
         game &game_data = modified_user.game_data;
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.status = INITIALIZED;
-        gettile(game_data.deck_player, game_data.hand_player);
-        game_data.standard_tile = game_data.hand_player[0];
+        gettile(game_data);
+        game_data.standard_tile = game_data.current_tile;
+        const auto hilo_tile = table_deck.at(game_data.standard_tile);
+        get_odds(game_data, hilo_tile.tile_value);
     });
 }
 
@@ -44,12 +46,16 @@ ACTION mahjonghilo::playhilo(name username, int option)
     auto &user = _users.get(username.value, "User doesn't exist");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        gettile(game_data.deck_player, game_data.hand_player);
-        const auto hilo_tile = table_deck.at(game_data.hand_player[1]);
-
-        const auto current_tile = table_deck.at(game_data.hand_player[0]);
-        hi_lo_step(hilo_tile.tile_value, current_tile.tile_value);
-        game_data.standard_tile = game_data.hand_player[0];
+        gettile(game_data);
+        sorthand(game_data.hand_player);
+        const auto current_tile = table_deck.at(game_data.current_tile);
+        if (option != 0)
+        {
+            const auto hilo_tile = table_deck.at(game_data.standard_tile);
+            hilo_step(game_data, hilo_tile.tile_value, current_tile.tile_value, option);
+        }
+        game_data.standard_tile = game_data.current_tile;
+        get_odds(game_data, current_tile.tile_value);
     });
 }
 
@@ -62,7 +68,6 @@ ACTION mahjonghilo::discardtile(name username, int idx)
         game &game_data = modified_user.game_data;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
         game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
-        gettile(game_data.deck_player, game_data.hand_player);
     });
 }
 

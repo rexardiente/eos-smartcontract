@@ -21,9 +21,10 @@ private:
         INITIALIZED = 0, // for game
         ONGOING = 1,     // for game
         DONE = 2,        // for game
-        LOW = 0,         //for Hi-Lo
-        DRAW = 1,        //for Hi-Lo
-        HIGH = 2         //for Hi-Lo
+        SKIP = 0,        //for Hi-Lo
+        LOW = 1,         //for Hi-Lo
+        DRAW = 2,        //for Hi-Lo
+        HIGH = 3
     };
 
     enum tile_type : uint8_t
@@ -197,6 +198,7 @@ private:
         float low_odds = MH_DEFAULT;
         float draw_odds = MH_DEFAULT;
         float high_odds = MH_DEFAULT;
+        uint8_t current_tile;
         uint8_t standard_tile;
         int pair_count;
         int pung_count;
@@ -234,9 +236,10 @@ private:
 
     int rng(const int &range);
     void onsettledpay(name to, asset quantity, string memo);
-    void gettile(vector<uint8_t> & deck, vector<uint8_t> & hand);
-    float get_odds(int value);
-    int hi_lo_step(int prev_tile, int current_tile);
+    void gettile(game & gamedata);
+    void sorthand(vector<uint8_t> & hand);
+    void get_odds(game & gamedata, int value);
+    void hilo_step(game & gamedata, int prev_tile, int current_tile, int option);
     string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 
 public:

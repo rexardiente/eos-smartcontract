@@ -44,14 +44,14 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
         .send();
 }
 
-void mahjonghilo::gettile(vector<uint8_t> &deck, vector<uint8_t> &hand)
+void mahjonghilo::gettile(game &gamedata)
 {
-    int deck_tile_idx = rng(deck.size()); // Pick a random tile from the deck
+    int deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
 
     int first_empty_slot = -1; // Find the first empty slot in the hand
-    for (int i = 0; i <= hand.size(); i++)
+    for (int i = 0; i <= gamedata.hand_player.size(); i++)
     {
-        auto id = hand[i];
+        auto id = gamedata.hand_player[i];
         if (table_deck.at(id).type == EMPTY)
         {
             first_empty_slot = i;
@@ -59,10 +59,12 @@ void mahjonghilo::gettile(vector<uint8_t> &deck, vector<uint8_t> &hand)
         }
     }
     // check(first_empty_slot != -1, "No empty slot in the player's hand");
-    hand.insert(hand.begin(), deck[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
-    deck.erase(deck.begin() + deck_tile_idx);       // Remove the tile from the deck
+    gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
+    gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx);                       // Remove the tile from the deck
+    gamedata.current_tile = gamedata.deck_player[deck_tile_idx - 1];
 }
-float mahjonghilo::get_odds(int value)
+
+void mahjonghilo::get_odds(game &gamedata, int value)
 {
     float sametiles, odds;
     if (value == 10)
@@ -73,34 +75,73 @@ float mahjonghilo::get_odds(int value)
     {
         sametiles = 11;
     }
-    if (option == 0)
+    gamedata.low_odds = (135 / ((value - 1) * 12)) * 0.9;
+    if (gamedata.low_odds < 1)
     {
-        odds = ((sametiles + 1) * (value - 1)) / 135;
+        gamedata.low_odds = 1;
     }
-    else if (option == 1)
+    gamedata.draw_odds = (135 / (value * sametiles)) * 0.9;
+    if (gamedata.draw_odds < 1)
     {
-        odds = (sametiles) / 135;
+        gamedata.draw_odds = 1;
     }
-    else
+    gamedata.high_odds = (135 / ((11 - value) * 12)) * 0.9;
+    if (gamedata.high_odds < 1)
     {
-        odds = ((sametiles + 1) * (11 - value)) / 135;
+        gamedata.high_odds = 1;
     }
-    return odds * 100;
 }
 
-int mahjonghilo::hi_lo_step(int prev_tile, int current_tile)
+void mahjonghilo::sorthand(vector<uint8_t> &hand)
 {
+    int n = hand.size(), i, j, temp;
+    for (i = 0; i < (n - 1); i++)
+    {
+        for (j = 0; j < (n - i - 1); j++)
+        {
+            if (hand[j] > hand[j + 1])
+            {
+                temp = hand[j];
+                hand[j] = hand[j + 1];
+                hand[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void mahjonghilo::hilo_step(game &gamedata, int prev_tile, int current_tile, int option)
+{
+    int result;
     if (prev_tile > current_tile)
     {
-        return 0;
+        result = 1;
     }
     else if (prev_tile == current_tile)
     {
-        return 1;
+        result = 2;
     }
     else
     {
-        return 2;
+        result = 3;
+    }
+    if (result == option)
+    {
+        if (result == 1)
+        {
+            gamedata.hi_lo_prize.amount *= gamedata.low_odds;
+        }
+        else if (result == 2)
+        {
+            gamedata.hi_lo_prize.amount *= gamedata.draw_odds;
+        }
+        else
+        {
+            gamedata.hi_lo_prize.amount *= gamedata.high_odds;
+        }
+    }
+    else
+    {
+        gamedata.hi_lo_prize.amount = 0;
     }
 }
 
