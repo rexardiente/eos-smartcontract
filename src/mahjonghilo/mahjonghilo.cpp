@@ -20,8 +20,8 @@ ACTION mahjonghilo::startgame(name username)
 {
     // Ensure this action is authorized by the player
     require_auth(username);
-
     auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.status == INITIALIZED, "Game already started");
     uint64_t id = 0;
     auto size = transaction_size();
     char buf[size];
@@ -32,7 +32,8 @@ ACTION mahjonghilo::startgame(name username)
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
-        game_data.status = INITIALIZED;
+        game_data.status = ONGOING;
+        game_data.hi_lo_prize.amount = 10000;
         gettile(game_data);
         game_data.standard_tile = game_data.current_tile;
         const auto hilo_tile = table_deck.at(game_data.standard_tile);
@@ -44,12 +45,14 @@ ACTION mahjonghilo::playhilo(name username, int option)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
+    check(user.game_data.status == ONGOING, "Either game hasn't started or already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         gettile(game_data);
         sorthand(game_data.hand_player);
         const auto current_tile = table_deck.at(game_data.current_tile);
-        if (option != 0)
+        if (option != 0 && game_data.hi_lo_prize.amount != 0)
         {
             const auto hilo_tile = table_deck.at(game_data.standard_tile);
             hilo_step(game_data, hilo_tile.tile_value, current_tile.tile_value, option);
@@ -68,6 +71,67 @@ ACTION mahjonghilo::discardtile(name username, int idx)
         game &game_data = modified_user.game_data;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
         game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
+    });
+}
+
+ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
+{
+    require_auth(username);
+
+    auto &user = _users.get(username.value, "User doesn't exist");
+    // const auto kongtile{};
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     kongtile[i] = table_deck.at(game_data.hand_player[idx[i]]);
+        // }
+        const auto kongtile1 = table_deck.at(game_data.hand_player[idx[0]]);
+        const auto kongtile2 = table_deck.at(game_data.hand_player[idx[1]]);
+        const auto kongtile3 = table_deck.at(game_data.hand_player[idx[2]]);
+        const auto kongtile4 = table_deck.at(game_data.hand_player[idx[3]]);
+
+        if (kongtile1.type == kongtile2.type && kongtile1.tile_value == kongtile2.tile_value)
+        {
+            if (kongtile4.type == kongtile3.type && kongtile4.tile_value == kongtile3.tile_value)
+            {
+                if (kongtile1.type == kongtile3.type && kongtile1.tile_value == kongtile3.tile_value)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
+                    }
+                    for (int i = 3; i >= 0; i--)
+                    {
+                        game_data.hand_player.erase(game_data.hand_player.begin() + idx[i]);
+                    }
+                    game_data.kong_count += 1;
+                }
+                else
+                {
+                    print("Tiles are not of the same suit and value.");
+                }
+            }
+            else
+            {
+                print("Tiles are not of the same suit and value.");
+            }
+        }
+        else
+        {
+            print("Tiles are not of the same suit and value.");
+        }
+    });
+}
+
+ACTION mahjonghilo::dclrwinhand(name username)
+{
+    require_auth(username);
+
+    auto &user = _users.get(username.value, "User doesn't exist");
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.status = 3;
     });
 }
 

@@ -152,7 +152,7 @@ ACTION ghostquest::withdraw(name username, string key)
         .send();
     auto characters = user->game_data.character;
     map<string, ghost>::iterator itr = characters.find(key);
-    eliminated_withdrawn(itr); // modify withdrawn character
+    itr->second.character_life = 0;
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.character = characters;

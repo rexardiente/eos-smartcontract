@@ -81,7 +81,12 @@ PLAYHILO()
 
 DISCARD()
 {
-    cleos push action mahjonghilo discardtile '[ "user1", 2]' -p user1@active
+    cleos push action mahjonghilo discardtile '[ "user1", 0]' -p user1@active
+}
+
+KONGDEC()
+{
+    cleos push action mahjonghilo dclrkong '[ "user1", [2,3,4,5]]' -p user1@active
 }
 
 TRANSFER()
@@ -108,7 +113,7 @@ GET_CURRENCY()
 # cleos set account permission ghostquest active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
 
 
-#UNLOCK_WALLET
+# UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
 COMPILE_CONTRACT
@@ -117,8 +122,9 @@ DEPLOY_CONTRACT
 # STARTGAME
 # PLAYHILO
 # DISCARD
+# KONGDEC
 # TRANSFER 
 # WITHDRAW
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

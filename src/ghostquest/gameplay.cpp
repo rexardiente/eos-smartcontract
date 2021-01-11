@@ -225,7 +225,7 @@ void ghostquest::damage_step(map<string, ghost>::iterator &attacker, map<string,
 void ghostquest::result_step(map<string, ghost>::iterator &loser, map<string, ghost>::iterator &winner, battle_history &current_battle) // modify status and other data values for both characters
 {
     loser->second.status = LOSER;
-    (loser->second.character_life == 1) ? ({loser->second.status = ELIMINATED; eliminated_withdrawn(loser); })
+    (loser->second.character_life == 1) ? ({loser->second.status = ELIMINATED; loser->second.character_life = 0; })
                                         : ({ loser->second.character_life -= 1; return; });
     winner->second.status = WINNER;
     winner->second.character_life += 1;
@@ -258,20 +258,6 @@ void ghostquest::calculate_prize(map<string, ghost>::iterator &ghost) // generat
         house_edge = init_prize * 0.1;
     }
     ghost->second.prize.amount = init_prize - house_edge;
-}
-
-void ghostquest::eliminated_withdrawn(map<string, ghost>::iterator &ghost) // disable characters by removing stats
-{
-    ghost->second.status = 6;
-    ghost->second.character_life = 0;
-    ghost->second.initial_hp = 0;
-    ghost->second.ghost_class = 0;
-    ghost->second.ghost_level = 0;
-    ghost->second.attack = 0;
-    ghost->second.defense = 0;
-    ghost->second.speed = 0;
-    ghost->second.luck = 0;
-    ghost->second.prize.amount = 0;
 }
 
 int ghostquest::rng(const int &range)

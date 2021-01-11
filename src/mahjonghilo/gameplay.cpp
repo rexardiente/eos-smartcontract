@@ -47,48 +47,51 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
 void mahjonghilo::gettile(game &gamedata)
 {
     int deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
+    // int deck_tile_idx = 30; // Pick a random tile from the deck
 
-    int first_empty_slot = -1; // Find the first empty slot in the hand
-    for (int i = 0; i <= gamedata.hand_player.size(); i++)
-    {
-        auto id = gamedata.hand_player[i];
-        if (table_deck.at(id).type == EMPTY)
-        {
-            first_empty_slot = i;
-            break;
-        }
-    }
-    // check(first_empty_slot != -1, "No empty slot in the player's hand");
     gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
-    gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx);                       // Remove the tile from the deck
-    gamedata.current_tile = gamedata.deck_player[deck_tile_idx - 1];
+    gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
+    gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx); // Remove the tile from the deck
 }
 
 void mahjonghilo::get_odds(game &gamedata, int value)
 {
-    float sametiles, odds;
-    if (value == 10)
+    float odds;
+    if (value == 1)
     {
-        sametiles = 15;
+        gamedata.low_odds = 0;
     }
     else
     {
-        sametiles = 11;
+        gamedata.low_odds = (135 / ((value - 1) * 12)) * 0.9;
+        if (gamedata.low_odds < 1)
+        {
+            gamedata.low_odds = 1;
+        }
     }
-    gamedata.low_odds = (135 / ((value - 1) * 12)) * 0.9;
-    if (gamedata.low_odds < 1)
+    if (value == 10)
     {
-        gamedata.low_odds = 1;
+        gamedata.draw_odds = (135 / 15) * 0.9;
     }
-    gamedata.draw_odds = (135 / (value * sametiles)) * 0.9;
-    if (gamedata.draw_odds < 1)
+    else
     {
-        gamedata.draw_odds = 1;
+        gamedata.draw_odds = (135 / 11) * 0.9;
+        if (gamedata.draw_odds < 1)
+        {
+            gamedata.draw_odds = 1;
+        }
     }
-    gamedata.high_odds = (135 / ((11 - value) * 12)) * 0.9;
-    if (gamedata.high_odds < 1)
+    if (value == 11)
     {
-        gamedata.high_odds = 1;
+        gamedata.high_odds = 0;
+    }
+    else
+    {
+        gamedata.high_odds = (135 / ((11 - value) * 12)) * 0.9;
+        if (gamedata.high_odds < 1)
+        {
+            gamedata.high_odds = 1;
+        }
     }
 }
 
