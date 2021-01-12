@@ -226,7 +226,7 @@ void ghostquest::result_step(map<string, ghost>::iterator &loser, map<string, gh
 {
     loser->second.status = LOSER;
     (loser->second.character_life == 1) ? ({loser->second.status = ELIMINATED; loser->second.character_life = 0; })
-                                        : ({ loser->second.character_life -= 1; return; });
+                                        : ({ loser->second.character_life -= 1; });
     winner->second.status = WINNER;
     winner->second.character_life += 1;
     std::string victorylog = " Battle Outcome : Character of " + name{winner->second.owner}.to_string() + " won against character of" + name{loser->second.owner}.to_string();
