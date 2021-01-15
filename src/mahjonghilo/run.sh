@@ -20,8 +20,8 @@ CREATE_ACCOUNT_WALLET()
 {   
     echo "${EXECUTE} Creating Wallet [\"mahjonghilo\",\"user1\",\"user2\"] with PRIVATE_KEY=\"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV\""
     cleos create account eosio mahjonghilo EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
-    # cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
-    # cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+    cleos create account eosio user2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
 
 }
 
@@ -81,12 +81,17 @@ PLAYHILO()
 
 DISCARD()
 {
-    cleos push action mahjonghilo discardtile '[ "user1", 0]' -p user1@active
+    cleos push action mahjonghilo discardtile '[ "user1", 9]' -p user1@active
 }
 
 KONGDEC()
 {
-    cleos push action mahjonghilo dclrkong '[ "user1", [2,3,4,5]]' -p user1@active
+    cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
+}
+
+WINDEC()
+{
+    cleos push action mahjonghilo dclrwinhand '["user1"]' -p user1@active
 }
 
 TRANSFER()
@@ -123,8 +128,9 @@ DEPLOY_CONTRACT
 # PLAYHILO
 # DISCARD
 # KONGDEC
+WINDEC
 # TRANSFER 
 # WITHDRAW
 # GET_CURRENCY 
-REMOVE_EXISTING_GAME
+# REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

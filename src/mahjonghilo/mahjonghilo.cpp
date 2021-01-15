@@ -45,12 +45,12 @@ ACTION mahjonghilo::playhilo(name username, int option)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.discarded_tiles.size() < 20, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
     check(user.game_data.status == ONGOING, "Either game hasn't started or already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         gettile(game_data);
-        sorthand(game_data.hand_player);
         const auto current_tile = table_deck.at(game_data.current_tile);
         if (option != 0 && game_data.hi_lo_prize.amount != 0)
         {
@@ -67,6 +67,8 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.discarded_tiles.size() < 19, "Your hand is for declaration(win/lose).");
+    check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a full hand before discarding a tile.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
@@ -79,23 +81,23 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
-    // const auto kongtile{};
+    vector<tile> kongtile{};
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        // for (int i = 0; i < 4; i++)
-        // {
-        //     kongtile[i] = table_deck.at(game_data.hand_player[idx[i]]);
-        // }
-        const auto kongtile1 = table_deck.at(game_data.hand_player[idx[0]]);
-        const auto kongtile2 = table_deck.at(game_data.hand_player[idx[1]]);
-        const auto kongtile3 = table_deck.at(game_data.hand_player[idx[2]]);
-        const auto kongtile4 = table_deck.at(game_data.hand_player[idx[3]]);
-
-        if (kongtile1.type == kongtile2.type && kongtile1.tile_value == kongtile2.tile_value)
+        for (int i = 0; i < 4; i++)
         {
-            if (kongtile4.type == kongtile3.type && kongtile4.tile_value == kongtile3.tile_value)
+            kongtile[i] = table_deck.at(game_data.hand_player[idx[i]]);
+        }
+        // const auto kongtile1 = table_deck.at(game_data.hand_player[idx[0]]);
+        // const auto kongtile2 = table_deck.at(game_data.hand_player[idx[1]]);
+        // const auto kongtile3 = table_deck.at(game_data.hand_player[idx[2]]);
+        // const auto kongtile4 = table_deck.at(game_data.hand_player[idx[3]]);
+
+        if (kongtile[0].suit == kongtile[1].suit && kongtile[0].tile_value == kongtile[1].tile_value)
+        {
+            if (kongtile[2].suit == kongtile[3].suit && kongtile[2].tile_value == kongtile[3].tile_value)
             {
-                if (kongtile1.type == kongtile3.type && kongtile1.tile_value == kongtile3.tile_value)
+                if (kongtile[0].suit == kongtile[2].suit && kongtile[0].tile_value == kongtile[2].tile_value)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -121,17 +123,28 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
         {
             print("Tiles are not of the same suit and value.");
         }
+        sorthand(game_data.reveal_kong);
+        gettile(game_data);
     });
 }
 
 ACTION mahjonghilo::dclrwinhand(name username)
 {
     require_auth(username);
-
+    vector<tile> remtiles{};
     auto &user = _users.get(username.value, "User doesn't exist");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.status = 3;
+        winhand_check(game_data, game_data.hand_player);
+
+        if (game_data.hand_player.size() == 0)
+        {
+            print("Proceed to scoring..");
+        }
+        else
+        {
+            print("Your hand didn't win..");
+        }
     });
 }
 

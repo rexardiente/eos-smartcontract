@@ -28,7 +28,7 @@ private:
         HIGH = 3
     };
 
-    enum tile_type : uint8_t
+    enum tile_suit : uint8_t
     {
         EMPTY = 0,
         CHARACTER = 1,
@@ -45,7 +45,7 @@ private:
 
     struct tile
     {
-        uint8_t type;
+        uint8_t suit;
         int tile_value;
     };
 
@@ -241,8 +241,17 @@ private:
     void onsettledpay(name to, asset quantity, string memo);
     void gettile(game & gamedata);
     void sorthand(vector<uint8_t> & hand);
+    void two_rem(game & gamedata, vector<tile> tiles);
+    void five_rem(game & gamedata, vector<tile> tiles);
+    void eight_rem(game & gamedata, vector<tile> tiles);
+    void eleven_rem(game & gamedata, vector<tile> tiles);
+    void fourteen_rem(game & gamedata, vector<tile> tiles);
+    void transferhand(game & gamedata, int size);
+    void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
     void hilo_step(game & gamedata, int prev_tile, int current_tile, int option);
+    int pair_pung_chow(int value1, uint8_t suit1, int value2, uint8_t suit2, int value3, uint8_t suit3);
+    void winhand_check(game & gamedata, vector<uint8_t> & hand);
     string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 
 public:
