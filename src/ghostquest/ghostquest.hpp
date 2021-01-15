@@ -18,13 +18,6 @@ private:
     enum Defaults : int64_t
     {
         GQ_DEFAULT = 0,
-        LIFE_DEFAULT = 0,
-        HP_DEFAULT = 0,
-        STAT_DEFAULT = 0,
-        BL_DEFAULT = 0,
-        LVL_DEFAULT = 0,
-        LMT_DEFAULT = 0,
-        CLASS_DEFAULT = 0,
         SUMMONED = 1,
         STANDBY = 2,
         INBATTLE = 3,
@@ -32,7 +25,6 @@ private:
         LOSER = 5,
         ELIMINATED = 6,
         IDLE = 7,
-        INITIALIZED = 0,
         ONGOING = 1,
         DONE = 2
     };
@@ -50,33 +42,26 @@ private:
     {
         name owner;
         // uint64_t ghost_id; move as ID Key
-        uint64_t character_life = LIFE_DEFAULT;
-        int initial_hp = HP_DEFAULT;
-        uint64_t ghost_class = CLASS_DEFAULT;
-        uint64_t ghost_level = LVL_DEFAULT;
+        uint64_t character_life = GQ_DEFAULT;
+        int initial_hp = GQ_DEFAULT;
+        uint64_t ghost_class = GQ_DEFAULT;
+        uint64_t ghost_level = GQ_DEFAULT;
         uint64_t status = GQ_DEFAULT;
-        uint64_t attack = STAT_DEFAULT;
-        uint64_t defense = STAT_DEFAULT;
-        uint64_t speed = STAT_DEFAULT;
-        uint64_t luck = STAT_DEFAULT;
+        uint64_t attack = GQ_DEFAULT;
+        uint64_t defense = GQ_DEFAULT;
+        uint64_t speed = GQ_DEFAULT;
+        uint64_t luck = GQ_DEFAULT;
         asset prize = DEFAULT_ASSET;
-        int battle_limit = LMT_DEFAULT;
+        int battle_limit = GQ_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
         uint64_t last_match = GQ_DEFAULT;
         map<string, battle_history> match_history;
-        // std::chrono::time_point<std::chrono::steady_clock> last_battle;
-        // vector<fight_log> battle_log;
-
-        // auto primary_key() const
-        // {
-        //     return key;
-        // }
+        uint64_t created_at = GQ_DEFAULT;
     };
 
     struct game
     {
         map<string, ghost> character;
-        // uint8_t status = INITIALIZED;
     };
 
     struct [[eosio::table]] user

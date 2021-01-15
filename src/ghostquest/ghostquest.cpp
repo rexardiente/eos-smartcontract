@@ -43,6 +43,7 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
             new_ghost.character_life = 1;
             new_ghost.status = STANDBY;
             new_ghost.initial_hp = 100 + rng(50);
+            new_ghost.created_at = current_time_point().time_since_epoch()._count;
             gen_stat(new_ghost); // generate status for character
             game_data.character.insert(game_data.character.end(), pair<string, ghost>(key, new_ghost));
         }
