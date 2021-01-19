@@ -66,67 +66,65 @@ ACTION ghostquest::addlife(name username, asset quantity, string key) // add lif
     });
 }
 
-ACTION ghostquest::battle(vector<pair<string, name>> &players, string gameid) // battle action
+ACTION ghostquest::battle(string gameid, pair<string, name> winner, pair<string, name> loser, vector<string> logs) // battle action
 {
     require_auth(_self);
-    check(players[0].first != players[1].first, "Match not allowed.");
-    check(players[0].second != players[1].second, "Match not allowed.");
+    check(winner.second != loser.second, "Same Character are not allowed to match");
+    check(winner.first != loser.first, "Same Character are not allowed to match");
+    auto &winner_player = _users.get(winner.second.value, "User doesn't exist.");
+    auto &loser_player = _users.get(loser.second.value, "User doesn't exist.");
 
-    battle_history current_battle;
-    const uint64_t time_executed = current_time_point().elapsed._count; // track current time of execution..
-    auto &player1 = _users.get(players[0].second.value, "User doesn't exist.");
-    auto &player2 = _users.get(players[1].second.value, "User doesn't exist.");
+    map<string, ghost> winner_player_characters = winner_player.game_data.character;
+    map<string, ghost> loser_player_characters = loser_player.game_data.character;
 
-    map<string, ghost> player1_characters = player1.game_data.character;
-    map<string, ghost> player2_characters = player2.game_data.character;
+    vector<map<string, ghost>::iterator> itr{winner_player_characters.find(winner.first), loser_player_characters.find(loser.first)};
 
-    vector<map<string, ghost>::iterator> itr{player1_characters.find(players[0].first), player2_characters.find(players[1].first)};
-
-    // check(itr[0]->second.match_history.find(itr[1]->second.ghost_id) == itr[0]->second.match_history.end(), "Enemy already fought before.");
-    // check(itr[1]->second.match_history.find(itr[0]->second.ghost_id) == itr[1]->second.match_history.end(), "Enemy already fought before.");
-    // check(itr[0]->second.character_life == itr[1]->second.character_life, "Match not allowed.");
+    check(itr[0]->second.match_history.find(itr[1]->first) == itr[0]->second.match_history.end(), "Enemy already fought before.");
+    check(itr[1]->second.match_history.find(itr[0]->first) == itr[1]->second.match_history.end(), "Enemy already fought before.");
+    check(itr[0]->second.character_life == itr[1]->second.character_life, "Match not allowed.");
     check(itr[0]->second.battle_count <= itr[0]->second.battle_limit, "Battle limit reached.");
     check(itr[1]->second.battle_count <= itr[1]->second.battle_limit, "Battle limit reached.");
 
+    battle_history current_battle;
+    auto time_executed = current_time_point().elapsed._count;
     current_battle.time_executed = time_executed;
-    battle_step(itr[0], itr[1], current_battle);
+    current_battle.gameplay_log = logs;
+
     // update each players battle history..
     for_each(itr.begin(), itr.end(), [&](map<string, ghost>::iterator &n) {
-        // map<string, battle_history>::iterator it;
-        // for (it = n->second.match_history.begin(); it != n->second.match_history.end(); it++)
-        // {
-        //     check(it->second.enemy_id == itr[0]->first, "Enemy already fought before.");
-        //     check(it->second.enemy_id == itr[1]->first, "Enemy already fought before.");
-        // }
-        // n->second.match_history.insert(n->second.match_history.end(), pair<uint64_t, battle_history>(n->second.ghost_id == itr[0]->second.ghost_id ? itr[1]->second.ghost_id : itr[0]->second.ghost_id, current_battle));
         n->second.match_history.insert(n->second.match_history.end(), pair<string, battle_history>(gameid, current_battle));
         n->second.last_match = time_executed;
     });
 
-    if (itr[0]->second.character_life > player1.game_data.character.at(players[0].first).character_life)
-    {
-        itr[0]->second.match_history.at(gameid).isWin = true;
-        itr[1]->second.match_history.at(gameid).isWin = false;
-    }
-    else
-    {
-        itr[1]->second.match_history.at(gameid).isWin = true;
-        itr[0]->second.match_history.at(gameid).isWin = false;
-    }
-    itr[0]->second.battle_count += 1;
-    itr[0]->second.match_history.at(gameid).enemy = players[1].second;
-    itr[0]->second.match_history.at(gameid).enemy_id = players[1].first;
-    itr[1]->second.battle_count += 1;
-    itr[1]->second.match_history.at(gameid).enemy = players[0].second;
-    itr[1]->second.match_history.at(gameid).enemy_id = players[0].first;
+    _users.modify(winner_player, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
 
-    _users.modify(player1, _self, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.character = player1_characters;
+        calculate_prize(itr[0]);
+        itr[0]->second.battle_count += 1;
+        itr[0]->second.match_history.at(gameid).enemy = loser.second;
+        itr[0]->second.match_history.at(gameid).enemy_id = loser.first;
+        itr[0]->second.match_history.at(gameid).isWin = true;
+        game_data.character = winner_player_characters;
     });
-    _users.modify(player2, _self, [&](auto &modified_user) {
+    _users.modify(loser_player, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character = player2_characters;
+
+        itr[1]->second.battle_count += 1;
+        itr[1]->second.match_history.at(gameid).enemy = winner.second;
+        itr[1]->second.match_history.at(gameid).enemy_id = winner.first;
+        itr[1]->second.match_history.at(gameid).isWin = false;
+        itr[1]->second.prize = DEFAULT_ASSET;
+
+        if (itr[1]->second.character_life > 1)
+        {
+            itr[1]->second.character_life -= 1;
+        }
+        else
+        {
+            itr[1]->second.status = ELIMINATED;
+            itr[1]->second.character_life = 0;
+        }
+        game_data.character = loser_player_characters;
     });
 }
 

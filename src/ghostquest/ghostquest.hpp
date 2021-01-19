@@ -96,9 +96,9 @@ private:
     void summon_ready(name username, asset quantity, int limit);
     void onsettledpay(name to, asset quantity, string memo);
     void gen_stat(ghost & initghost);
-    void battle_step(map<string, ghost>::iterator & ghost1, map<string, ghost>::iterator & ghost2, battle_history & current_battle);
-    void damage_step(map<string, ghost>::iterator & attacker, map<string, ghost>::iterator & defender, int round, battle_history &current_battle, int damage);
-    void result_step(map<string, ghost>::iterator & loser, map<string, ghost>::iterator & winner, battle_history & current_battle);
+    // void battle_step(map<string, ghost>::iterator & ghost1, map<string, ghost>::iterator & ghost2, battle_history & current_battle);
+    // void damage_step(map<string, ghost>::iterator & attacker, map<string, ghost>::iterator & defender, int round, battle_history &current_battle, int damage);
+    // void result_step(map<string, ghost>::iterator & loser, map<string, ghost>::iterator & winner, battle_history & current_battle);
     void set_add_life(name username, asset quantity, string key);
     void calculate_prize(map<string, ghost>::iterator & ghost);
     void eliminated_withdrawn(map<string, ghost>::iterator & ghost);
@@ -118,7 +118,7 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION battle(vector<pair<string, name>> & players, string gameid);
+    ACTION battle(string gameid, pair<string, name> winner, pair<string, name> loser, vector<string> logs);
     ACTION withdraw(name username, string key);
     ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(name username, asset quantity, int limit);
