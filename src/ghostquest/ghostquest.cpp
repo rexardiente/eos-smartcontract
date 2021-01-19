@@ -101,6 +101,7 @@ ACTION ghostquest::battle(string gameid, pair<string, name> winner, pair<string,
 
         calculate_prize(itr[0]);
         itr[0]->second.battle_count += 1;
+        itr[0]->second.character_life += 1;
         itr[0]->second.match_history.at(gameid).enemy = loser.second;
         itr[0]->second.match_history.at(gameid).enemy_id = loser.first;
         itr[0]->second.match_history.at(gameid).isWin = true;
