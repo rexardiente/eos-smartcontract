@@ -94,13 +94,13 @@ ACTION ghostquest::battle(string gameid, pair<string, name> winner, pair<string,
     for_each(itr.begin(), itr.end(), [&](map<string, ghost>::iterator &n) {
         n->second.match_history.insert(n->second.match_history.end(), pair<string, battle_history>(gameid, current_battle));
         n->second.last_match = time_executed;
+        n->second.battle_count += 1;
     });
 
     _users.modify(winner_player, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
 
         calculate_prize(itr[0]);
-        itr[0]->second.battle_count += 1;
         itr[0]->second.character_life += 1;
         itr[0]->second.match_history.at(gameid).enemy = loser.second;
         itr[0]->second.match_history.at(gameid).enemy_id = loser.first;
@@ -110,7 +110,6 @@ ACTION ghostquest::battle(string gameid, pair<string, name> winner, pair<string,
     _users.modify(loser_player, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
 
-        itr[1]->second.battle_count += 1;
         itr[1]->second.match_history.at(gameid).enemy = winner.second;
         itr[1]->second.match_history.at(gameid).enemy_id = winner.first;
         itr[1]->second.match_history.at(gameid).isWin = false;
