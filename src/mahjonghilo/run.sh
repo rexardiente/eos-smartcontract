@@ -3,12 +3,13 @@
 # Run Command: ./run.sh --source 
 
 # Project Setup
-PROJECT_NAME="Mahjong-Hi/Lo Quest"
+PROJECT_NAME="Mahjong-Hi/Lo"
 # Global ENV
 EXECUTE="> "
 
 # Cleos Wallet Password
 # PW5KgmdCJdBjcgfBazCCKvYB8Lbzgrs6AvMhXamKe7FvwQQWYxt1P
+# PW5KNqqcca9vDQ1UBDYwejsY78GwLay3RP7qWG9EaabsjvdCozFWF -- DonunFactory1 MacBook
 
 UNLOCK_WALLET()
 {
@@ -27,8 +28,8 @@ CREATE_ACCOUNT_WALLET()
 
 SET_PERMISSION() 
 {
-    echo "${EXECUTE} Setting Permission for [\"ghostquest\"] with PUBLICK_KEY=\"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV\""
-    cleos set account permission mahjonghilo active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
+    echo "${EXECUTE} Setting Permission for [\"mahjonghilo\"] with PUBLICK_KEY=\"EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV\""
+    cleos set account permission mahjonghilo active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "mahjonghilo","permission":"eosio.code"},"weight":1}]}'
 }
 # Compile Contract
 COMPILE_CONTRACT() 
@@ -81,7 +82,7 @@ PLAYHILO()
 
 DISCARD()
 {
-    cleos push action mahjonghilo discardtile '[ "user1", 9]' -p user1@active
+    cleos push action mahjonghilo discardtile '[ "user1", 4]' -p user1@active
 }
 
 KONGDEC()
@@ -115,22 +116,22 @@ GET_CURRENCY()
     cleos get currency balance eosio.token user2 EOS
 }
 
-# cleos set account permission ghostquest active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
+# cleos set account permission mahjonghilo active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "mahjonghilo","permission":"eosio.code"},"weight":1}]}'
 
 
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # STARTGAME
 # PLAYHILO
 # DISCARD
 # KONGDEC
-WINDEC
+# WINDEC
 # TRANSFER 
 # WITHDRAW
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

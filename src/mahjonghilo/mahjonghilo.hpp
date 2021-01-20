@@ -46,7 +46,7 @@ private:
     struct tile
     {
         uint8_t suit;
-        int tile_value;
+        int value;
     };
 
     const map<uint8_t, tile> table_deck = {
@@ -244,13 +244,15 @@ private:
     void two_rem(game & gamedata, vector<tile> tiles);
     void five_rem(game & gamedata, vector<tile> tiles);
     void eight_rem(game & gamedata, vector<tile> tiles);
-    void eleven_rem(game & gamedata, vector<tile> tiles);
-    void fourteen_rem(game & gamedata, vector<tile> tiles);
+    // void eleven_rem(game & gamedata, vector<tile> tiles);
+    // void fourteen_rem(game & gamedata, vector<tile> tiles);
     void transferhand(game & gamedata, int size);
     void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
     void hilo_step(game & gamedata, int prev_tile, int current_tile, int option);
-    int pair_pung_chow(int value1, uint8_t suit1, int value2, uint8_t suit2, int value3, uint8_t suit3);
+    int pair_pung_chow(tile tile1, tile tile2, tile tile3);
+    int pair_check(tile tile1, tile tile2);
+    int five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5);
     void winhand_check(game & gamedata, vector<uint8_t> & hand);
     string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 

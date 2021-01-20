@@ -37,7 +37,7 @@ ACTION mahjonghilo::startgame(name username)
         gettile(game_data);
         game_data.standard_tile = game_data.current_tile;
         const auto hilo_tile = table_deck.at(game_data.standard_tile);
-        get_odds(game_data, hilo_tile.tile_value);
+        get_odds(game_data, hilo_tile.value);
     });
 }
 
@@ -55,10 +55,10 @@ ACTION mahjonghilo::playhilo(name username, int option)
         if (option != 0 && game_data.hi_lo_prize.amount != 0)
         {
             const auto hilo_tile = table_deck.at(game_data.standard_tile);
-            hilo_step(game_data, hilo_tile.tile_value, current_tile.tile_value, option);
+            hilo_step(game_data, hilo_tile.value, current_tile.value, option);
         }
         game_data.standard_tile = game_data.current_tile;
-        get_odds(game_data, current_tile.tile_value);
+        get_odds(game_data, current_tile.value);
     });
 }
 
@@ -68,7 +68,7 @@ ACTION mahjonghilo::discardtile(name username, int idx)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.discarded_tiles.size() < 19, "Your hand is for declaration(win/lose).");
-    check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a full hand before discarding a tile.");
+    check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
@@ -82,6 +82,7 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     vector<tile> kongtile{};
+    check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Must have a complete hand to declare a kong.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         for (int i = 0; i < 4; i++)
@@ -92,39 +93,26 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
         // const auto kongtile2 = table_deck.at(game_data.hand_player[idx[1]]);
         // const auto kongtile3 = table_deck.at(game_data.hand_player[idx[2]]);
         // const auto kongtile4 = table_deck.at(game_data.hand_player[idx[3]]);
-
-        if (kongtile[0].suit == kongtile[1].suit && kongtile[0].tile_value == kongtile[1].tile_value)
+        int check1 = pair_check(kongtile[0], kongtile[1]);
+        int check2 = pair_check(kongtile[2], kongtile[3]);
+        check(check1 == 1 && check2 == 1, "Tiles are not of the same suit and value.");
+        if (check1 == check2)
         {
-            if (kongtile[2].suit == kongtile[3].suit && kongtile[2].tile_value == kongtile[3].tile_value)
+            for (int i = 0; i < 4; i++)
             {
-                if (kongtile[0].suit == kongtile[2].suit && kongtile[0].tile_value == kongtile[2].tile_value)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
-                    }
-                    for (int i = 3; i >= 0; i--)
-                    {
-                        game_data.hand_player.erase(game_data.hand_player.begin() + idx[i]);
-                    }
-                    game_data.kong_count += 1;
-                }
-                else
-                {
-                    print("Tiles are not of the same suit and value.");
-                }
+                game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
             }
-            else
+            for (int i = 3; i >= 0; i--)
             {
-                print("Tiles are not of the same suit and value.");
+                game_data.hand_player.erase(game_data.hand_player.begin() + idx[i]);
             }
+            game_data.kong_count += 1;
         }
         else
         {
             print("Tiles are not of the same suit and value.");
         }
         sorthand(game_data.reveal_kong);
-        gettile(game_data);
     });
 }
 
