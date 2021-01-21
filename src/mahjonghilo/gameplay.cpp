@@ -281,17 +281,17 @@ int mahjonghilo::five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4,
             return 0;
         }
     }
-    else if ((pair_pung_chow(tile1, tile2, tile4)) == 3)
-    {
-        if ((pair_check(tile3, tile5)) == 2)
-        {
-            return 2;
-        }
-        else
-        {
-            return 0;
-        }
-    }
+    // else if ((pair_pung_chow(tile1, tile2, tile4)) == 3)
+    // {
+    //     if ((pair_check(tile3, tile5)) == 2)
+    //     {
+    //         return 2;
+    //     }
+    //     else
+    //     {
+    //         return 0;
+    //     }
+    // }
     else
     {
         return 0;
