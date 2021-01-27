@@ -82,12 +82,12 @@ PLAYHILO()
 
 DISCARD()
 {
-    cleos push action mahjonghilo discardtile '[ "user1", 4]' -p user1@active
+    cleos push action mahjonghilo discardtile '[ "user1", 1]' -p user1@active
 }
 
 KONGDEC()
 {
-    cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
+    cleos push action mahjonghilo dclrkong '[ "user1", [10,11,12,13]]' -p user1@active
 }
 
 WINDEC()

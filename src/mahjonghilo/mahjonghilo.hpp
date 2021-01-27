@@ -244,8 +244,8 @@ private:
     void two_rem(game & gamedata, vector<tile> tiles);
     void five_rem(game & gamedata, vector<tile> tiles);
     void eight_rem(game & gamedata, vector<tile> tiles);
-    // void eleven_rem(game & gamedata, vector<tile> tiles);
-    // void fourteen_rem(game & gamedata, vector<tile> tiles);
+    void eleven_rem(game & gamedata, vector<tile> tiles);
+    void fourteen_rem(game & gamedata, vector<tile> tiles);
     void transferhand(game & gamedata, int size);
     void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
@@ -253,6 +253,7 @@ private:
     int pair_pung_chow(tile tile1, tile tile2, tile tile3);
     int pair_check(tile tile1, tile tile2);
     int five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5);
+    int six_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6);
     void winhand_check(game & gamedata, vector<uint8_t> & hand);
     string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 
