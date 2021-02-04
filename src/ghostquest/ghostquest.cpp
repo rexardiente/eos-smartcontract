@@ -32,6 +32,7 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         int counter = game_data.character.size();
+        auto current_time = current_time_point().time_since_epoch()._count;
         for (int i = counter; i < (counter + (quantity.amount / 10000)); i++) // summon character/characters and hitpoints
         {
             ghost new_ghost;
@@ -39,11 +40,10 @@ ACTION ghostquest::genchar(name username, asset quantity, int limit) // generate
             new_ghost.owner = modified_user.username;
             new_ghost.prize.amount = 10000;
             new_ghost.battle_limit = limit;
-            new_ghost.status = SUMMONED;
             new_ghost.character_life = 1;
             new_ghost.status = STANDBY;
             new_ghost.initial_hp = 100 + rng(50);
-            new_ghost.created_at = current_time_point().time_since_epoch()._count;
+            new_ghost.created_at = current_time;
             gen_stat(new_ghost); // generate status for character
             game_data.character.insert(game_data.character.end(), pair<string, ghost>(key, new_ghost));
         }
@@ -86,7 +86,7 @@ ACTION ghostquest::battle(string gameid, pair<string, name> winner, pair<string,
     check(itr[1]->second.battle_count <= itr[1]->second.battle_limit, "Battle limit reached.");
 
     battle_history current_battle;
-    auto time_executed = current_time_point().elapsed._count;
+    auto time_executed = current_time_point().time_since_epoch()._count;
     current_battle.time_executed = time_executed;
     current_battle.gameplay_log = logs;
 
