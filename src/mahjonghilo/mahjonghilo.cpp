@@ -124,10 +124,17 @@ ACTION mahjonghilo::dclrwinhand(name username)
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         winhand_check(game_data, game_data.hand_player);
-
         if (game_data.hand_player.size() == 0)
         {
-            print("Proceed to scoring..");
+            for (int i = 0; i < game_data.reveal_kong.size(); i++)
+            {
+                game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
+            }
+            for (int i = 0; i < game_data.reveal_kong.size(); i++)
+            {
+                game_data.reveal_kong.erase(game_data.reveal_kong.begin());
+            }
+            print("Well played!");
         }
         else
         {
