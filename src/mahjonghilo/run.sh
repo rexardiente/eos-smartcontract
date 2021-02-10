@@ -87,7 +87,7 @@ DISCARD()
 
 KONGDEC()
 {
-    cleos push action mahjonghilo dclrkong '[ "user1", [10,11,12,13]]' -p user1@active
+    cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
 }
 
 WINDEC()
@@ -132,6 +132,6 @@ DEPLOY_CONTRACT
 # WINDEC
 # TRANSFER 
 # WITHDRAW
-# GET_CURRENCY 
+GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
