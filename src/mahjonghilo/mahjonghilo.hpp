@@ -187,7 +187,7 @@ private:
         {134, {GREEN, 11}},
         {135, {GREEN, 11}},
         {136, {GREEN, 11}}};
-
+    
     struct game
     {
         string game_id;

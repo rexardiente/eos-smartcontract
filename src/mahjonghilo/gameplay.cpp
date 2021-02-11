@@ -1948,42 +1948,201 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                 }
                 else
                 {
-                    int check5 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
+                    int check5 = pair_pung_chow(tiles[5], tiles[6], tiles[7]); // 1112256  1235566
                     if (check5 == 2 || check5 == 3)
                     {
-                        int check6 = five_tile_check(tiles[8],tiles[9],tiles[10],tiles[11],tiles[12]);
-                        if(check6==2 && pair_pung_chow(tiles[10], tiles[12], tiles[13]) == 3)
+                        int check6 = five_tile_check(tiles[8], tiles[9], tiles[10], tiles[11], tiles[12]);
+                        if (check6 == 2 && pair_pung_chow(tiles[10], tiles[12], tiles[13]) == 3)
                         {
-                            gamedata.pair_count+=1;
-                            gamedata.chow_count+=2;
+                            gamedata.pair_count += 1;
+                            gamedata.chow_count += 2;
                             pung_chow(gamedata, check2);
                             pung_chow(gamedata, check5);
                             transferhand(gamedata, 14);
                         }
-                        else if(check6 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
+                        else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                         {
-                                                        gamedata.pair_count+=1;
-                            gamedata.chow_count+=1;
-                            
+                            gamedata.pair_count += 1;
+                            gamedata.chow_count += 1;
+                            gamedata.pung_count += 1;
                             pung_chow(gamedata, check2);
                             pung_chow(gamedata, check5);
                             transferhand(gamedata, 14);
-
                         }
-                        
+                        else
+                        {
+                            print("55 - Hand combination not correct!");
+                        }
                     }
                     else if (check5 == 1)
                     {
+                        int check6 = pair_check(tiles[7], tiles[8]); // 111334455
+                        if (check6 == 1 && pair_pung_chow(tiles[3], tiles[5], tiles[7]) == 3)
+                        {
+                            int check7 = pair_pung_chow(tiles[9], tiles[10], tiles[11]);
+                            if (check7 == 3 && pair_check(tiles[12], tiles[13]) == 1)
+                            {
+                                gamedata.pair_count += 1;
+                                gamedata.chow_count += 3;
+                                pung_chow(gamedata, check2);
+                                transferhand(gamedata, 14);
+                            }
+                            else if (check7 == 2)
+                            {
+                                if (pair_check(tiles[12], tiles[13]) == 1)
+                                {
+                                    gamedata.pair_count += 1;
+                                    gamedata.pung_count += 1;
+                                    gamedata.chow_count += 2;
+                                    pung_chow(gamedata, check2);
+                                    transferhand(gamedata, 14);
+                                }
+                                else if (pair_check(tiles[12], tiles[13]) == 2 && pair_pung_chow(tiles[11], tiles[12], tiles[13]) == 3)
+                                {
+                                    gamedata.pair_count += 1;
+                                    gamedata.chow_count += 3;
+                                    pung_chow(gamedata, check2);
+                                    transferhand(gamedata, 14);
+                                }
+                                else
+                                {
+                                    print("55 - Hand combination not correct!");
+                                }
+                            }
+                            else if (check7 == 1)
+                            {
+                                int check8 = pair_pung_chow(tiles[11], tiles[12], tiles[13]);
+                                if (check8 == 2 || check8 == 3)
+                                {
+                                    gamedata.pair_count += 1;
+                                    gamedata.chow_count += 2;
+                                    pung_chow(gamedata, check2);
+                                    pung_chow(gamedata, check8);
+                                    transferhand(gamedata, 14);
+                                }
+                                else
+                                {
+                                    print("55 - Hand combination not correct!");
+                                }
+                            }
+                            else
+                            {
+                                int check8 = five_tile_check(tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]);
+                                if (check8 == 1)
+                                {
+                                    gamedata.pair_count += 1;
+                                    gamedata.chow_count += 3;
+                                    pung_chow(gamedata, check2);
+                                    transferhand(gamedata, 14);
+                                }
+                                else
+                                {
+                                    print("55 - Hand combination not correct!");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            print("55 - Hand combination not correct!");
+                        }
                     }
                     else
                     {
-                        /* code */
+                        print("55 - Hand combination not correct!");
                     }
                 }
             }
-            else if (check3 == 2)
+            else if (check3 == 2 && check2 == 2) // 11123
             {
-                /* code */
+                if (pair_pung_chow(tiles[2], tiles[3], tiles[4]) == 3)
+                {
+                    int check4 = six_tile_check(tiles[5], tiles[6], tiles[7], tiles[8], tiles[9], tiles[10]);
+                    if (check4 > 3 && check4 < 9)
+                    {
+                        int check5 = pair_pung_chow(tiles[11], tiles[12], tiles[13]);
+                        if (check5 == 2 || check5 == 3)
+                        {
+                            gamedata.pair_count += 1;
+                            gamedata.chow_count += 1;
+                            pung_chow(gamedata, check4);
+                            pung_chow(gamedata, check5);
+                            transferhand(gamedata, 14);
+                        }
+                        else
+                        {
+                            print("55 - Hand combination not correct!");
+                        }
+                    }
+                    else
+                    {
+                        int check5 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
+                        if (check5 == 2 || check5 == 3)
+                        {
+                            int check6 = five_tile_check(tiles[8], tiles[9], tiles[10], tiles[11], tiles[12]);
+                            if (check6 == 2 && pair_pung_chow(tiles[10], tiles[12], tiles[13]) == 3)
+                            {
+                                gamedata.pair_count += 1;
+                                gamedata.chow_count += 3;
+                                pung_chow(gamedata, check5);
+                                transferhand(gamedata, 14);
+                            }
+                            else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
+                            {
+                                gamedata.pair_count += 1;
+                                gamedata.pung_count += 1;
+                                gamedata.chow_count += 2;
+                                pung_chow(gamedata, check5);
+                                transferhand(gamedata, 14);
+                            }
+                            else
+                            {
+                                print("55 - Hand combination not correct!");
+                            }
+                        }
+                        else
+                        {
+                            int check6 = five_tile_check(tiles[5], tiles[6], tiles[7], tiles[8], tiles[9]);
+                            if (check6 == 2 && pair_pung_chow(tiles[7], tiles[9], tiles[10]) == 3)
+                            {
+                                int check7 = pair_pung_chow(tiles[11], tiles[12], tiles[13]);
+                                if (check7 == 2 || check7 == 3)
+                                {
+                                    gamedata.pair_count += 1;
+                                    gamedata.chow_count += 3;
+                                    pung_chow(gamedata, check7);
+                                    transferhand(gamedata, 14);
+                                }
+                                else
+                                {
+                                    print("55 - Hand combination not correct!");
+                                }
+                            }
+                            else if (check6 == 3 && pair_pung_chow(tiles[5], tiles[9], tiles[10]) == 3)
+                            {
+                                if (check7 == 2 || check7 == 3)
+                                {
+                                    gamedata.pair_count += 1;
+                                    gamedata.pung_count += 1;
+                                    gamedata.chow_count += 2;
+                                    pung_chow(gamedata, check7);
+                                    transferhand(gamedata, 14);
+                                }
+                                else
+                                {
+                                    print("55 - Hand combination not correct!");
+                                }
+                            }
+                            else
+                            {
+                                print("55 - Hand combination not correct!");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    print("55 - Hand combination not correct!");
+                }
             }
             else
             {
@@ -1992,6 +2151,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
         }
         else if (check2 == 1)
         {
+            int check3 = six_tile_check(tiles[3],tiles[4],tilesp[5],tiles[6],tiles[7])            
         }
         else
         {
