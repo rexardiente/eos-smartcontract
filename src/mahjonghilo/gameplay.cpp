@@ -1466,7 +1466,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
         }
         else
         {
-            if ((pair_check(tiles[6], tiles[7])) == 1 && (pair_pung_chow(tiles[2], tiles[4], tiles[6])) == 3)
+            if ((pair_check(tiles[6], tiles[7])) == 1 && (pair_pung_chow(tiles[2], tiles[4], tiles[6])) == 3) 
             {
                 int check3 = six_tile_check(tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]);
                 if (check3 > 3 && check3 < 9)
@@ -2149,9 +2149,119 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                 print("55 - Hand combination not correct!");
             }
         }
-        else if (check2 == 1)
+        else if (check2 == 1) // 11
         {
-            int check3 = six_tile_check(tiles[3],tiles[4],tilesp[5],tiles[6],tiles[7])            
+            int check3 = six_tile_check(tiles[2],tiles[3],tiles[4],tiles[5],tiles[6],tiles[7]);
+            if(check3>3 && check3<9)
+            {
+                int check4 = six_tile_check(tiles[8],tiles[9],tiles[10],tiles[11],tiles[12],tiles[13]);
+                if(check4>3 && check4<9)
+                {
+                    gamedata.pair_count+=1;
+                    pung_chow(gamedata, check3);
+                    pung_chow(gamedata, check4);
+                    transferhand(gamedata, 14);
+                }
+                else
+                {
+                    int check5 = five_tile_check(tiles[8],tiles[9],tiles[10],tiles[11],tiles[12]);
+                    if(check5 == 2 && pair_pung_chow(tiles[10],tiles[12],tiles[13])==3)
+                    {
+                        gamedata.pair_count+=1;
+                        gamedata.chow_count+=2;
+                        pung_chow(gamedata, check3);
+                        transferhand(gamedata, 14);
+                    }
+                    else if(check5 == 3 && pair_pung_chow(tiles[8],tiles[12],tiles[13])==3)
+                    {
+                        gamedata.pair_count+=1;
+                        gamedata.chow_count+=1;
+                        gamedata.pung_count+=1;
+                        pung_chow(gamedata, check3);
+                        transferhand(gamedata, 14);
+                    }
+                    else
+                    {
+                     print("55 - Hand combination not correct!");   
+                    }
+                }
+            }
+            else
+            {
+                int check4 = pair_pung_chow(tiles[2],tiles[3],tiles[4]); 
+                if(check4==2 || check4==3)
+                {
+                    int check5 = five_tile(tiles[5],tiles[6],tiles[7],tiles[8],tiles[9]);
+                    if(check5 == 2 && pair_pung_chow(tiles[7],tiles[9],tiles[10])==3)
+                    {
+                        int check6 = pair_pung_chow(tiles[11],tiles[12],tiles[13]);
+                        if(check6 == 2 || check6 == 3)
+                        {
+                        gamedata.pair_count+=1;
+                        gamedata.chow_count+=2;
+                        pung_chow(gamedata, check4);
+                                                pung_chow(gamedata, check6);
+                        transferhand(gamedata, 14);
+                        }
+                        else
+                        {
+                                                 print("55 - Hand combination not correct!");   
+                        }
+                    }
+                    else if(check5 == 3 && pair_pung_chow(tiles[5],tiles[9],tiles[10])==3)
+                    {
+                        int check6 = pair_pung_chow(tiles[11],tiles[12],tiles[13]);
+                        if(check6 == 2 || check6 == 3)
+                        {
+                        gamedata.pair_count+=1;
+                        gamedata.chow_count+=1;
+                        gamedata.pung_count+=1;
+                        pung_chow(gamedata, check4);
+                                                pung_chow(gamedata, check6);
+                        transferhand(gamedata, 14);
+                        }
+                        else
+                        {
+                                                 print("55 - Hand combination not correct!");   
+                        }
+                    }
+                    else
+                    {
+                     print("55 - Hand combination not correct!");   
+                    }
+                }
+                else
+                {
+                    int check5 = five_tile_check(tiles[2],tiles[3],tiles[4],tiles[5],tiles[6]); // 1134445 55 66 1134555 66 77
+                    if(check5 == 1 && pair_pung_chow(tiles[6],tiles[8],tiles[10])==3)
+                    {
+                        if(pair_check(tiles[7],tiles[8])==1 && pair_check(tiles[9],tiles[10])==1)
+                        {
+                            int check6 = pair_pung_chow(tiles[11],tiles[12],tiles[13]);
+                            if(check6 == 2 || check6 == 3)
+                            {
+                                gamedata.pair_count+=1;
+                                gamedata.chow_count+=3;
+                                pung_chow(gamedata, check6)
+                            }
+                        }
+
+                    }
+                    else if(check5 == 2 && pair_pung_chow(tiles[4],tiles[6],tiles[7])==3)
+                    {
+                                                int check6 = six_tile_check(tiles[7],tiles[8],tiles[9],tiles[10])
+
+                    }
+                    else if(check5 == 3 && pair_pung_chow(tiles[2],tiles[6],tiles[7])==3)
+                    {
+
+                    }
+                    else
+                    {
+                     print("55 - Hand combination not correct!");   
+                    }
+                }
+            }            
         }
         else
         {
@@ -2182,7 +2292,7 @@ int mahjonghilo::rng(const int &range)
 
     // Get the random result in desired range
     int random_result = new_seed_value % range;
-    return random_result;
+    return random_result; 
 }
 
 string mahjonghilo::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size)
