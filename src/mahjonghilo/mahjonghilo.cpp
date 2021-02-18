@@ -45,15 +45,26 @@ ACTION mahjonghilo::startgame(name username)
     {
     require_auth(username); 
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == INITIALIZED, "Cannot do a trial. Initialize a new game.");
+    check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.status = ONTRIAL;
+        if(game_data.status==INITIALIZED)
+        {
+            game_data.status = ONTRIAL;
+        }
+        else
+        {
+            int size = game_data.winning_hand.size();
+            for (int i = 0; i < size; i++)
+            {
+                game_data.winning_hand.erase(game_data.winning_hand.begin());
+            }
+        }
         for(int i = 0; i<idx.size();i++)
         {
             game_data.hand_player.insert(game_data.hand_player.begin(), game_data.deck_player[idx[i]-1]); // Assign the tile to the first empty slot in the hand
         }
-                sorthand(game_data.hand_player);
+        sorthand(game_data.hand_player);
         winhand_check(game_data, game_data.hand_player);
         if (game_data.hand_player.size() == 0)
         {
@@ -72,7 +83,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.discarded_tiles.size() < 20, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
-    check(user.game_data.status == ONGOING, "Either game hasn't started or already ended.");
+    check(user.game_data.status == ONGOING, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         gettile(game_data);
@@ -92,6 +103,7 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.status == ONGOING, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
     check(user.game_data.discarded_tiles.size() < 19, "Your hand is for declaration(win/lose).");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _users.modify(user, username, [&](auto &modified_user) {
@@ -107,6 +119,7 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     vector<tile> kongtile{};
+    check(user.game_data.status == ONGOING, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Must have a complete hand to declare a kong.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
@@ -145,6 +158,7 @@ ACTION mahjonghilo::dclrwinhand(name username)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.status == ONGOING, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         winhand_check(game_data, game_data.hand_player);
