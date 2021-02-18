@@ -41,6 +41,31 @@ ACTION mahjonghilo::startgame(name username)
     });
 }
 
+    ACTION mahjonghilo::starttrial(name username, vector<int> idx)
+    {
+    require_auth(username); 
+    auto &user = _users.get(username.value, "User doesn't exist");
+    check(user.game_data.status == INITIALIZED, "Cannot do a trial. Initialize a new game.");
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.status = ONTRIAL;
+        for(int i = 0; i<idx.size();i++)
+        {
+            game_data.hand_player.insert(game_data.hand_player.begin(), game_data.deck_player[idx[i]-1]); // Assign the tile to the first empty slot in the hand
+        }
+                sorthand(game_data.hand_player);
+        winhand_check(game_data, game_data.hand_player);
+        if (game_data.hand_player.size() == 0)
+        {
+            print("Well played!");
+        }
+        else
+        {
+            print("Your hand didn't win..");
+        }
+    });
+    }
+
 ACTION mahjonghilo::playhilo(name username, int option)
 {
     require_auth(username);
@@ -119,7 +144,6 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
 ACTION mahjonghilo::dclrwinhand(name username)
 {
     require_auth(username);
-    vector<tile> remtiles{};
     auto &user = _users.get(username.value, "User doesn't exist");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;

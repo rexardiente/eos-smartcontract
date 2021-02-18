@@ -22,6 +22,7 @@ private:
         ONGOING = 1,     // for mahjong game
         WIN = 2,         // for mahjong game
         LOSE = 3,        // for mahjong game
+        ONTRIAL = 7, // for mahjong game
         SKIP = 0,        //for Hi-Lo
         LOW = 1,         //for Hi-Lo
         DRAW = 2,        //for Hi-Lo
@@ -187,7 +188,7 @@ private:
         {134, {GREEN, 11}},
         {135, {GREEN, 11}},
         {136, {GREEN, 11}}};
-    
+
     struct game
     {
         string game_id;
@@ -272,6 +273,7 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION startgame(name username);
+    ACTION starttrial(name username, vector<int> idx);
     ACTION playhilo(name username, int option);
     ACTION discardtile(name username, int idx);
     ACTION dclrkong(name username, vector<int> idx);

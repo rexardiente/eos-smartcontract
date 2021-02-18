@@ -90,6 +90,11 @@ KONGDEC()
     cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
 }
 
+TRIALMODE()
+{
+    cleos push action mahjonghilo starttrial '["user1", [3,4,9,10,13,14,17,18,60,61,62,65,66,69]]' -p user1@active
+}
+
 WINDEC()
 {
     cleos push action mahjonghilo dclrwinhand '["user1"]' -p user1@active
@@ -132,6 +137,7 @@ DEPLOY_CONTRACT
 # WINDEC
 # TRANSFER 
 # WITHDRAW
-GET_CURRENCY 
+TRIALMODE
+# GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
