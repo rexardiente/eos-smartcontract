@@ -22,7 +22,7 @@ private:
         ONGOING = 1,     // for mahjong game
         WIN = 2,         // for mahjong game
         LOSE = 3,        // for mahjong game
-        ONTRIAL = 7, // for mahjong game
+        ONTRIAL = 7,     // for mahjong game
         SKIP = 0,        //for Hi-Lo
         LOW = 1,         //for Hi-Lo
         DRAW = 2,        //for Hi-Lo
@@ -48,6 +48,94 @@ private:
     {
         uint8_t suit;
         int value;
+    };
+
+    struct score
+    {
+        string score_name;
+        int value;
+    };
+
+    const map<uint8_t, score> score_deck = {
+        {0, {"No Score", 0}},
+        {1, {"Big Four Winds", 88}},
+        {2, {"Big Three Dragons", 88}},
+        {3, {"All Green", 88}},
+        {4, {"Nine Gates", 88}},
+        {5, {"Four Kongs", 88}},
+        {6, {"Seven Shift Pairs", 88}},
+        {7, {"Thirteen Orphans", 88}},
+        {8, {"All Terminals", 64}},
+        {9, {"Little Four Winds", 64}},
+        {10, {"Little Three Dragons", 64}},
+        {11, {"All Honours", 64}},
+        {12, {"Four Concealed Pungs", 64}},
+        {13, {"Quadruple Chows", 48}},
+        {14, {"Four Pure Shifted Chows", 32}},
+        {15, {"Three Kongs", 32}},
+        {16, {"All Terminals and Hnors", 32}},
+        {17, {"Seven Pairs", 24}},
+        {18, {"Greater Honours and Knitted Tiles", 24}},
+        {19, {"All Even Pungs", 24}},
+        {20, {"Pure Triple Chow ", 24}},
+        {21, {"Pure Shifted Pungs", 24}},
+        {22, {"Upper Tiles", 24}},
+        {23, {"Middle Tiles", 24}},
+        {24, {"Lower Tiles", 24}},
+        {25, {"Pure Straight", 16}},
+        {26, {"Three-suited Terminal Chows", 16}},
+        {27, {"Pure Shifted Chows", 16}},
+        {28, {"All Fives", 16}},
+        {29, {"Triple Pung", 16}},
+        {30, {"Three Concealed Pungs", 16}},
+        {31, {"Lesser Honours and Knitted Tiles", 12}},
+        {32, {"Knitted Straight", 12}},
+        {33, {"Upper Four", 12}},
+        {34, {"Lower Four", 12}},
+        {35, {"Big Three Winds", 12}},
+        {36, {"Mixed Straight", 8}},
+        {37, {"Reversible Tiles", 8}},
+        {38, {"Mixed Triple Chow", 8}},
+        {39, {"Mixed Shifted Pungs", 8}},
+        {40, {"Chicken Hand", 8}},
+        {41, {"Last Tile Draw", 8}},
+        {42, {"Last Tile Claim", 8}},
+        {43, {"Out With Replacement Tile", 8}},
+        {44, {"Rob Kong", 8}},
+        {45, {"Two Concealed Kongs", 8}},
+        {46, {"All Pungs", 6}},
+        {47, {"Half Flush", 6}},
+        {48, {"Mixed Shifted Chows", 6}},
+        {49, {"All Types", 6}},
+        {50, {"Melded Hand", 6}},
+        {51, {"Two Dragon Pungs", 6}},
+        {52, {"Outside Hand", 4}},
+        {53, {"Fully Concealed Hands", 4}},
+        {54, {"Two Melded Kongs", 4}},
+        {55, {"Last Tile", 4}},
+        {56, {"Dragon Pung", 2}},
+        {57, {"Prevalent Wind", 2}},
+        {58, {"Seat Wind", 2}},
+        {59, {"Concealed Hand", 2}},
+        {60, {"All Chows", 2}},
+        {61, {"Tile Hog", 2}},
+        {62, {"Mixed Double Pung", 2}},
+        {63, {"Two Concealed Pungs", 2}},
+        {64, {"Concealed Kongs", 2}},
+        {65, {"All Simples", 2}},
+        {66, {"Pure Double Chow", 1}},
+        {67, {"Mixed Double Chow", 1}},
+        {68, {"Short Straight", 1}},
+        {69, {"Two Terminal Chows", 1}},
+        {70, {"Pung of Terminals or Honours", 1}},
+        {71, {"Melded Kong", 1}},
+        {72, {"One Voided Suit", 1}},
+        {73, {"No Honours", 1}},
+        {74, {"Edge Wait", 1}},
+        {75, {"Closed Wait", 1}},
+        {76, {"Single Wait", 1}},
+        {77, {"Self Draw", 1}}
+
     };
 
     const map<uint8_t, tile> table_deck = {
@@ -199,6 +287,13 @@ private:
         float high_odds = MH_DEFAULT;
         uint8_t current_tile;
         uint8_t standard_tile;
+        int eye_idx;
+        int lowest;
+        int highest;
+        int low_tiles;
+        int mid_tiles;
+        int upp_tiles;
+        int suit_count;
         int pair_count;
         int pung_count;
         int chow_count;
@@ -208,6 +303,8 @@ private:
         vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
+        vector<uint8_t> score_check = {};
+        int final_score;
     };
 
     struct [[eosio::table]] user
@@ -242,6 +339,8 @@ private:
     void onsettledpay(name to, asset quantity, string memo);
     void gettile(game & gamedata);
     void sorthand(vector<uint8_t> & hand);
+    void sorteye(vector<uint8_t> & hand, int idx);
+    void getscore(game & gamedata, vector<uint8_t> & hand);
     void two_rem(game & gamedata, vector<tile> tiles);
     void five_rem(game & gamedata, vector<tile> tiles);
     void eight_rem(game & gamedata, vector<tile> tiles);

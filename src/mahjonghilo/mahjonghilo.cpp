@@ -175,6 +175,8 @@ ACTION mahjonghilo::dclrwinhand(name username)
             {
                 game_data.reveal_kong.erase(game_data.reveal_kong.begin());
             }
+            vector<uint8_t> temp_hand = sorteye(game_data.winning_hand, game_data.eye_idx);
+            getscore(game_data, temp_hand);
             print("Well played!");
         }
         else
