@@ -41,14 +41,14 @@ ACTION mahjonghilo::startgame(name username)
     });
 }
 
-    ACTION mahjonghilo::starttrial(name username, vector<int> idx)
-    {
-    require_auth(username); 
+ACTION mahjonghilo::starttrial(name username, vector<int> idx)
+{
+    require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        if(game_data.status==INITIALIZED)
+        if (game_data.status == INITIALIZED)
         {
             game_data.status = ONTRIAL;
         }
@@ -59,10 +59,13 @@ ACTION mahjonghilo::startgame(name username)
             {
                 game_data.winning_hand.erase(game_data.winning_hand.begin());
             }
+            game_data.pair_count=0;
+            game_data.pung_count=0;
+            game_data.chow_count=0;
         }
-        for(int i = 0; i<idx.size();i++)
+        for (int i = 0; i < idx.size(); i++)
         {
-            game_data.hand_player.insert(game_data.hand_player.begin(), game_data.deck_player[idx[i]-1]); // Assign the tile to the first empty slot in the hand
+            game_data.hand_player.insert(game_data.hand_player.begin(), game_data.deck_player[idx[i] - 1]); // Assign the tile to the first empty slot in the hand
         }
         sorthand(game_data.hand_player);
         winhand_check(game_data, game_data.hand_player);
@@ -75,7 +78,7 @@ ACTION mahjonghilo::startgame(name username)
             print("Your hand didn't win..");
         }
     });
-    }
+}
 
 ACTION mahjonghilo::playhilo(name username, int option)
 {
