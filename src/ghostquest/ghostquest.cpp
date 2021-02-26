@@ -100,11 +100,11 @@ ACTION ghostquest::battle(string gameid, pair<string, name> winner, pair<string,
     _users.modify(winner_player, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
 
-        calculate_prize(itr[0]);
         itr[0]->second.character_life += 1;
         itr[0]->second.match_history.at(gameid).enemy = loser.second;
         itr[0]->second.match_history.at(gameid).enemy_id = loser.first;
         itr[0]->second.match_history.at(gameid).isWin = true;
+        calculate_prize(itr[0]);
         game_data.character = winner_player_characters;
     });
     _users.modify(loser_player, _self, [&](auto &modified_user) {
