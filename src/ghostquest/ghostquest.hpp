@@ -16,7 +16,6 @@ private:
     enum Defaults : int64_t
     {
         DEFAULT = 0,
-        NUM_1 = 1,
         BATTLE_STANDBY = 1,
         ELIMINATED = 2,
         WITHDRAWN = 3
@@ -70,7 +69,7 @@ private:
     // transfer related functions..
     void oninit(name username, asset quantity, int limit);
     void onaddnewlife(name username, asset quantity, string key);
-    void onsettledpay(name username, asset quantity, string memo);
+    void onsettledpay(const name username, const asset quantity, const string memo);
 
 public:
     using contract::contract;

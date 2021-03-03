@@ -32,20 +32,24 @@ ACTION ghostquest::init(name username, asset quantity, int limit)
     });
 }
 
-ACTION ghostquest::settledpay(name username, asset prize, string memo)
+ACTION ghostquest::settledpay(const name username, const asset prize, const string memo)
 {
     require_auth(_self);
     auto &user = _users.get(username.value, "User doesn't exist");
+    // construct ID key using string memo
+    int str_first = memo.find(GET_ID_FROM_STR_FIRST) + 4;
+    int str_second = memo.find(GET_ID_FROM_STR_SECOND);
+    string id = memo.substr(str_first, str_second-str_first);
 
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.data;
-        // construct ID key using string memo
-        unsigned str_first = memo.find(GET_ID_FROM_STR_FIRST);
-        unsigned str_second = memo.find(GET_ID_FROM_STR_SECOND);
-        string key = memo.substr(str_first, str_second-str_first);
-        map<string, character>::iterator itr = game_data.characters.find(key);
-        check(itr->second.STATUS == WITHDRAWN, "Prize is already transferred.");
-        itr->second.LIFE = DEFAULT;
+        auto &characters = game_data.characters;
+        auto &character = characters.at(id);
+
+        check(character.LIFE != DEFAULT, "HP is equal to 0.");
+        check(character.STATUS != WITHDRAWN, "Prize is already transferred.");
+        character.STATUS = WITHDRAWN;
+        character.LIFE = DEFAULT;
     });
 }
 
@@ -58,12 +62,12 @@ ACTION ghostquest::withdraw(name username, string key)
 
     check(itr != characters.end(), "Doesn't exist.");
     check(itr->second.LIFE > DEFAULT, "No enough HP.");
-    check(itr->second.STATUS == ELIMINATED, "Already eliminated.");
-    check(itr->second.STATUS == WITHDRAWN, "Already withdrawn.");
+    check(itr->second.STATUS != ELIMINATED, "Already eliminated.");
+    check(itr->second.STATUS != WITHDRAWN, "Already withdrawn.");
     check(itr->second.GAME_COUNT > DEFAULT, "Has not been in a battle.");
-
+    const string id = itr->first;
     asset prize = calculate_prize(itr);
-    std::string feedback = "GQ WITHDRAW: " + name{username}.to_string() + GET_ID_FROM_STR_FIRST + itr->first + GET_ID_FROM_STR_SECOND + " RECEIVED " + std::to_string(prize.amount);
+    std::string feedback = "GQ WITHDRAW: " + name{username}.to_string() + GET_ID_FROM_STR_FIRST + id + GET_ID_FROM_STR_SECOND + " RECEIVED " + std::to_string(prize.amount);
     action{
         permission_level{_self, "active"_n},
         eosio_token,
@@ -103,6 +107,7 @@ ACTION ghostquest::newlife(name username, asset quantity, string key) // add lif
         game &game_data = modified_user.data;
         map<string, character>::iterator itr = game_data.characters.find(key);
         check(itr != game_data.characters.end(), "Character cease to exist.");
+        check(itr->second.LIFE != ELIMINATED, "Already eliminated.");
         itr->second.LIFE += quantity.amount / 10000;
     });
 }
@@ -119,25 +124,27 @@ ACTION ghostquest::battleresult(string gameid, pair<string, name> winner, pair<s
     map<string, character> player2_characters = loser_player.data.characters;
     vector<map<string, character>::iterator> itr{player1_characters.find(winner.first), player2_characters.find(loser.first)};
 
-    check(itr[0]->second.GAME_COUNT <= itr[0]->second.GAME_LIMIT, winner.first + "reached battle limit.");
-    check(itr[1]->second.GAME_COUNT <= itr[1]->second.GAME_LIMIT, loser.first + "reached battle limit.");
+    check(itr[0]->second.LIFE != 0, winner.first + " No remaining HP.");
+    check(itr[1]->second.LIFE != 0, loser.first + " No remaining HP.");
+    check(itr[0]->second.GAME_COUNT <= itr[0]->second.GAME_LIMIT, winner.first + " reached battle limit.");
+    check(itr[1]->second.GAME_COUNT <= itr[1]->second.GAME_LIMIT, loser.first + " reached battle limit.");
 
     // update each players battle details..
     for_each(itr.begin(), itr.end(), [&](map<string, character>::iterator &n) {
         // n->second.match_history.insert(n->second.match_history.end(), pair<string, battle_history>(gameid, current_battle));
         // n->second.last_match = time_executed;
-        n->second.GAME_COUNT += NUM_1;
+        n->second.GAME_COUNT += 1;
     });
 
     _users.modify(winner_player, _self, [&](auto &modified_user) {
         game &game_data = modified_user.data;
-        itr[0]->second.LIFE += NUM_1;
+        itr[0]->second.LIFE += 1;
         game_data.characters = player1_characters;
     });
     _users.modify(loser_player, _self, [&](auto &modified_user) {
         game &game_data = modified_user.data;
-        itr[1]->second.LIFE -= NUM_1;
-        if (itr[1]->second.LIFE == DEFAULT) { itr[1]->second.STATUS = ELIMINATED; }
+        itr[1]->second.LIFE -= 1;
+        if (itr[1]->second.LIFE == 0) { itr[1]->second.STATUS = ELIMINATED; }
         game_data.characters = player2_characters;
     });
 }
