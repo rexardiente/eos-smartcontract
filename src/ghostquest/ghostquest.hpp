@@ -34,7 +34,6 @@ private:
         uint64_t LUCK = DEFAULT;
         int GAME_LIMIT = DEFAULT;
         uint64_t GAME_COUNT = DEFAULT;
-        bool IS_NEW = true; // change to false once validated by server API
         uint64_t CREATED_AT = DEFAULT;
     };
 

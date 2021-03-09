@@ -77,8 +77,9 @@ ACTION ghostquest::withdraw(name username, string key)
 }
 
 ACTION ghostquest::end(name username)
-{
-    require_auth(username);
+{   
+    // require_auth(_self);
+    check(has_auth(_self) || has_auth(username), "Unauthorized user");
     auto &user = _users.get(username.value, "User doesn't exist");
     _users.erase(user);
 }
