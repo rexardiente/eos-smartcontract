@@ -108,7 +108,7 @@ ACTION ghostquest::newlife(name username, asset quantity, string key) // add lif
         game &game_data = modified_user.data;
         map<string, character>::iterator itr = game_data.characters.find(key);
         check(itr != game_data.characters.end(), "Character cease to exist.");
-        check(itr->second.LIFE == BATTLE_STANDBY, "Already eliminated.");
+        check(itr->second.LIFE != DEFAULT, "Already eliminated.");
         itr->second.LIFE += quantity.amount / 10000;
     });
 }
