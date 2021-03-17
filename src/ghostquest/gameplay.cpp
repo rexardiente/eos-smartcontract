@@ -1,73 +1,29 @@
 #include "ghostquest.hpp"
+#include <string>
 
-void ghostquest::gen_stat(character &ch) // function for generating monster/s status
+string ghostquest::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size)
 {
-    ch.ATTACK = 25 + rng(50);
-    ch.DEFENSE = 25 + rng(50);
-    ch.SPEED = 25 + rng(50);
-    ch.LUCK = 25 + rng(50);
-    int sum = ch.ATTACK + ch.DEFENSE + ch.SPEED + ch.LUCK + ch.HP;
-
-    if (sum > 199 && sum < 286) { ch.LEVEL = 1; }
-    else if (sum > 285 && sum < 311) { ch.LEVEL = 2; }
-    else if (sum > 310 && sum < 341) { ch.LEVEL = 3; }
-    else if (sum > 340 && sum < 386) { ch.LEVEL = 4; } 
-    else { ch.LEVEL = 5; }
-
-    if (ch.ATTACK > ch.DEFENSE) 
-    {
-        if (ch.ATTACK > ch.SPEED && ch.ATTACK > ch.LUCK) { ch.CLASS = 1; }
-        else if (ch.SPEED > ch.LUCK) { ch.CLASS = 3; }
-        else { ch.CLASS = 4; }
-    }
-    else 
-    {
-        if (ch.DEFENSE > ch.SPEED && ch.DEFENSE > ch.LUCK) { ch.CLASS = 2; }
-        else if (ch.SPEED > ch.LUCK) { ch.CLASS = 3; }
-        else { ch.CLASS = 4; }
-    }
-}
-
-int ghostquest::rng(const int &range)
-{
-    auto seed_iterator = _seeds.begin();
-
-    if (seed_iterator == _seeds.end())
-    {
-        seed_iterator = _seeds.emplace(_self, [&](auto &seed) {});
-    }
-
-    int prime = 65537;
-    auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
-
-    _seeds.modify(seed_iterator, _self, [&](auto &s)
-    {
-        s.value = new_seed_value;
-    });
-
-    int random_result = new_seed_value % range;
-    return random_result;
-}
-
-string ghostquest::checksum256_to_string_hash()
-{   
-    auto size = transaction_size();
-    char buf[size];
-    check(size == read_transaction(buf, size), "read_transaction failed");
-    checksum256 sha = sha256(buf, size);
-    auto hbytes = sha.extract_as_byte_array();
-    std::string hash_id;
-
+    std::string r;
     const char *to_hex = "0123456789abcdef";
-    for (uint32_t i = 0; i < hbytes.size(); ++i) { (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)]; }
-    return hash_id;
+    for (uint32_t i = 0; i < arr.size(); ++i)
+    {
+        (r += to_hex[(arr[i] >> 4)]) += to_hex[(arr[i] & 0x0f)];
+    }
+    return r;
 }
 
-void ghostquest::ondeposit(name from, name to, asset quantity, string memo)
+void ghostquest::ondeposit(name from,
+                           name to,
+                           asset quantity,
+                           string memo)
 {
     if (from == _self)
     {
-        if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos) { onsettledpay(to, quantity, memo); }
+        if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
+        {
+            onsettledpay(to, quantity, memo);
+        }
+
         // we're sending money, do nothing additional
         return;
     }
@@ -77,41 +33,254 @@ void ghostquest::ondeposit(name from, name to, asset quantity, string memo)
     check(quantity.symbol == ghostquest_symbol, "Invalid EOS Token");
 
     std::string str = memo.substr(9);
-    if (memo.find("ADD_LIFE") != std::string::npos) { onaddnewlife(from, quantity, str); }
+    if (memo.find("ADD_LIFE") != std::string::npos)
+    {
+        set_add_life(from, quantity, str);
+    }
     else
     {
         int limit = stoi(str);
-        oninit(from, quantity, limit);
+        summon_ready(from, quantity, limit);
     }
 }
 
-void ghostquest::oninit(name username, asset quantity, int limit) // trigger summoning after transfer transaction
+void ghostquest::summon_ready(name username, asset quantity, int limit) // trigger summoning after transfer transaction
 {
     require_auth(username);
-    action(permission_level{_self, "active"_n}, _self, "init"_n, std::make_tuple(username, quantity, limit)).send();
+
+    action( //generate characters
+        permission_level{_self, "active"_n},
+        _self,
+        "genchar"_n,
+        std::make_tuple(username, quantity, limit))
+        .send();
 }
 
-void ghostquest::onaddnewlife(name username, asset quantity, string key) // trigger adding life after transfer transaction
+void ghostquest::set_add_life(name username, asset quantity, string key) // trigger adding life after transfer transaction
 {
     require_auth(username);
-    action(permission_level{_self, "active"_n}, _self, "newlife"_n, std::make_tuple(username, quantity, key)).send();
+
+    action( // add life
+        permission_level{_self, "active"_n},
+        _self,
+        "addlife"_n,
+        std::make_tuple(username, quantity, key))
+        .send();
 }
 
 void ghostquest::onsettledpay(name username, asset quantity, string memo)
 {
     require_auth(_self);
-    action(permission_level{_self, "active"_n}, _self, "settledpay"_n, std::make_tuple(username, quantity, memo)).send();
+    action(
+        permission_level{_self, "active"_n},
+        _self,
+        "settledpay"_n,
+        std::make_tuple(username, quantity, memo))
+        .send();
 }
 
-asset ghostquest::calculate_prize(map<string, character>::iterator character) // generate prize after battle
-{   
+void ghostquest::gen_stat(ghost &initial_ghost) // function for generating monster/s status
+{
+    initial_ghost.attack = 25 + rng(50);
+    initial_ghost.defense = 25 + rng(50);
+    initial_ghost.speed = 25 + rng(50);
+    initial_ghost.luck = 25 + rng(50);
+    int sum = initial_ghost.attack + initial_ghost.defense + initial_ghost.speed + initial_ghost.luck + initial_ghost.initial_hp;
+    if (sum > 199 && sum < 286)
+    {
+        initial_ghost.ghost_level = 1;
+    }
+    else if (sum > 285 && sum < 311)
+    {
+        initial_ghost.ghost_level = 2;
+    }
+    else if (sum > 310 && sum < 341)
+    {
+        initial_ghost.ghost_level = 3;
+    }
+    else if (sum > 340 && sum < 386)
+    {
+        initial_ghost.ghost_level = 4;
+    }
+    else
+    {
+        initial_ghost.ghost_level = 5;
+    }
+    if (initial_ghost.attack > initial_ghost.defense)
+    {
+        if (initial_ghost.attack > initial_ghost.speed && initial_ghost.attack > initial_ghost.luck)
+        {
+            initial_ghost.ghost_class = 1;
+        }
+        else if (initial_ghost.speed > initial_ghost.luck)
+        {
+            initial_ghost.ghost_class = 3;
+        }
+        else
+        {
+            initial_ghost.ghost_class = 4;
+        }
+    }
+    else
+    {
+        if (initial_ghost.defense > initial_ghost.speed && initial_ghost.defense > initial_ghost.luck)
+        {
+            initial_ghost.ghost_class = 2;
+        }
+        else if (initial_ghost.speed > initial_ghost.luck)
+        {
+            initial_ghost.ghost_class = 3;
+        }
+        else
+        {
+            initial_ghost.ghost_class = 4;
+        }
+    }
+}
+
+// void ghostquest::battle_step(map<string, ghost>::iterator &ghost1, map<string, ghost>::iterator &ghost2, battle_history &current_battle) // battle process
+// {
+//     check(ghost1->second.character_life > 0 && ghost2->second.character_life > 0, "Your or your enemy character can not battle.");
+//     int numberofrounds = 1;
+//     int dmg1 = 0, dmg2 = 0; // variable for damage taken of characters
+//     while (dmg1 < ghost1->second.initial_hp && dmg2 < ghost2->second.initial_hp)
+//     {
+//         if (ghost1->second.speed > ghost2->second.speed) // determine which monster attack first
+//         {
+//             damage_step(ghost1, ghost2, numberofrounds, current_battle, dmg2); // perform damage calculation
+//             numberofrounds += 1;
+//             if (ghost2->second.initial_hp > dmg2)
+//             {
+//                 damage_step(ghost2, ghost1, numberofrounds, current_battle, dmg1); // perform damage calculation
+//                 numberofrounds += 1;
+//                 if (ghost1->second.initial_hp < dmg1)
+//                 {
+//                     result_step(ghost1, ghost2, current_battle); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
+//                 }
+//             }
+//             else
+//             {
+//                 result_step(ghost2, ghost1, current_battle); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
+//             }
+//         }
+//         else
+//         {
+//             damage_step(ghost2, ghost1, numberofrounds, current_battle, dmg1); // perform damage calculation
+//             numberofrounds += 1;
+//             if (ghost1->second.initial_hp > dmg1)
+//             {
+//                 damage_step(ghost1, ghost2, numberofrounds, current_battle, dmg2); // perform damage calculation
+//                 numberofrounds += 1;
+//                 if (ghost2->second.initial_hp > dmg2)
+//                 {
+//                     result_step(ghost2, ghost1, current_battle); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
+//                 }
+//             }
+//             else
+//             {
+//                 result_step(ghost1, ghost2, current_battle); // generate result(status=winner/loser/eliminated) if either character reached 0 hitpoints
+//             }
+//         }
+//     }
+//     calculate_prize(ghost1); // calculate prize after battle
+//     calculate_prize(ghost2); // calculate prize after battle
+// }
+
+// void ghostquest::damage_step(map<string, ghost>::iterator &attacker, map<string, ghost>::iterator &defender, int round, battle_history &current_battle, int damage) // perform damage calculation
+// {
+//     int chance = attacker->second.ghost_class == 4 ? (attacker->second.luck / 3) : (attacker->second.luck / 4);
+//     int luck = rng(99) + 1;
+//     int fnldmg = 0;
+//     int getdmgwdt = attacker->second.attack / 16 + 1;
+//     int dmgwdt = rng(getdmgwdt);
+//     int dmgred = (attacker->second.attack * defender->second.defense) / 100;
+//     if (luck <= chance) // determine critical and damage width for final damage dealt
+//     {
+//         if (luck % 2 == 0)
+//         {
+//             fnldmg = attacker->second.attack + dmgwdt;
+//         }
+//         else
+//         {
+//             fnldmg = attacker->second.attack - dmgwdt;
+//         }
+//     }
+//     else
+//     {
+//         if (luck % 2 == 0)
+//         {
+//             fnldmg = attacker->second.attack - dmgred + dmgwdt;
+//         }
+//         else
+//         {
+//             fnldmg = attacker->second.attack - dmgred - dmgwdt;
+//         }
+//     }
+//     // defender->second.hitpoints = ((defender->second.hitpoints - fnldmg) < 0) ? 0 : defender->second.hitpoints - fnldmg; // Hitpoints reduction
+//     damage += fnldmg;
+//     std::string battlelog = "Round " + std::to_string(round) + " : Character of " + name{defender->second.owner}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.owner}.to_string() + ".";
+//     current_battle.gameplay_log.push_back(battlelog);
+// }
+
+// void ghostquest::result_step(map<string, ghost>::iterator &loser, map<string, ghost>::iterator &winner, battle_history &current_battle) // modify status and other data values for both characters
+// {
+//     loser->second.status = LOSER;
+//     (loser->second.character_life == 1) ? ({loser->second.status = ELIMINATED; loser->second.character_life = 0; })
+//                                         : ({ loser->second.character_life -= 1; });
+//     winner->second.status = WINNER;
+//     winner->second.character_life += 1;
+//     std::string victorylog = " Battle Outcome : Character of " + name{winner->second.owner}.to_string() + " won against character of" + name{loser->second.owner}.to_string();
+//     current_battle.gameplay_log.push_back(victorylog);
+// }
+
+void ghostquest::calculate_prize(map<string, ghost>::iterator &ghost) // generate prize after battle
+{
     float house_edge;
-    float init_prize = character->second.LIFE * 10000;
-    if (character->second.GAME_COUNT < 21) { house_edge = init_prize * 0.06; }
-    else if (character->second.GAME_COUNT > 20 && character->second.GAME_COUNT < 41) { house_edge = init_prize * 0.07; }
-    else if (character->second.GAME_COUNT > 40 && character->second.GAME_COUNT < 61) { house_edge = init_prize * 0.08; }
-    else if (character->second.GAME_COUNT > 60 && character->second.GAME_COUNT < 81) { house_edge = init_prize * 0.09; }
-    else { house_edge = init_prize * 0.1;}
-    
-    return asset(init_prize - house_edge, symbol(MAIN_TOKEN, PRECISION));
+    float init_prize = ghost->second.character_life * 10000;
+    if (ghost->second.battle_count < 21)
+    {
+        house_edge = init_prize * 0.06;
+    }
+    else if (ghost->second.battle_count > 20 && ghost->second.battle_count < 41)
+    {
+        house_edge = init_prize * 0.07;
+    }
+    else if (ghost->second.battle_count > 40 && ghost->second.battle_count < 61)
+    {
+        house_edge = init_prize * 0.08;
+    }
+    else if (ghost->second.battle_count > 60 && ghost->second.battle_count < 81)
+    {
+        house_edge = init_prize * 0.09;
+    }
+    else
+    {
+        house_edge = init_prize * 0.1;
+    }
+    ghost->second.prize.amount = init_prize - house_edge;
+}
+
+int ghostquest::rng(const int &range)
+{
+    // Find the existing seed
+    auto seed_iterator = _seeds.begin();
+
+    // Initialize the seed with default value if it is not found
+    if (seed_iterator == _seeds.end())
+    {
+        seed_iterator = _seeds.emplace(_self, [&](auto &seed) {});
+    }
+
+    // Generate new seed value using the existing seed value
+    int prime = 65537;
+    auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
+
+    // Store the updated seed value in the table
+    _seeds.modify(seed_iterator, _self, [&](auto &s) {
+        s.value = new_seed_value;
+    });
+
+    // Get the random result in desired range
+    int random_result = new_seed_value % range;
+    return random_result;
 }
