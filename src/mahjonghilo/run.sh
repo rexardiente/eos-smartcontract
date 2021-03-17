@@ -9,7 +9,7 @@ EXECUTE="> "
 
 # Cleos Wallet Password
 # PW5KgmdCJdBjcgfBazCCKvYB8Lbzgrs6AvMhXamKe7FvwQQWYxt1P
-# PW5KNqqcca9vDQ1UBDYwejsY78GwLay3RP7qWG9EaabsjvdCozFWF -- DonunFactory1 MacBook
+# PW5KNqqcca9vDQ1UBDYwejsY78GwLay3RP7qWG9EaabsjvdCozFWF -- DonutFactory1 MacBook
 
 UNLOCK_WALLET()
 {
@@ -72,7 +72,7 @@ REMOVE_EXISTING_GAME()
 
 STARTGAME()
 {
-    cleos push action mahjonghilo startgame '["user1"]' -p user1@active
+    cleos push action mahjonghilo startgame '["user1", 13]' -p user1@active
 }
 
 PLAYHILO()
@@ -92,7 +92,7 @@ KONGDEC()
 
 TRIALMODE()
 {
-    cleos push action mahjonghilo starttrial '["user1", [41,42,43,84,85,89,90,91,109,110,111,117,118,119]]' -p user1@active
+    cleos push action mahjonghilo starttrial '["user1", [1,13,25,41,53,65,81,93,105,109,113,117,121,125]]' -p user1@active
 }
 
 WINDEC()

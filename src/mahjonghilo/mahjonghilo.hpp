@@ -40,8 +40,8 @@ private:
         WEST = 6,
         NORTH = 7,
         RED = 8,
-        GREEN = 9,
-        WHITE = 10
+        WHITE = 9,
+        GREEN = 10
     };
 
     struct tile
@@ -60,83 +60,84 @@ private:
         {0, {"No Score", 0}},
         {1, {"Big Four Winds", 88}},
         {2, {"Big Three Dragons", 88}},
-        {3, {"All Green", 88}},
-        {4, {"Nine Gates", 88}},
-        {5, {"Four Kongs", 88}},
-        {6, {"Seven Shift Pairs", 88}},
+        {3, {"Four Kongs", 88}},
+        {4, {"Seven Shift Pairs", 88}},
+        {5, {"All Green", 88}},
+        {6, {"Nine Gates", 88}},
         {7, {"Thirteen Orphans", 88}},
-        {8, {"All Terminals", 64}},
-        {9, {"Little Four Winds", 64}},
-        {10, {"Little Three Dragons", 64}},
-        {11, {"All Honours", 64}},
+        {8, {"Little Four Winds", 64}},
+        {9, {"Little Three Dragons", 64}},
+        {10, {"All Honors", 64}},
+        {11, {"Pure Terminal Chows", 64}},
         {12, {"Four Concealed Pungs", 64}},
-        {13, {"Quadruple Chows", 48}},
-        {14, {"Four Pure Shifted Chows", 32}},
-        {15, {"Three Kongs", 32}},
-        {16, {"All Terminals and Hnors", 32}},
-        {17, {"Seven Pairs", 24}},
-        {18, {"Greater Honours and Knitted Tiles", 24}},
-        {19, {"All Even Pungs", 24}},
-        {20, {"Pure Triple Chow ", 24}},
-        {21, {"Pure Shifted Pungs", 24}},
-        {22, {"Upper Tiles", 24}},
-        {23, {"Middle Tiles", 24}},
-        {24, {"Lower Tiles", 24}},
-        {25, {"Pure Straight", 16}},
-        {26, {"Three-suited Terminal Chows", 16}},
-        {27, {"Pure Shifted Chows", 16}},
-        {28, {"All Fives", 16}},
-        {29, {"Triple Pung", 16}},
-        {30, {"Three Concealed Pungs", 16}},
-        {31, {"Lesser Honours and Knitted Tiles", 12}},
-        {32, {"Knitted Straight", 12}},
-        {33, {"Upper Four", 12}},
-        {34, {"Lower Four", 12}},
-        {35, {"Big Three Winds", 12}},
-        {36, {"Mixed Straight", 8}},
-        {37, {"Reversible Tiles", 8}},
-        {38, {"Mixed Triple Chow", 8}},
-        {39, {"Mixed Shifted Pungs", 8}},
-        {40, {"Chicken Hand", 8}},
-        {41, {"Last Tile Draw", 8}},
-        {42, {"Last Tile Claim", 8}},
-        {43, {"Out With Replacement Tile", 8}},
-        {44, {"Rob Kong", 8}},
-        {45, {"Two Concealed Kongs", 8}},
-        {46, {"All Pungs", 6}},
-        {47, {"Half Flush", 6}},
-        {48, {"Mixed Shifted Chows", 6}},
-        {49, {"All Types", 6}},
-        {50, {"Melded Hand", 6}},
-        {51, {"Two Dragon Pungs", 6}},
-        {52, {"Outside Hand", 4}},
-        {53, {"Fully Concealed Hands", 4}},
-        {54, {"Two Melded Kongs", 4}},
-        {55, {"Last Tile", 4}},
-        {56, {"Dragon Pung", 2}},
-        {57, {"Prevalent Wind", 2}},
-        {58, {"Seat Wind", 2}},
-        {59, {"Concealed Hand", 2}},
-        {60, {"All Chows", 2}},
-        {61, {"Tile Hog", 2}},
-        {62, {"Mixed Double Pung", 2}},
-        {63, {"Two Concealed Pungs", 2}},
-        {64, {"Concealed Kongs", 2}},
-        {65, {"All Simples", 2}},
-        {66, {"Pure Double Chow", 1}},
-        {67, {"Mixed Double Chow", 1}},
-        {68, {"Short Straight", 1}},
-        {69, {"Two Terminal Chows", 1}},
-        {70, {"Pung of Terminals or Honours", 1}},
-        {71, {"Melded Kong", 1}},
-        {72, {"One Voided Suit", 1}},
-        {73, {"No Honours", 1}},
-        {74, {"Edge Wait", 1}},
-        {75, {"Closed Wait", 1}},
-        {76, {"Single Wait", 1}},
-        {77, {"Self Draw", 1}}
-
-    };
+        {13, {"All Terminals", 64}},
+        {14, {"Quadruple Chows", 48}},
+        {15, {"Four Pure Shifted Pungs", 48}},
+        // {16, {"Four Pure Shifted Chows", 32}}, -------------
+        {17, {"All Terminals and Honors", 32}},
+        {18, {"Three Kongs", 32}},
+        // {19, {"Pure Triple Chow", 24}}, -------------
+        {20, {"Pure Shifted Pungs", 24}},
+        {21, {"All Even Pungs", 24}},
+        {22, {"Seven Pairs", 24}},
+        {23, {"Full Flush", 24}},
+        {24, {"Upper Tiles", 24}},
+        {25, {"Middle Tiles", 24}},
+        {26, {"Lower Tiles", 24}},
+        {27, {"Greater Honors and Knitted Tiles", 24}},
+        {28, {"Pure Shifted Chows", 16}},
+        {29, {"Pure Straight", 16}},
+        {30, {"Three-suited Terminal Chows", 16}},
+        {31, {"Triple Pungs", 16}},
+        {32, {"Three Concealed Pungs", 16}},
+        {33, {"All Fives", 16}},
+        {34, {"Big Three Winds", 12}},
+        {35, {"Knitted Straight", 12}},
+        {36, {"Upper Four", 12}},
+        {37, {"Lower Four", 12}},
+        {38, {"Lesser Honors and Knitted Tiles", 12}},
+        {39, {"Mixed Triple Chow", 8}},
+        {40, {"Mixed Straight", 8}},
+        {41, {"Mixed Shifted Pungs", 8}},
+        {42, {"Two Concealed Kongs", 8}},
+        // {43, {"Out With Replacement Tile", 8}}, -------------
+        // {44, {"Robbing the Kong", 8}}, -------------
+        {45, {"Last Tile Draw", 8}},
+        // {46, {"Last Tile Claim", 8}}, -------------
+        // {47, {"Chicken Hand", 8}}, -------------
+        {48, {"Reversible Tiles", 8}},
+        {49, {"Two Dragon Pungs", 6}},
+        {50, {"Mixed Shifted Chows", 6}},
+        {51, {"All Pungs", 6}},
+        {52, {"All Types", 6}},
+        {53, {"Half Flush", 6}},
+        // {54, {"Melded Hand", 6}}, -------------
+        // {55, {"Two Melded Kongs", 4}}, -------------
+        {56, {"Outside Hand", 4}},
+        {57, {"Last Tile", 4}},
+        {58, {"Fully Concealed Hands", 4}},
+        {59, {"Dragon Pung", 2}},
+        {60, {"Prevalent Wind", 2}},
+        {61, {"Seat Wind", 2}},
+        {62, {"All Chows", 2}},
+        {63, {"Double Pungs", 2}},
+        {64, {"Two Concealed Pungs", 2}},
+        {65, {"Concealed Kong", 2}},
+        // {66, {"Concealed Hand", 2}}, -------------
+        {67, {"All Simples", 2}},
+        {68, {"Tile Hog", 2}},
+        {69, {"Pure Double Chows", 1}},
+        {70, {"Mixed Double Chows", 1}},
+        {71, {"Short Straight", 1}},
+        {72, {"Two Terminal Chows", 1}},
+        {73, {"Pung of Terminals or Honour", 1}},
+        {74, {"Melded Kong", 1}},
+        {75, {"One Voided Suit", 1}},
+        {76, {"No Honors", 1}}};
+    // {77, {"Edge Wait", 1}}, -------------
+    // {78, {"Closed Wait", 1}}, -------------
+    // {79, {"Self Drawn", 1}}, -------------
+    // {80, {"Single Wait", 1}}}; -------------
 
     const map<uint8_t, tile> table_deck = {
         {0, {EMPTY, 0}},
@@ -219,7 +220,7 @@ private:
         {77, {BAMBOO, 2}},
         {78, {BAMBOO, 2}},
         {79, {BAMBOO, 2}},
-        {80, {BAMBOO, 4}},
+        {80, {BAMBOO, 2}},
         {81, {BAMBOO, 3}},
         {82, {BAMBOO, 3}},
         {83, {BAMBOO, 3}},
@@ -285,15 +286,16 @@ private:
         float low_odds = MH_DEFAULT;
         float draw_odds = MH_DEFAULT;
         float high_odds = MH_DEFAULT;
+        vector<int> sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
+        uint8_t prevalent_wind;
+        uint8_t seat_wind;
         uint8_t current_tile;
         uint8_t standard_tile;
         int eye_idx;
-        int lowest;
-        int highest;
-        int low_tiles;
-        int mid_tiles;
-        int upp_tiles;
-        int suit_count;
+        // int lowest;
+        // int highest;
+        // int suit_count;
+        // int type_count;
         int pair_count;
         int pung_count;
         int chow_count;
@@ -304,6 +306,7 @@ private:
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
+        vector<string> score_type = {};
         int final_score;
     };
 
@@ -346,6 +349,7 @@ private:
     void eight_rem(game & gamedata, vector<tile> tiles);
     void eleven_rem(game & gamedata, vector<tile> tiles);
     void fourteen_rem(game & gamedata, vector<tile> tiles);
+    void winhand_check(game & gamedata, vector<uint8_t> & hand);
     void transferhand(game & gamedata, int size);
     void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
@@ -354,7 +358,7 @@ private:
     int pair_check(tile tile1, tile tile2);
     int five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5);
     int six_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6);
-    void winhand_check(game & gamedata, vector<uint8_t> & hand);
+    int honors_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6, tile tile7);
     string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 
 public:
@@ -371,7 +375,7 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION startgame(name username);
+    ACTION startgame(name username, int numgaames);
     ACTION starttrial(name username, vector<int> idx);
     ACTION playhilo(name username, int option);
     ACTION discardtile(name username, int idx);

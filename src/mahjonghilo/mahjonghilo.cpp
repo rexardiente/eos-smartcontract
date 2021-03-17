@@ -16,7 +16,7 @@ ACTION mahjonghilo::initialize(name username)
     }
 }
 
-ACTION mahjonghilo::startgame(name username)
+ACTION mahjonghilo::startgame(name username, int numgames)
 {
     // Ensure this action is authorized by the player
     require_auth(username);
@@ -34,6 +34,40 @@ ACTION mahjonghilo::startgame(name username)
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.status = ONGOING;
         game_data.hi_lo_prize.amount = 10000;
+        int num1 = numgames % 16;
+        int num2 = numgames % 4;
+        if (num1 > 0 && num1 < 5)
+        {
+            game_data.prevalent_wind = EAST;
+        }
+        else if (num1 > 4 && num1 < 9)
+        {
+            game_data.prevalent_wind = SOUTH;
+        }
+        else if (num1 > 8 && num1 < 13)
+        {
+            game_data.prevalent_wind = WEST;
+        }
+        else
+        {
+            game_data.prevalent_wind = NORTH;
+        }
+        if (num2 == 1)
+        {
+            game_data.seat_wind = EAST;
+        }
+        else if (num2 == 2)
+        {
+            game_data.seat_wind = SOUTH;
+        }
+        else if (num2 == 3)
+        {
+            game_data.seat_wind = WEST;
+        }
+        else
+        {
+            game_data.seat_wind = NORTH;
+        }
         gettile(game_data);
         game_data.standard_tile = game_data.current_tile;
         const auto hilo_tile = table_deck.at(game_data.standard_tile);
@@ -54,14 +88,25 @@ ACTION mahjonghilo::starttrial(name username, vector<int> idx)
         }
         else
         {
-            int size = game_data.winning_hand.size();
-            for (int i = 0; i < size; i++)
+            if (game_data.winning_hand.size() != 0)
             {
-                game_data.winning_hand.erase(game_data.winning_hand.begin());
+                int size = game_data.winning_hand.size();
+                for (int i = 0; i < size; i++)
+                {
+                    game_data.winning_hand.erase(game_data.winning_hand.begin());
+                }
+                game_data.pair_count = 0;
+                game_data.pung_count = 0;
+                game_data.chow_count = 0;
             }
-            game_data.pair_count=0;
-            game_data.pung_count=0;
-            game_data.chow_count=0;
+            else
+            {
+                int size = game_data.hand_player.size();
+                for (int i = 0; i < size; i++)
+                {
+                    game_data.hand_player.erase(game_data.hand_player.begin());
+                }
+            }
         }
         for (int i = 0; i < idx.size(); i++)
         {
@@ -69,9 +114,13 @@ ACTION mahjonghilo::starttrial(name username, vector<int> idx)
         }
         sorthand(game_data.hand_player);
         winhand_check(game_data, game_data.hand_player);
+        // game_data.winning_hand = temp_hand;
         if (game_data.hand_player.size() == 0)
         {
             print("Well played!");
+            getscore(game_data, game_data.winning_hand);
+            sorthand(game_data.score_check);
+            // print(game_data.final_score);
         }
         else
         {
@@ -167,6 +216,9 @@ ACTION mahjonghilo::dclrwinhand(name username)
         winhand_check(game_data, game_data.hand_player);
         if (game_data.hand_player.size() == 0)
         {
+            vector<uint8_t> temp_hand = game_data.winning_hand;
+            sorteye(temp_hand, game_data.eye_idx);
+            getscore(game_data, temp_hand);
             for (int i = 0; i < game_data.reveal_kong.size(); i++)
             {
                 game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
@@ -175,8 +227,8 @@ ACTION mahjonghilo::dclrwinhand(name username)
             {
                 game_data.reveal_kong.erase(game_data.reveal_kong.begin());
             }
-            vector<uint8_t> temp_hand = sorteye(game_data.winning_hand, game_data.eye_idx);
-            getscore(game_data, temp_hand);
+            sorteye(temp_hand, game_data.eye_idx);
+            // getscore(game_data, temp_hand);
             print("Well played!");
         }
         else
