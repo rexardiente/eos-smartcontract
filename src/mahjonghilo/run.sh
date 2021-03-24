@@ -57,7 +57,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 # Create user and game_defaults
 INITIALIZE_GAME()
 {
-    echo "${EXECUTE} Creating new game for \"user1, user2\"..."
+    echo "${EXECUTE} Creating new account for \"user1\"..."
     cleos push action mahjonghilo initialize '["user1"]' -p user1@active #for user1
     # cleos push action mahjonghilo initialize '["user2"]' -p user2@active #for user2
     
@@ -65,37 +65,37 @@ INITIALIZE_GAME()
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
 {
-    echo "${EXECUTE} Deleting existing game for \"user1, user2\"..."
+    echo "${EXECUTE} Deleting existing account for \"user1\"..."
     cleos push action mahjonghilo end '["user1"]' -p user1@active #for user1
     # cleos push action mahjonghilo end '["user2"]' -p user2@active #for user2
 }
 
-STARTGAME()
+STARTGAME() ## function : startgame -> to start a new game, parameters : name 'user', integer 'number of games'(to be taken from server)
 {
     cleos push action mahjonghilo startgame '["user1", 13]' -p user1@active
 }
 
-PLAYHILO()
+PLAYHILO() ## function : playhilo -> to draw a tile, parameters : name 'user', uint8_t 'option'(0=skip,1=low,2=draw,3=high)     note : players can play hi-lo with or without deposit, all drawn tiles will be within gamedata
 {
     cleos push action mahjonghilo playhilo '["user1", 1]' -p user1@active
 }
 
-DISCARD()
+DISCARD() ## function : discardtile -> to discard a tile, parameters : name 'user', uint8_t 'index'(index of the tile desired to be discarded from hand)    note : there will be a message if a player hands reaches certain amount of tiles
 {
     cleos push action mahjonghilo discardtile '[ "user1", 1]' -p user1@active
 }
 
-KONGDEC()
+KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user', array<uint8_t> 'index'(indexes of the 4 tiles designated as kong)      note : declaring a kong will automatically draw a tile which is also possible for Hi-Lo
 {
     cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
 }
 
-TRIALMODE()
+TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
 {
     cleos push action mahjonghilo starttrial '["user1", 10, [34,35,36,77,78,117,118,119,121,122,123,133,134,135]]' -p user1@active
 }
 
-WINDEC()
+WINDEC() ## function : dclrwinhand -> to declare a winning hand, parameters : name 'user'   note : game data of the user will be used for checking
 {
     cleos push action mahjonghilo dclrwinhand '["user1"]' -p user1@active
 }
