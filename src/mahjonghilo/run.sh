@@ -77,7 +77,7 @@ STARTGAME()
 
 PLAYHILO()
 {
-    cleos push action mahjonghilo playhilo '["user1", 0]' -p user1@active
+    cleos push action mahjonghilo playhilo '["user1", 1]' -p user1@active
 }
 
 DISCARD()
@@ -92,7 +92,7 @@ KONGDEC()
 
 TRIALMODE()
 {
-    cleos push action mahjonghilo starttrial '["user1", [1,13,25,41,53,65,81,93,105,109,113,117,121,125]]' -p user1@active
+    cleos push action mahjonghilo starttrial '["user1", 10, [34,35,36,77,78,117,118,119,121,122,123,133,134,135]]' -p user1@active
 }
 
 WINDEC()
@@ -102,15 +102,15 @@ WINDEC()
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "mahjonghilo", "2.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "mahjonghilo", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+    cleos push action eosio.token transfer '[ "user1", "mahjonghilo", "1.0000 EOS", "MHL Deposit" ]' -p user1@active
+    # cleos push action eosio.token transfer '[ "user2", "mahjonghilo", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
 }
 
 
 WITHDRAW()
 {
-    cleos push action mahjonghilo withdraw '[ "user1", 1]' -p user1@active
-    cleos push action mahjonghilo withdraw '[ "user2", 1]' -p user2@active
+    cleos push action mahjonghilo withdraw '[ "user1"]' -p user1@active
+    # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
 }
 
 
@@ -118,7 +118,7 @@ GET_CURRENCY()
 {
     cleos get currency balance eosio.token mahjonghilo EOS 
     cleos get currency balance eosio.token user1 EOS
-    cleos get currency balance eosio.token user2 EOS
+    # cleos get currency balance eosio.token user2 EOS
 }
 
 # cleos set account permission mahjonghilo active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "mahjonghilo","permission":"eosio.code"},"weight":1}]}'
@@ -130,12 +130,12 @@ GET_CURRENCY()
 # COMPILE_CONTRACT
 # DEPLOY_CONTRACT
 # INITIALIZE_GAME
+# TRANSFER
 # STARTGAME
 # PLAYHILO
 # DISCARD
 # KONGDEC
-# WINDEC
-# TRANSFER 
+# WINDEC 
 # WITHDRAW
 # TRIALMODE
 # GET_CURRENCY 

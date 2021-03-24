@@ -16,6 +16,19 @@ ACTION mahjonghilo::initialize(name username)
     }
 }
 
+// function for accepting bet
+ACTION mahjonghilo::acceptbet(name username, asset quantity)
+{
+    require_auth(_self);
+    auto itr = _users.find(username.value);
+    // check(itr == _users.end(), "Either User has Initialized a Game or has an Existing Game");
+    auto user = _users.find(username.value);
+    _users.modify(user, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.hi_lo_prize.amount = quantity.amount;
+    });
+}
+
 ACTION mahjonghilo::startgame(name username, int numgames)
 {
     // Ensure this action is authorized by the player
@@ -33,7 +46,7 @@ ACTION mahjonghilo::startgame(name username, int numgames)
         game &game_data = modified_user.game_data;
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.status = ONGOING;
-        game_data.hi_lo_prize.amount = 10000;
+        // game_data.hi_lo_prize.amount = 10000;
         int num1 = numgames % 16;
         int num2 = numgames % 4;
         if (num1 > 0 && num1 < 5)
@@ -75,13 +88,47 @@ ACTION mahjonghilo::startgame(name username, int numgames)
     });
 }
 
-ACTION mahjonghilo::starttrial(name username, vector<int> idx)
+ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
+        int num1 = numgames % 16;
+        int num2 = numgames % 4;
+        if (num1 > 0 && num1 < 5)
+        {
+            game_data.prevalent_wind = EAST;
+        }
+        else if (num1 > 4 && num1 < 9)
+        {
+            game_data.prevalent_wind = SOUTH;
+        }
+        else if (num1 > 8 && num1 < 13)
+        {
+            game_data.prevalent_wind = WEST;
+        }
+        else
+        {
+            game_data.prevalent_wind = NORTH;
+        }
+        if (num2 == 1)
+        {
+            game_data.seat_wind = EAST;
+        }
+        else if (num2 == 2)
+        {
+            game_data.seat_wind = SOUTH;
+        }
+        else if (num2 == 3)
+        {
+            game_data.seat_wind = WEST;
+        }
+        else
+        {
+            game_data.seat_wind = NORTH;
+        }
         if (game_data.status == INITIALIZED)
         {
             game_data.status = ONTRIAL;
@@ -98,6 +145,17 @@ ACTION mahjonghilo::starttrial(name username, vector<int> idx)
                 game_data.pair_count = 0;
                 game_data.pung_count = 0;
                 game_data.chow_count = 0;
+                game_data.final_score = 0;
+                int size2 = game_data.score_check.size();
+                for (int i = 0; i < size2; i++)
+                {
+                    game_data.score_check.erase(game_data.score_check.begin());
+                }
+                int size3 = game_data.score_type.size();
+                for (int i = 0; i < size3; i++)
+                {
+                    game_data.score_type.erase(game_data.score_type.begin());
+                }
             }
             else
             {
@@ -115,9 +173,10 @@ ACTION mahjonghilo::starttrial(name username, vector<int> idx)
         sorthand(game_data.hand_player);
         winhand_check(game_data, game_data.hand_player);
         // game_data.winning_hand = temp_hand;
-        if (game_data.hand_player.size() == 0)
+        if (game_data.winning_hand.size() != 0)
         {
             print("Well played!");
+            sorteye(game_data.winning_hand, game_data.eye_idx);
             getscore(game_data, game_data.winning_hand);
             sorthand(game_data.score_check);
             // print(game_data.final_score);
@@ -135,6 +194,8 @@ ACTION mahjonghilo::playhilo(name username, int option)
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.discarded_tiles.size() < 20, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
+    // check(user.game_data.standard_tile == 1 && option > 1, "Cannot choose Low option, please choose Draw or High.");
+    // check(user.game_data.standard_tile == 11 && option < 3, "Cannot choose High option, please choose Low or Draw.");
     check(user.game_data.status == ONGOING, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
@@ -227,7 +288,7 @@ ACTION mahjonghilo::dclrwinhand(name username)
             {
                 game_data.reveal_kong.erase(game_data.reveal_kong.begin());
             }
-            sorteye(temp_hand, game_data.eye_idx);
+            // sorteye(temp_hand, game_data.eye_idx);
             // getscore(game_data, temp_hand);
             print("Well played!");
         }
@@ -249,12 +310,20 @@ ACTION mahjonghilo::withdraw(name username)
 {
     require_auth(username);
     auto user = _users.find(username.value);
-    // action{
-    //     permission_level{_self, "active"_n},
-    //     eosio_token,
-    //     "transfer"_n,
-    //     std::make_tuple(_self, username, user.game_data.hi_lo_prize, feedback)}
-    //     .send();
+    check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred or you are on trial.");
+    check(user->game_data.hi_lo_prize.amount > 0, "You have no prize money.");
+    std::string feedback = "MHL Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.hi_lo_prize.amount); // transfer funds to user
+    action{
+        permission_level{_self, "active"_n},
+        eosio_token,
+        "transfer"_n,
+        std::make_tuple(_self, username, user->game_data.hi_lo_prize, feedback)}
+        .send();
+
+    _users.modify(user, username, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.hi_lo_prize = DEFAULT_ASSET;
+    });
 }
 
 ACTION mahjonghilo::end(name username)

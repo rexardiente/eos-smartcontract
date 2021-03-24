@@ -281,11 +281,12 @@ private:
     struct game
     {
         string game_id;
+        vector<uint8_t> deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
         uint8_t status;
         asset hi_lo_prize = DEFAULT_ASSET;
-        float low_odds = MH_DEFAULT;
-        float draw_odds = MH_DEFAULT;
-        float high_odds = MH_DEFAULT;
+        double low_odds = MH_DEFAULT;
+        double draw_odds = MH_DEFAULT;
+        double high_odds = MH_DEFAULT;
         vector<int> sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         uint8_t prevalent_wind;
         uint8_t seat_wind;
@@ -300,7 +301,6 @@ private:
         int pung_count;
         int chow_count;
         int kong_count;
-        vector<uint8_t> deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
         vector<uint8_t> hand_player = {};
         vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
@@ -339,11 +339,14 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
+    double roundoff(double var);
+    void depositbet(name to, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
     void gettile(game & gamedata);
     void sorthand(vector<uint8_t> & hand);
     void sorteye(vector<uint8_t> & hand, int idx);
     void getscore(game & gamedata, vector<uint8_t> & hand);
+    void sumscore(game & gamedata);
     void two_rem(game & gamedata, vector<tile> tiles);
     void five_rem(game & gamedata, vector<tile> tiles);
     void eight_rem(game & gamedata, vector<tile> tiles);
@@ -355,7 +358,9 @@ private:
     void get_odds(game & gamedata, int value);
     void hilo_step(game & gamedata, int prev_tile, int current_tile, int option);
     int pair_pung_chow(tile tile1, tile tile2, tile tile3);
+    int pung_check(tile tile1, tile tile2, tile tile3);
     int pair_check(tile tile1, tile tile2);
+    int wind_check(game gamedata, tile tile1, int check1);
     int five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5);
     int six_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6);
     int honors_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6, tile tile7);
@@ -375,8 +380,9 @@ public:
                                                                  asset quantity,
                                                                  string memo);
     ACTION initialize(name username);
-    ACTION startgame(name username, int numgaames);
-    ACTION starttrial(name username, vector<int> idx);
+    ACTION acceptbet(name username, asset quantity);
+    ACTION startgame(name username, int numgames);
+    ACTION starttrial(name username, int numgames, vector<int> idx);
     ACTION playhilo(name username, int option);
     ACTION discardtile(name username, int idx);
     ACTION dclrkong(name username, vector<int> idx);

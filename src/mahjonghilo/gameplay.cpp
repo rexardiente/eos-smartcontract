@@ -20,7 +20,7 @@ void mahjonghilo::ondeposit(name from,
     check(quantity.symbol.is_valid(), "Invalid quantity");
     check(quantity.amount > 0, "Only positive quantity allowed");
     check(quantity.symbol == mahjonghilo_symbol, "Invalid EOS Token");
-
+    depositbet(from, quantity);
     // std::string str = memo.substr(9);
     // if (memo.find("ADD_LIFE") != std::string::npos)
     // {
@@ -31,6 +31,27 @@ void mahjonghilo::ondeposit(name from,
     //     int limit = stoi(str);
     //     summon_ready(from, quantity, limit);
     // }
+}
+
+double mahjonghilo::roundoff(double var)
+{
+    // 37.66666 * 100 =3766.66
+    // 3766.66 + .5 =3767.16    for rounding off value
+    // then type cast to int so value is 3767
+    // then divided by 100 so the value converted into 37.67
+    float value = (int)(var * 10 + .5);
+    return (float)value / 10;
+}
+
+void mahjonghilo::depositbet(name username, asset quantity)
+{
+    require_auth(username);
+    action(
+        permission_level{_self, "active"_n},
+        _self,
+        "acceptbet"_n,
+        std::make_tuple(username, quantity))
+        .send();
 }
 
 void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
@@ -58,78 +79,89 @@ void mahjonghilo::gettile(game &gamedata)
 void mahjonghilo::get_odds(game &gamedata, int value)
 {
     gamedata.sumofvalue[value - 1] -= 1;
-    float sum, sum1, sum2;
+    double sum, sum1, sum2, num1, num2, num3;
     for (int i = 0; i < gamedata.sumofvalue.size(); i++)
     {
         sum += gamedata.sumofvalue[i];
     }
-    // print(sum);
-    for (int i = 0; i < value - 1; i++)
-    {
-        sum1 += gamedata.sumofvalue[i];
-    }
-    sum2 = sum - sum1 - gamedata.sumofvalue[value - 1];
-    gamedata.draw_odds = (sum / gamedata.sumofvalue[value - 1]) * 0.9;
+    num2 = (sum / gamedata.sumofvalue[value - 1]) * 0.9;
     if (value == 1)
     {
-        gamedata.low_odds = 0;
+        num1 = 0;
+        for (int i = value; i < gamedata.sumofvalue.size(); i++)
+        {
+            sum2 += gamedata.sumofvalue[i];
+        }
+        num3 = (sum / sum2) * 0.9;
+        // for (int i = value; i < gamedata.sumofvalue.size(); i++)
+        // {
+        //     sum2 += gamedata.sumofvalue[i];
+        // }
+    }
+    else if (value == 11)
+    {
+        num3 = 0;
+        for (int i = 0; i < gamedata.sumofvalue.size(); i++)
+        {
+            sum1 += gamedata.sumofvalue[i];
+        }
+        num1 = (sum / sum1) * 0.9;
     }
     else
     {
-        gamedata.low_odds = (sum / sum1) * 0.9;
+        for (int i = 0; i < value - 1; i++)
+        {
+            sum1 += gamedata.sumofvalue[i];
+        }
+        num1 = (sum / sum1) * 0.9;
+        for (int i = value; i < gamedata.sumofvalue.size(); i++)
+        {
+            sum2 += gamedata.sumofvalue[i];
+        }
+        num3 = (sum / sum2) * 0.9;
     }
-    if (value == 11)
+    gamedata.low_odds = num1;
+    gamedata.draw_odds = num2;
+    gamedata.high_odds = num3;
+}
+
+void mahjonghilo::hilo_step(game &gamedata, int prev_tile, int current_tile, int option)
+{
+    int result;
+    // float patad = gamedata.hi_lo_prize.amount, num1 = gamedata.low_odds, num2 = gamedata.draw_odds, num3 = gamedata.high_odds;
+    if (prev_tile > current_tile)
     {
-        gamedata.high_odds = 0;
+        result = 1;
+    }
+    else if (prev_tile == current_tile)
+    {
+        result = 2;
     }
     else
     {
-        gamedata.high_odds = (sum / sum2) * 0.9;
+        result = 3;
     }
-    // for (int i = value; i < gamedata.sumofvalue.size(); i++)
-    // {
-    //     sum2 += gamedata.sumofvalue[i];
-    // }
-    // gamedata.high_odds = (135 / sum2) * 0.9;
-    // print("HELLO");
-    // print(sum2);
-    // float odds;
-    // if (value == 1)
-    // {
-    //     gamedata.low_odds = 0;
-    // }
-    // else
-    // {
-    //     gamedata.low_odds = (135 / ((value - 1) * 12)) * 0.9;
-    //     if (gamedata.low_odds < 1)
-    //     {
-    //         gamedata.low_odds = 1;
-    //     }
-    // }
-    // if (value == 10)
-    // {
-    //     gamedata.draw_odds = (135 / 15) * 0.9;
-    // }
-    // else
-    // {
-    //     gamedata.draw_odds = (135 / 11) * 0.9;
-    //     if (gamedata.draw_odds < 1)
-    //     {
-    //         gamedata.draw_odds = 1;
-    //     }
-    // }
-    // if (value == 11)
-    // {
-    //     gamedata.high_odds = 0;
-    // }
-    // else
-    // {
-    //     gamedata.high_odds = (135 / ((11 - value) * 12)) * 0.9;
-    //     if (gamedata.high_odds < 1)
-    //     {
-    //         gamedata.high_odds = 1;
-    //     }
-    // }
+    // float num1 = gamedata.low_odds, num2 = gamedata.draw_odds, num3 = gamedata.high_odds;
+    if (result == option)
+    {
+        if (result == 1)
+        {
+            gamedata.hi_lo_prize.amount *= gamedata.low_odds;
+        }
+        else if (result == 2)
+        {
+            gamedata.hi_lo_prize.amount *= gamedata.draw_odds;
+        }
+        else
+        {
+            gamedata.hi_lo_prize.amount *= gamedata.high_odds;
+        }
+    }
+    else
+    {
+        gamedata.hi_lo_prize.amount = 0;
+    }
+    // gamedata.hi_lo_prize.amount = patad;
 }
 
 void mahjonghilo::sorthand(vector<uint8_t> &hand)
@@ -158,6 +190,189 @@ void mahjonghilo::sorteye(vector<uint8_t> &hand, int idx)
     hand.insert(hand.end(), temp += 1);
 }
 
+void mahjonghilo::sumscore(game &gamedata)
+{
+    int num = 0;
+    for (int i = 0; i < gamedata.score_check.size(); i++)
+    {
+        const auto tempscore = score_deck.at(gamedata.score_check[i]);
+        if (tempscore.score_name != "No Score")
+        {
+            gamedata.score_type.insert(gamedata.score_type.begin(), tempscore.score_name);
+        }
+        num += tempscore.value;
+    }
+    gamedata.final_score = num;
+    while (gamedata.score_check.at(0) == 0)
+    {
+        gamedata.score_check.erase(gamedata.score_check.begin());
+    }
+}
+
+int mahjonghilo::pung_check(tile tile1, tile tile2, tile tile3)
+{
+    vector<tile> tiles = {};
+    tiles.insert(tiles.begin(), tile3);
+    tiles.insert(tiles.begin(), tile2);
+    tiles.insert(tiles.begin(), tile1);
+    int n = tiles.size(), i, j;
+    tile temp;
+    for (i = 0; i < (n - 1); i++)
+    {
+        for (j = 0; j < (n - i - 1); j++)
+        {
+            if (tiles[j].value > tiles[j + 1].value)
+            {
+                temp = tiles[j];
+                tiles[j] = tiles[j + 1];
+                tiles[j + 1] = temp;
+            }
+        }
+    }
+    if (tiles[2].value == 11) // --- --- DDD
+    {
+        if (tiles[1].value == 11) // --- DDD DDD
+        {
+            if (tiles[0].value == 11) // DDD DDD DDD
+            {
+                return 10;
+            }
+            else if (tiles[0].value == 10) // www DDD DDD
+            {
+                return 20;
+            }
+            else if (tiles[0].value == 1 || tiles[0].value == 9) // 1/9 DDD DDD
+            {
+                return 30;
+            }
+            else // 2-8 DDD DDD
+            {
+                return 50;
+            }
+        }
+        else if (tiles[1].value == 10) // --- www DDD
+        {
+            if (tiles[0].value == 10) // www www DDD
+            {
+                return 21;
+            }
+            else if (tiles[0].value == 1 || tiles[0].value == 9) // 1/9 www DDD
+            {
+                return 31;
+            }
+            else // 2-8 www DDD
+            {
+                return 51;
+            }
+        }
+        else if (tiles[1].value == 1 || tiles[1].value == 9) // --- 1/9 DDD
+        {
+            if (tiles[0].value == 1 || tiles[0].value == 9) // 1/9 1/9 DDD
+            {
+                return 32;
+            }
+            else // 2-8 999 DDD
+            {
+                return 52;
+            }
+        }
+        else
+        {
+            if (tiles[0].value == 1) // 111 2-8 DDD
+            {
+                return 36;
+            }
+            else // 2-8 2-8 DDD
+            {
+                return 53;
+            }
+        }
+    }
+    else if (tiles[2].value == 10) // --- --- www
+    {
+        if (tiles[1].value == 10) // --- www www
+        {
+            if (tiles[0].value == 10) // www www www
+            {
+                return 22;
+            }
+            else if (tiles[0].value == 1 || tiles[0].value == 9) // 1/9 www www
+            {
+                return 33;
+            }
+            else // 2-8 www www
+            {
+                return 54;
+            }
+        }
+        else if (tiles[1].value == 1 || tiles[1].value == 9) // --- 1/9 www
+        {
+            if (tiles[0].value == 1 || tiles[0].value == 9) // 1/9 1/9 www
+            {
+                return 34;
+            }
+            else // 2-8 1-9 www
+            {
+                return 55;
+            }
+        }
+        else
+        {
+            if (tiles[0].value == 1) // 1/9 2-8 www
+            {
+                return 37;
+            }
+            else // 2-8 2-8 www
+            {
+                return 56;
+            }
+        }
+    }
+    else if (tiles[2].value == 1 || tiles[2].value == 9) // --- --- 1/9
+    {
+        if (tiles[1].value == 1 || tiles[1].value == 9) // --- 1/9 1/9
+        {
+            if (tiles[0].value == 1 || tiles[0].value == 9) // 1/9 1/9 1/9
+            {
+                return 35;
+            }
+            else // 2-8 999 999
+            {
+                return 57;
+            }
+        }
+        else
+        {
+            if (tiles[0].value == 1) // 111 2-8 999
+            {
+                return 38;
+            }
+            else // 2-8, 2-8, 999
+            {
+                return 58;
+            }
+        }
+    }
+    else
+    {
+        if (tiles[1].value > 1 && tiles[1].value < 9)
+        {
+            if (tiles[0].value > 1 && tiles[0].value < 9) // 2-8 2-8 2-8
+            {
+                return 59;
+            }
+            else // 111 2-8 2-8
+            {
+                return 39;
+            }
+        }
+        else
+        {
+            return 40; // 111 111 2-8
+        }
+    }
+}
+
 void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
 {
     vector<tile> tiles = {};
@@ -169,26 +384,1225 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
     {
         if (gamedata.pung_count == 4)
         {
-            if (tiles[0].value == 10 && tiles[3].value == 10)
+            if (tiles[0].value == 10) // www --- --- ---
             {
-                if (tiles[6].value == 10 && tiles[9].value == 10)
+                int check1 = pung_check(tiles[3], tiles[6], tiles[9]);
+                if (check1 == 10) // www DDD DDD DDD
                 {
-                    if (tiles[12].value == 1 || tiles[12].value == 9)
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 2);
+                    int checkwind = 0;
+                    if (tiles[12].value == 10) // www DDD DDD DDD ww
                     {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 1);
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 13);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 10);
+                        checkwind = 1;
+                    }
+                    else // www DDD DDD DDD 1/9 or www DDD DDD DDD 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[0], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 20) // www www DDD DDD
+                {
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // www www DDD DDD DD or www www DDD DDD ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 10);
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 9);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        }
+                        checkwind = 1;
+                    }
+                    else // www www DDD DDD 1/9 or www www DDD DDD 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 49);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 53);
                     }
-                    else if (tiles[12].value > 10)
+                    int check2 = wind_check(gamedata, tiles[0], checkwind);
+                    if (check2 == 1)
                     {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 1);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                    int check3 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check3 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 21) // www www www DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // www www www DDD DD or www www www DDD ww
+                    {
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 10);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 8);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 34);
+                        checkwind = 1;
+                    }
+                    else // www www www DDD 1/9 or www www www DDD 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 34);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        // gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                    }
+                    int check2 = wind_check(gamedata, tiles[0], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                    int check3 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check3 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                    int check4 = wind_check(gamedata, tiles[9], checkwind);
+                    if (check4 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check4 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check4 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else // www www www www
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 1);
+                    if (tiles[12].value == 11)
+                    {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 10);
                     }
                     else
                     {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 1);
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
                     }
                 }
+            }
+            else if (tiles[0].value == 9) // 999 --- --- ---
+            {
+                int check1 = pung_check(tiles[3], tiles[6], tiles[9]);
+                if (check1 == 10) // 999 DDD DDD DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 2);
+                    if (tiles[12].value == 10) // 999 DDD DDD DDD ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                    }
+                    else // 999 DDD DDD DDD 1/9 or 999 DDD DDD DDD 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                }
+                else if (check1 == 20) // 999 www DDD DDD
+                {
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // 999 www DDD DDD DD or 999 www DDD DDD ww
+                    {
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 9);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        checkwind = 1;
+                    }
+                    else // 999 www DDD DDD 1/9 or 999 www DDD DDD 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 21) // 999 www www DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    int checkwind = 0;
+                    if (tiles[12].value == 11) // 999 www www DDD DD or 999 www www DDD ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        checkwind = 1;
+                    }
+                    else // 999 www www DDD 1/9 or 999 www www DDD 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                    int check3 = wind_check(gamedata, tiles[6], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check3 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 22) // 999 www www www
+                {
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // 999 www www www DD or 999 www www www ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 34);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 8);
+                        }
+                        checkwind = 1;
+                    }
+                    else // 999 www www www 1/9 or 999 www www www 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 34);
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                    int check3 = wind_check(gamedata, tiles[6], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check3 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                    int check4 = wind_check(gamedata, tiles[9], checkwind);
+                    if (check4 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check4 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check4 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 30) // 999 999 DDD DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    if (tiles[12].value > 9) // 999 999 DDD DDD DD or 999 999 DDD DDD ww
+                    {
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 9);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                    }
+                    else // 999 999 DDD DDD 1/9 or 999 999 DDD DDD 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        if (tiles[0].suit == tiles[12].suit || tiles[3].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                }
+                else if (check1 == 31) // 999 999 www DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // 999 999 www DDD DD or 999 999 www DDD ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        checkwind = 1;
+                    }    // note if =10/13/17, no 51/56/73
+                    else // 999 999 www DDD 1/9 or 999 999 www DDD 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        if (tiles[0].suit == tiles[12].suit || tiles[3].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[6], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 32) // 999 999 999 DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 31);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    if (tiles[12].value > 1 && tiles[12].value < 9) // 999 999 999 DDD 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    }
+                    else // 999 999 999 DDD DD or 999 999 999 DDD ww or 999 999 999 DDD 11
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        if (tiles[12].value == 10)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                }
+                else if (check1 == 33) // 999 999 www www
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // 999 999 www www DD or 999 999 www www ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        checkwind = 1;
+                    }
+                    else // 999 999 www ww 1/9 or 999 999 www www 2-8
+                    {
+                        if (tiles[12].value == 1 || tiles[12].value == 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                            checkwind = 1;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        if (tiles[0].suit == tiles[12].suit || tiles[3].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[6], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                    int check3 = wind_check(gamedata, tiles[9], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check3 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else // 34 - 999 999 999 www
+                {
+                    int checkwind = 0;
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 31);
+                    if (tiles[12].value > 1 && tiles[12].value < 9) // 999 999 999 www 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    }
+                    else // 999 999 999 www DD or 999 999 999 www ww or 999 999 999 www 11
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                        checkwind = 1;
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[9], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+            }
+            else if (tiles[0].value > 1 && tiles[0].value < 9) // 2-8 --- --- ---
+            {
+                int check1 = pung_check(tiles[3], tiles[6], tiles[9]);
+                if (check1 == 10) // 2-8 DDD DDD DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 2);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    if (tiles[12].value == 10) // 2-8 DDD DDD DDD ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                    }
+                    else // 2-8 DDD DDD DDD 1/9 or 2-8 DDD DDD DDD 2-8
+                    {
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                }
+                else if (check1 == 20) // 2-8 www DDD DDD
+                {
+                    int checkwind = 0;
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    if (tiles[12].value > 9) // 2-8 www DDD DDD DD or 2-8 www DDD DDD ww
+                    {
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 9);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        }
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        // checkwind = 1;
+                    }
+                    else // 2-8 www DDD DDD 1/9 or 2-8 www DDD DDD 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 21) // 2-8 www www DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    int checkwind = 0;
+                    if (tiles[12].value == 11) // 2-8 www www DDD DD or 2-8 www www DDD ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                    }
+                    else // 2-8 www www DDD 1/9 or 2-8 www www DDD 2-8
+                    {
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check2 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                    int check3 = wind_check(gamedata, tiles[6], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else if (check3 == 4)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+
+                }                      // note if =10/13/17, no 51/56/73
+                else if (check1 == 22) // 2-8 www www www
+                {
+                    int checkwind = 0;
+                    if (tiles[12].value > 9) // 2-8 www www www DD or 2-8 www www www ww
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        if (tiles[12].value == 11)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 34);
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 8);
+                            checkwind = 1;
+                        }
+                    }
+                    else // 2-8 www www www 1/9 or 2-8 www www www 2-8
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 34);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                        if (tiles[0].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    int check2 = wind_check(gamedata, tiles[3], checkwind);
+                    if (check2 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check2 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check2 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    int check3 = wind_check(gamedata, tiles[6], checkwind);
+                    if (check3 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        checkwind = 1;
+                    }
+                    else if (check3 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check3 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    int check4 = wind_check(gamedata, tiles[9], checkwind);
+                    if (check4 == 1)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                        // checkwind = 1;
+                    }
+                    else if (check4 == 2)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                    else if (check4 == 3)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                    }
+                }
+                // else if (check1 == 30) // 999 999 DDD DDD
+                // {
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                //     if (tiles[12].value > 9) // 999 999 DDD DDD DD or 999 999 DDD DDD ww
+                //     {
+                //         if (tiles[12].value == 11)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 9);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                //         }
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                //     }
+                //     else // 999 999 DDD DDD 1/9 or 999 999 DDD DDD 2-8
+                //     {
+                //         if (tiles[12].value == 1 || tiles[12].value == 9)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                //         }
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 49);
+                //         if (tiles[0].suit == tiles[12].suit || tiles[3].suit == tiles[12].suit)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                //         }
+                //     }
+                // }
+                // else if (check1 == 31) // 999 999 www DDD
+                // {
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                //     int checkwind = 0;
+                //     if (tiles[12].value > 9) // 999 999 www DDD DD or 999 999 www DDD ww
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                //         checkwind = 1;
+                //     }    // note if =10/13/17, no 51/56/73
+                //     else // 999 999 www DDD 1/9 or 999 999 www DDD 2-8
+                //     {
+                //         if (tiles[12].value == 1 || tiles[12].value == 9)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //             checkwind = 1;
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                //         }
+                //         if (tiles[0].suit == tiles[12].suit || tiles[3].suit == tiles[12].suit)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                //         }
+                //     }
+                //     int check2 = wind_check(gamedata, tiles[6], checkwind);
+                //     if (check2 == 1)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                //         // checkwind = 1;
+                //     }
+                //     else if (check2 == 2)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                //     else if (check2 == 3)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //     }
+                //     else
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                // }
+                // else if (check1 == 32) // 999 999 999 DDD
+                // {
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 31);
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                //     if (tiles[12].value > 1 && tiles[12].value < 9) // 999 999 999 DDD 2-8
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                //     }
+                //     else // 999 999 999 DDD DD or 999 999 999 DDD ww or 999 999 999 DDD 11
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //         if (tiles[12].value == 10)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                //         }
+                //     }
+                // }
+                // else if (check1 == 33) // 999 999 www www
+                // {
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                //     int checkwind = 0;
+                //     if (tiles[12].value > 9) // 999 999 www www DD or 999 999 www www ww
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                //         checkwind = 1;
+                //     }
+                //     else // 999 999 www ww 1/9 or 999 999 www www 2-8
+                //     {
+                //         if (tiles[12].value == 1 || tiles[12].value == 9)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //             checkwind = 1;
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                //         }
+                //         if (tiles[0].suit == tiles[12].suit || tiles[3].suit == tiles[12].suit)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                //         }
+                //     }
+                //     int check2 = wind_check(gamedata, tiles[6], checkwind);
+                //     if (check2 == 1)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                //         checkwind = 1;
+                //     }
+                //     else if (check2 == 2)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                //     else if (check2 == 3)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //     }
+                //     else
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                //     int check3 = wind_check(gamedata, tiles[9], checkwind);
+                //     if (check3 == 1)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                //         // checkwind = 1;
+                //     }
+                //     else if (check3 == 2)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                //     else if (check3 == 3)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //     }
+                //     else
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                // }
+                // else // 34 - 999 999 999 www
+                // {
+                //     int checkwind = 0;
+                //     gamedata.score_check.insert(gamedata.score_check.begin(), 31);
+                //     if (tiles[12].value > 1 && tiles[12].value < 9) // 999 999 999 www 2-8
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                //     }
+                //     else // 999 999 999 www DD or 999 999 999 www ww or 999 999 999 www 11
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
+                //         checkwind = 1;
+                //         if (tiles[12].value == 11)
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                //         }
+                //         else
+                //         {
+                //             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                //         }
+                //     }
+                //     int check2 = wind_check(gamedata, tiles[9], checkwind);
+                //     if (check3 == 1)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 73);
+                //         // checkwind = 1;
+                //     }
+                //     else if (check3 == 2)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                //     else if (check3 == 3)
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 60);
+                //     }
+                //     else
+                //     {
+                //         gamedata.score_check.insert(gamedata.score_check.begin(), 61);
+                //     }
+                // }
             }
         }
         else if (gamedata.pung_count == 3)
@@ -224,14 +1638,7 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
     {
         print("HII!");
     }
-    int num = 0;
-    for (int i = 0; i < gamedata.score_check.size(); i++)
-    {
-        const auto tempscore = score_deck.at(gamedata.score_check[i]);
-        num += tempscore.value;
-        gamedata.score_type.insert(gamedata.score_type.begin(), tempscore.score_name);
-    }
-    gamedata.final_score = num;
+    sumscore(gamedata);
 }
 
 // void mahjonghilo::four_pungs(game &gamedata, vector<tile> tiles)
@@ -241,42 +1648,6 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
 //         print(tiles[i].suit);
 //     }
 // }
-
-void mahjonghilo::hilo_step(game &gamedata, int prev_tile, int current_tile, int option)
-{
-    int result;
-    if (prev_tile > current_tile)
-    {
-        result = 1;
-    }
-    else if (prev_tile == current_tile)
-    {
-        result = 2;
-    }
-    else
-    {
-        result = 3;
-    }
-    if (result == option)
-    {
-        if (result == 1)
-        {
-            gamedata.hi_lo_prize.amount *= gamedata.low_odds;
-        }
-        else if (result == 2)
-        {
-            gamedata.hi_lo_prize.amount *= gamedata.draw_odds;
-        }
-        else
-        {
-            gamedata.hi_lo_prize.amount *= gamedata.high_odds;
-        }
-    }
-    else
-    {
-        gamedata.hi_lo_prize.amount = 0;
-    }
-}
 
 void mahjonghilo::winhand_check(game &gamedata, vector<uint8_t> &hand)
 {
@@ -358,18 +1729,42 @@ int mahjonghilo::pair_pung_chow(tile tile1, tile tile2, tile tile3)
 {
     if (tile1.suit == tile2.suit && tile1.value == tile2.value)
     {
-        if (tile2.suit == tile3.suit && tile2.value == tile3.value)
+        // if (tile2.suit == tile3.suit && tile2.value == tile3.value)
+        // {
+        //     return 2;
+        // }
+        // else
+        // {
+        // if (tile2.value < 10 && tile3.value < 10)
+        // {
+        if (tile2.value == tile3.value && tile2.suit == tile3.suit)
         {
             return 2;
         }
-        else if (tile2.value != tile3.value)
+        else
         {
             return 1;
         }
-        else
-        {
-            return 0;
-        }
+        // }
+        // else
+        // {
+        //     if (tile2.value == tile3.value)
+        //     {
+        //         if (tile2.suit == tile3.suit)
+        //         {
+        //             return 2;
+        //         }
+        //         else
+        //         {
+        //             return 1;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         return 1;
+        //     }
+        // }
+        // }
     }
     else if (tile1.suit == tile2.suit && tile2.suit == tile3.suit)
     {
@@ -431,6 +1826,46 @@ int mahjonghilo::pair_check(tile tile1, tile tile2) // !!!
     else
     {
         return 0;
+    }
+}
+
+int mahjonghilo::wind_check(game gamedata, tile tile1, int check1)
+{
+    if (tile1.suit != gamedata.prevalent_wind && tile1.suit != gamedata.seat_wind)
+    {
+        if (check1 == 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return 5;
+        }
+    }
+    else
+    {
+        if (tile1.suit == gamedata.prevalent_wind)
+        {
+            if (tile1.suit == gamedata.seat_wind)
+            {
+                return 2;
+            }
+            else
+            {
+                return 3;
+            }
+        }
+        else
+        {
+            if (tile1.suit == gamedata.seat_wind)
+            {
+                return 4;
+            }
+            else
+            {
+                return 5;
+            }
+        }
     }
 }
 
@@ -812,6 +2247,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                     gamedata.chow_count += 1;
                     gamedata.pung_count += 1;
                     transferhand(gamedata, 8);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 }
                 else
                 {
@@ -887,6 +2323,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                         gamedata.chow_count += 1;
                         gamedata.pung_count += 1;
                         transferhand(gamedata, 8);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[3], tiles[6], tiles[7]) == 3)
                     {
@@ -994,6 +2431,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.chow_count += 1;
                     pung_chow(gamedata, check1);
                     transferhand(gamedata, 11);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 }
                 else
                 {
@@ -1093,6 +2531,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.pung_count += 1;
                     pung_chow(gamedata, check2);
                     transferhand(gamedata, 11);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 }
                 else if (check4 == 2 && pair_pung_chow(tiles[6], tiles[9], tiles[10]) == 3)
                 {
@@ -1169,6 +2608,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check4);
                         transferhand(gamedata, 11);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
                     {
@@ -1236,6 +2676,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check6);
                                 transferhand(gamedata, 11);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -1392,6 +2833,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.pair_count += 1;
                     gamedata.eye_idx = 9;
                     gamedata.chow_count += 3;
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     transferhand(gamedata, 11);
                 }
                 else if (check4 == 2)
@@ -1403,6 +2845,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.chow_count += 2;
                         gamedata.pung_count += 1;
                         transferhand(gamedata, 11);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[8], tiles[9], tiles[10]) == 3)
                     {
@@ -1410,6 +2853,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 3;
                         transferhand(gamedata, 11);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
                     {
@@ -1524,6 +2968,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 3;
                         gamedata.pung_count += 1;
                         transferhand(gamedata, 14);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check4 == 2 && (pair_pung_chow(tiles[10], tiles[12], tiles[13])) == 3)
                     {
@@ -1678,6 +3123,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 3;
                             gamedata.pung_count += 1;
                             transferhand(gamedata, 14);
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
                         {
@@ -1718,6 +3164,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pung_count += 1;
                         gamedata.chow_count += 3;
                         transferhand(gamedata, 14);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
                     {
@@ -1768,6 +3215,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 3;
                         gamedata.pung_count += 1;
                         transferhand(gamedata, 14);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[9], tiles[12], tiles[13]) == 3)
                     {
@@ -1916,6 +3364,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check1);
                         transferhand(gamedata, 14);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
                     {
@@ -1961,6 +3410,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check1);
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -2064,6 +3514,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             pung_chow(gamedata, check2);
                             pung_chow(gamedata, check5);
                             transferhand(gamedata, 14);
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
                         {
@@ -2196,6 +3647,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 2;
                                 pung_chow(gamedata, check5);
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -2231,6 +3683,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.chow_count += 2;
                                     pung_chow(gamedata, check7);
                                     transferhand(gamedata, 14);
+                                    gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                                 }
                                 else
                                 {
@@ -2287,6 +3740,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check3);
                         transferhand(gamedata, 14);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
                     {
@@ -2329,6 +3783,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             pung_chow(gamedata, check4);
                             pung_chow(gamedata, check6);
                             transferhand(gamedata, 14);
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
                         {
@@ -2412,6 +3867,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.pair_count += 1;
                             pung_chow(gamedata, check6);
                             transferhand(gamedata, 14);
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
                         {
@@ -2423,6 +3879,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pair_count += 1;
                                 gamedata.chow_count += 3;
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                             {
@@ -2431,6 +3888,8 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 2;
                                 gamedata.pung_count += 2;
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -2507,7 +3966,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             pung_chow(gamedata, check5);
                             transferhand(gamedata, 14);
                         }
-                        else if (check5 == 3 && pair_pung_chow(tiles[8], tiles[10], tiles[13]) == 3)
+                        else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[10], tiles[13]) == 3)
                         {
                             gamedata.pair_count += 1;
                             gamedata.eye_idx = 2;
@@ -2515,6 +3974,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.pung_count += 1;
                             pung_chow(gamedata, check5);
                             transferhand(gamedata, 14);
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
                         {
@@ -2737,6 +4197,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 3;
                                 gamedata.pung_count += 1;
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -2787,6 +4248,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 3;
                                 gamedata.pung_count += 1;
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else if (check7 == 2 && pair_pung_chow(tiles[9], tiles[12], tiles[13]) == 3)
                             {
@@ -2794,6 +4256,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 8;
                                 gamedata.chow_count += 4;
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -2809,6 +4272,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
             }
             else if (check3 == 3 && pair_pung_chow(tiles[0], tiles[4], tiles[5]) == 3) // 111123     / 122223
             {
+                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 int check4 = six_tile_check(tiles[6], tiles[7], tiles[8], tiles[9], tiles[10], tiles[11]);
                 if (check4 > 3 && check4 < 9)
                 {
@@ -2952,6 +4416,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 2;
                                 gamedata.pung_count += 2;
                                 transferhand(gamedata, 14);
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
                             {
@@ -2979,13 +4444,19 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 {
                                     gamedata.pair_count += 1;
                                     gamedata.eye_idx = 3;
-                                    gamedata.chow_count += 1;
-                                    gamedata.pung_count += 1;
+                                    gamedata.chow_count += 4;
                                     pung_chow(gamedata, check6);
                                     transferhand(gamedata, 14);
                                 }
                                 else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                                 {
+
+                                    gamedata.pair_count += 1;
+                                    gamedata.eye_idx = 3;
+                                    gamedata.chow_count += 3;
+                                    gamedata.pung_count += 1;
+                                    transferhand(gamedata, 14);
+                                    gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                                 }
                                 else
                                 {
@@ -3030,6 +4501,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             }
                             else if (check6 == 3 && pair_pung_chow(tiles[6], tiles[10], tiles[11]) == 3)
                             {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                                 int check7 = pair_check(tiles[12], tiles[13]);
                                 if (check7 == 1)
                                 {
