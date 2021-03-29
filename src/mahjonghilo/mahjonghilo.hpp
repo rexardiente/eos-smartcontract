@@ -122,9 +122,9 @@ private:
         {61, {"Seat Wind", 2}},
         {62, {"All Chows", 2}},
         {63, {"Double Pungs", 2}},
-        // {64, {"Two Concealed Pungs", 2}},
+        {64, {"Two Concealed Pungs", 2}},
         {65, {"Concealed Kong", 2}},
-        // {66, {"Concealed Hand", 2}}, -------------
+        {66, {"Mixed  Double Pungs", 2}},
         {67, {"All Simples", 2}},
         {68, {"Tile Hog", 2}},
         {69, {"Pure Double Chows", 1}},

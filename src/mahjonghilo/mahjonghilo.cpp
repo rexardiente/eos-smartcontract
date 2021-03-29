@@ -9,7 +9,7 @@ ACTION mahjonghilo::acceptbet(name username, asset quantity)
     auto user = _users.find(username.value);
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount = quantity.amount;
+        game_data.hi_lo_balance.amount += quantity.amount;
     });
 }
 
