@@ -19,14 +19,15 @@ private:
     {
         MH_DEFAULT = 0,
         INITIALIZED = 0, // for mahjong game
-        ONGOING = 1,     // for mahjong game
-        WIN = 2,         // for mahjong game
-        LOSE = 3,        // for mahjong game
+        ONGOING = 10,    // for mahjong game
+        WIN = 12,        // for mahjong game
+        LOSE = 13,       // for mahjong game
         ONTRIAL = 7,     // for mahjong game
         SKIP = 0,        //for Hi-Lo
         LOW = 1,         //for Hi-Lo
         DRAW = 2,        //for Hi-Lo
-        HIGH = 3
+        HIGH = 3         //for Hi-Lo
+
     };
 
     enum tile_suit : uint8_t
@@ -73,7 +74,7 @@ private:
         {13, {"All Terminals", 64}},
         {14, {"Quadruple Chows", 48}},
         {15, {"Four Pure Shifted Pungs", 48}},
-        // {16, {"Four Pure Shifted Chows", 32}}, -------------
+        {16, {"Four Pure Shifted Chows", 32}},
         {17, {"All Terminals and Honors", 32}},
         {18, {"Three Kongs", 32}},
         // {19, {"Pure Triple Chow", 24}}, -------------
@@ -114,14 +115,14 @@ private:
         // {54, {"Melded Hand", 6}}, -------------
         // {55, {"Two Melded Kongs", 4}}, -------------
         {56, {"Outside Hand", 4}},
-        {57, {"Last Tile", 4}},
-        {58, {"Fully Concealed Hands", 4}},
+        // {57, {"Last Tile", 4}},
+        // {58, {"Fully Concealed Hands", 4}},
         {59, {"Dragon Pung", 2}},
         {60, {"Prevalent Wind", 2}},
         {61, {"Seat Wind", 2}},
         {62, {"All Chows", 2}},
         {63, {"Double Pungs", 2}},
-        {64, {"Two Concealed Pungs", 2}},
+        // {64, {"Two Concealed Pungs", 2}},
         {65, {"Concealed Kong", 2}},
         // {66, {"Concealed Hand", 2}}, -------------
         {67, {"All Simples", 2}},
@@ -291,7 +292,7 @@ private:
         uint8_t prevalent_wind;
         uint8_t seat_wind;
         uint8_t current_tile;
-        uint8_t standard_tile;
+        // uint8_t standard_tile;
         int eye_idx;
         // int lowest;
         // int highest;
@@ -313,6 +314,7 @@ private:
     struct [[eosio::table]] user
     {
         name username;
+        int game_count;
         game game_data;
 
         auto primary_key() const
@@ -342,7 +344,7 @@ private:
     double roundoff(double var);
     void depositbet(name to, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    void gettile(game & gamedata);
+    uint8_t gettile(game & gamedata);
     void sorthand(vector<uint8_t> & hand);
     void sorteye(vector<uint8_t> & hand, int idx);
     void getscore(game & gamedata, vector<uint8_t> & hand);
@@ -356,7 +358,7 @@ private:
     void transferhand(game & gamedata, int size);
     void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
-    void hilo_step(game & gamedata, int prev_tile, int current_tile, int option);
+    float hilo_step(game gamedata, int prev_tile, int current_tile, int option);
     int pair_pung_chow(tile tile1, tile tile2, tile tile3);
     int pung_check(tile tile1, tile tile2, tile tile3);
     int pair_check(tile tile1, tile tile2);
@@ -381,7 +383,6 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION acceptbet(name username, asset quantity);
-    ACTION startgame(name username, int numgames);
     ACTION starttrial(name username, int numgames, vector<int> idx);
     ACTION playhilo(name username, int option);
     ACTION discardtile(name username, int idx);

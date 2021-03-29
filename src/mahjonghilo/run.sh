@@ -58,21 +58,25 @@ SHOW_EOSIO_CONTRACT_TABLE()
 INITIALIZE_GAME()
 {
     echo "${EXECUTE} Creating new account for \"user1\"..."
-    cleos push action mahjonghilo initialize '["user1"]' -p user1@active #for user1
+    cleos push action mahjonghilo initialize '["user1"]' -p mahjonghilo@active #for user1
     # cleos push action mahjonghilo initialize '["user2"]' -p user2@active #for user2
     
 }
+
+# RESET_GAME()
+# {
+#     echo "${EXECUTE} Creating new account for \"user1\"..."
+#     cleos push action mahjonghilo reset '["user1"]' -p mahjonghilo@active #for user1
+#     # cleos push action mahjonghilo initialize '["user2"]' -p user2@active #for user2
+    
+# }
+
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
 {
     echo "${EXECUTE} Deleting existing account for \"user1\"..."
-    cleos push action mahjonghilo end '["user1"]' -p user1@active #for user1
+    cleos push action mahjonghilo end '["user1"]' -p mahjonghilo@active #for user1
     # cleos push action mahjonghilo end '["user2"]' -p user2@active #for user2
-}
-
-STARTGAME() ## function : startgame -> to start a new game, parameters : name 'user', integer 'number of games'(to be taken from server)
-{
-    cleos push action mahjonghilo startgame '["user1", 13]' -p user1@active
 }
 
 PLAYHILO() ## function : playhilo -> to draw a tile, parameters : name 'user', uint8_t 'option'(0=skip,1=low,2=draw,3=high)     note : players can play hi-lo with or without deposit, all drawn tiles will be within gamedata
@@ -82,7 +86,7 @@ PLAYHILO() ## function : playhilo -> to draw a tile, parameters : name 'user', u
 
 DISCARD() ## function : discardtile -> to discard a tile, parameters : name 'user', uint8_t 'index'(index of the tile desired to be discarded from hand)    note : there will be a message if a player hands reaches certain amount of tiles
 {
-    cleos push action mahjonghilo discardtile '[ "user1", 1]' -p user1@active
+    cleos push action mahjonghilo discardtile '[ "user1", 5]' -p user1@active
 }
 
 KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user', array<uint8_t> 'index'(indexes of the 4 tiles designated as kong)      note : declaring a kong will automatically draw a tile which is also possible for Hi-Lo
@@ -96,13 +100,13 @@ TRIALMODE() ## function : starttrial -> to test out winning hand combinations, p
 }
 
 WINDEC() ## function : dclrwinhand -> to declare a winning hand, parameters : name 'user'   note : game data of the user will be used for checking
-{
+{ 
     cleos push action mahjonghilo dclrwinhand '["user1"]' -p user1@active
 }
 
 TRANSFER()
 {
-    cleos push action eosio.token transfer '[ "user1", "mahjonghilo", "1.0000 EOS", "MHL Deposit" ]' -p user1@active
+    cleos push action eosio.token transfer '[ "user1", "mahjonghilo", "5.0000 EOS", "MHL Deposit" ]' -p user1@active
     # cleos push action eosio.token transfer '[ "user2", "mahjonghilo", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
 }
 
@@ -127,11 +131,10 @@ GET_CURRENCY()
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
-# COMPILE_CONTRACT
-# DEPLOY_CONTRACT
+COMPILE_CONTRACT
+DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER
-# STARTGAME
 # PLAYHILO
 # DISCARD
 # KONGDEC
@@ -139,5 +142,5 @@ GET_CURRENCY()
 # WITHDRAW
 # TRIALMODE
 # GET_CURRENCY 
-REMOVE_EXISTING_GAME
+# REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
