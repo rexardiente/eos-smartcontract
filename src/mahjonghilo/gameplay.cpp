@@ -68,7 +68,6 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
 uint8_t mahjonghilo::gettile(game &gamedata)
 {
     int deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
-    // int deck_tile_idx = 0; // Pick a random tile from the deck
 
     gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
@@ -752,15 +751,16 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 }
                 else
                 {
-                    /* code */
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51); // trial
                 }
             }
             else if (checkfirst > 1 && checkfirst < 9)
             {
+                gamedata.score_check.insert(gamedata.score_check.begin(), 51); // trial
             }
             else
             {
-                /* code */
+                gamedata.score_check.insert(gamedata.score_check.begin(), 51); // trial
             }
             int check2 = wind_check(gamedata, tiles2[0], checkwind);
             if (check2 == 1)

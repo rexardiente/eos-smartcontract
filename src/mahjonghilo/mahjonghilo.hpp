@@ -19,10 +19,10 @@ private:
     {
         MH_DEFAULT = 0,
         INITIALIZED = 0, // for mahjong game
-        ONGOING = 10,    // for mahjong game
-        WIN = 12,        // for mahjong game
-        LOSE = 13,       // for mahjong game
-        ONTRIAL = 7,     // for mahjong game
+        ONGOING = 1,     // for mahjong game
+        WIN = 2,         // for mahjong game
+        LOSE = 3,        // for mahjong game
+        ONTRIAL = 5,     // for mahjong game
         //SKIP = 0,        //for Hi-Lo
         LOW = 1,  //for Hi-Lo
         DRAW = 2, //for Hi-Lo
@@ -294,6 +294,7 @@ private:
         uint8_t prevalent_wind;
         uint8_t seat_wind;
         uint8_t current_tile;
+        uint8_t standard_tile;
         int eye_idx;
         int winnable = MH_DEFAULT;
         // int highest;
