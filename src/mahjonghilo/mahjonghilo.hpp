@@ -23,10 +23,10 @@ private:
         WIN = 12,        // for mahjong game
         LOSE = 13,       // for mahjong game
         ONTRIAL = 7,     // for mahjong game
-        SKIP = 0,        //for Hi-Lo
-        LOW = 1,         //for Hi-Lo
-        DRAW = 2,        //for Hi-Lo
-        HIGH = 3         //for Hi-Lo
+        //SKIP = 0,        //for Hi-Lo
+        LOW = 1,  //for Hi-Lo
+        DRAW = 2, //for Hi-Lo
+        HIGH = 3  //for Hi-Lo
 
     };
 
@@ -59,41 +59,41 @@ private:
 
     const map<uint8_t, score> score_deck = {
         {0, {"No Score", 0}},
-        {1, {"Big Four Winds", 88}},
-        {2, {"Big Three Dragons", 88}},
-        {3, {"Four Kongs", 88}},
-        {4, {"Seven Shift Pairs", 88}},
-        {5, {"All Green", 88}},
-        {6, {"Nine Gates", 88}},
-        {7, {"Thirteen Orphans", 88}},
-        {8, {"Little Four Winds", 64}},
-        {9, {"Little Three Dragons", 64}},
-        {10, {"All Honors", 64}},
-        {11, {"Pure Terminal Chows", 64}},
-        {12, {"Four Concealed Pungs", 64}},
-        {13, {"All Terminals", 64}},
-        {14, {"Quadruple Chows", 48}},
-        {15, {"Four Pure Shifted Pungs", 48}},
-        {16, {"Four Pure Shifted Chows", 32}},
-        {17, {"All Terminals and Honors", 32}},
-        {18, {"Three Kongs", 32}},
+        {1, {"Big Four Winds", 88}},            //
+        {2, {"Big Three Dragons", 88}},         //
+        {3, {"Four Kongs", 88}},                //
+        {4, {"Seven Shift Pairs", 88}},         //
+        {5, {"All Green", 88}},                 //
+        {6, {"Nine Gates", 88}},                //
+        {7, {"Thirteen Orphans", 88}},          //
+        {8, {"Little Four Winds", 64}},         //
+        {9, {"Little Three Dragons", 64}},      //
+        {10, {"All Honors", 64}},               //
+        {11, {"Pure Terminal Chows", 64}},      //
+        {12, {"Four Concealed Pungs", 64}},     //
+        {13, {"All Terminals", 64}},            //
+        {14, {"Quadruple Chows", 48}},          //
+        {15, {"Four Pure Shifted Pungs", 48}},  //
+        {16, {"Four Pure Shifted Chows", 32}},  //
+        {17, {"All Terminals and Honors", 32}}, //
+        {18, {"Three Kongs", 32}},              //
         // {19, {"Pure Triple Chow", 24}}, -------------
-        {20, {"Pure Shifted Pungs", 24}},
-        {21, {"All Even Pungs", 24}},
-        {22, {"Seven Pairs", 24}},
-        {23, {"Full Flush", 24}},
-        {24, {"Upper Tiles", 24}},
-        {25, {"Middle Tiles", 24}},
-        {26, {"Lower Tiles", 24}},
-        {27, {"Greater Honors and Knitted Tiles", 24}},
-        {28, {"Pure Shifted Chows", 16}},
-        {29, {"Pure Straight", 16}},
-        {30, {"Three-suited Terminal Chows", 16}},
-        {31, {"Triple Pungs", 16}},
-        {32, {"Three Concealed Pungs", 16}},
-        {33, {"All Fives", 16}},
+        {20, {"Pure Shifted Pungs", 24}},               //
+        {21, {"All Even Pungs", 24}},                   //
+        {22, {"Seven Pairs", 24}},                      //
+        {23, {"Full Flush", 24}},                       //
+        {24, {"Upper Tiles", 24}},                      //
+        {25, {"Middle Tiles", 24}},                     //
+        {26, {"Lower Tiles", 24}},                      //
+        {27, {"Greater Honors and Knitted Tiles", 24}}, //
+        {28, {"Pure Shifted Chows", 16}},               //
+        {29, {"Pure Straight", 16}},                    //
+        {30, {"Three-suited Terminal Chows", 16}},      //
+        {31, {"Triple Pungs", 16}},                     //
+        {32, {"Three Concealed Pungs", 16}},            //
+        // {33, {"All Fives", 16}},
         {34, {"Big Three Winds", 12}},
-        {35, {"Knitted Straight", 12}},
+        // {35, {"Knitted Straight", 12}},
         {36, {"Upper Four", 12}},
         {37, {"Lower Four", 12}},
         {38, {"Lesser Honors and Knitted Tiles", 12}},
@@ -103,10 +103,10 @@ private:
         {42, {"Two Concealed Kongs", 8}},
         // {43, {"Out With Replacement Tile", 8}}, -------------
         // {44, {"Robbing the Kong", 8}}, -------------
-        {45, {"Last Tile Draw", 8}},
+        // {45, {"Last Tile Draw", 8}},
         // {46, {"Last Tile Claim", 8}}, -------------
         // {47, {"Chicken Hand", 8}}, -------------
-        {48, {"Reversible Tiles", 8}},
+        // {48, {"Reversible Tiles", 8}},
         {49, {"Two Dragon Pungs", 6}},
         {50, {"Mixed Shifted Chows", 6}},
         {51, {"All Pungs", 6}},
@@ -132,7 +132,7 @@ private:
         {71, {"Short Straight", 1}},
         {72, {"Two Terminal Chows", 1}},
         {73, {"Pung of Terminals or Honour", 1}},
-        {74, {"Melded Kong", 1}},
+        // {74, {"Melded Kong", 1}},
         {75, {"One Voided Suit", 1}},
         {76, {"No Honors", 1}}};
     // {77, {"Edge Wait", 1}}, -------------
@@ -284,7 +284,9 @@ private:
         string game_id;
         vector<uint8_t> deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
         uint8_t status;
-        asset hi_lo_prize = DEFAULT_ASSET;
+        asset hi_lo_balance = DEFAULT_ASSET;
+        int hi_lo_result = MH_DEFAULT;
+        float hi_lo_prize = MH_DEFAULT;
         double low_odds = MH_DEFAULT;
         double draw_odds = MH_DEFAULT;
         double high_odds = MH_DEFAULT;
@@ -292,9 +294,8 @@ private:
         uint8_t prevalent_wind;
         uint8_t seat_wind;
         uint8_t current_tile;
-        // uint8_t standard_tile;
         int eye_idx;
-        // int lowest;
+        int winnable = MH_DEFAULT;
         // int highest;
         // int suit_count;
         // int type_count;

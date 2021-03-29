@@ -9,7 +9,7 @@ ACTION mahjonghilo::acceptbet(name username, asset quantity)
     auto user = _users.find(username.value);
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_prize.amount = quantity.amount;
+        game_data.hi_lo_balance.amount = quantity.amount;
     });
 }
 
@@ -85,75 +85,77 @@ ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
     // check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        int num1 = numgames % 16;
-        int num2 = numgames % 4;
-        if (num1 > 0 && num1 < 5)
+        game_data.status = ONTRIAL;
+        // int num1 = numgames % 16;
+        // int num2 = numgames % 4;
+        // if (num1 > 0 && num1 < 5)
+        // {
+        //     game_data.prevalent_wind = EAST;
+        // }
+        // else if (num1 > 4 && num1 < 9)
+        // {
+        //     game_data.prevalent_wind = SOUTH;
+        // }
+        // else if (num1 > 8 && num1 < 13)
+        // {
+        //     game_data.prevalent_wind = WEST;
+        // }
+        // else
+        // {
+        //     game_data.prevalent_wind = NORTH;
+        // }
+        // if (num2 == 1)
+        // {
+        //     game_data.seat_wind = EAST;
+        // }
+        // else if (num2 == 2)
+        // {
+        //     game_data.seat_wind = SOUTH;
+        // }
+        // else if (num2 == 3)
+        // {
+        //     game_data.seat_wind = WEST;
+        // }
+        // else
+        // {
+        //     game_data.seat_wind = NORTH;
+        // }
+        int size5 = game_data.hand_player.size();
+        if (game_data.status == ONTRIAL)
         {
-            game_data.prevalent_wind = EAST;
-        }
-        else if (num1 > 4 && num1 < 9)
-        {
-            game_data.prevalent_wind = SOUTH;
-        }
-        else if (num1 > 8 && num1 < 13)
-        {
-            game_data.prevalent_wind = WEST;
-        }
-        else
-        {
-            game_data.prevalent_wind = NORTH;
-        }
-        if (num2 == 1)
-        {
-            game_data.seat_wind = EAST;
-        }
-        else if (num2 == 2)
-        {
-            game_data.seat_wind = SOUTH;
-        }
-        else if (num2 == 3)
-        {
-            game_data.seat_wind = WEST;
-        }
-        else
-        {
-            game_data.seat_wind = NORTH;
-        }
-        if (game_data.status == INITIALIZED)
-        {
-            game_data.status = ONTRIAL;
-        }
-        else
-        {
-            if (game_data.winning_hand.size() != 0)
+            for (int i = 0; i < size5; i++)
             {
-                int size = game_data.winning_hand.size();
-                for (int i = 0; i < size; i++)
-                {
-                    game_data.winning_hand.erase(game_data.winning_hand.begin());
-                }
-                game_data.pair_count = 0;
-                game_data.pung_count = 0;
-                game_data.chow_count = 0;
-                game_data.final_score = 0;
-                int size2 = game_data.score_check.size();
-                for (int i = 0; i < size2; i++)
-                {
-                    game_data.score_check.erase(game_data.score_check.begin());
-                }
-                int size3 = game_data.score_type.size();
-                for (int i = 0; i < size3; i++)
-                {
-                    game_data.score_type.erase(game_data.score_type.begin());
-                }
+                game_data.hand_player.erase(game_data.hand_player.begin());
             }
-            else
+        }
+        if (game_data.winning_hand.size() != 0)
+        {
+            int size = game_data.winning_hand.size();
+            for (int i = 0; i < size; i++)
             {
-                int size = game_data.hand_player.size();
-                for (int i = 0; i < size; i++)
-                {
-                    game_data.hand_player.erase(game_data.hand_player.begin());
-                }
+                game_data.winning_hand.erase(game_data.winning_hand.begin());
+            }
+            game_data.pair_count = 0;
+            game_data.pung_count = 0;
+            game_data.chow_count = 0;
+            game_data.final_score = 0;
+            int size2 = game_data.score_check.size();
+            for (int i = 0; i < size2; i++)
+            {
+                game_data.score_check.erase(game_data.score_check.begin());
+            }
+            int size3 = game_data.score_type.size();
+            for (int i = 0; i < size3; i++)
+            {
+                game_data.score_type.erase(game_data.score_type.begin());
+            }
+        }
+        else
+        {
+            int size = game_data.hand_player.size();
+            for (int i = 0; i < size; i++)
+            {
+                game_data.hand_player.erase(game_data.hand_player.begin());
             }
         }
         for (int i = 0; i < idx.size(); i++)
@@ -162,19 +164,20 @@ ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
         }
         sorthand(game_data.hand_player);
         winhand_check(game_data, game_data.hand_player);
-        // game_data.winning_hand = temp_hand;
-        if (game_data.winning_hand.size() != 0)
+        if (game_data.winnable == 1)
         {
-            print("Well played!");
+            transferhand(game_data, game_data.hand_player.size());
             sorteye(game_data.winning_hand, game_data.eye_idx);
             getscore(game_data, game_data.winning_hand);
             sorthand(game_data.score_check);
+            print("Well played!");
             // print(game_data.final_score);
         }
         else
         {
             print("Your hand didn't win..");
         }
+        game_data.winnable = 0;
     });
 }
 
@@ -185,51 +188,64 @@ ACTION mahjonghilo::playhilo(name username, int option)
     // check(, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()) && user.game_data.discarded_tiles.size() < 20, "Discard a tile to draw a new one.");
     // check(, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
-    check(user.game_data.status == ONGOING && user.game_data.hi_lo_prize.amount > 0, "No remaining balance on account");
+    check(user.game_data.status == ONGOING && user.game_data.hi_lo_balance.amount > 0, "No remaining balance on account");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         // gettile(game_data);
         // float bet = 1.0000;
-        game_data.hi_lo_prize.amount -= 10000;
+        game_data.hi_lo_balance.amount -= 10000;
         const auto standard_tile = table_deck.at(game_data.current_tile);
         const auto current_tile = table_deck.at(gettile(game_data));
-        game_data.hi_lo_prize.amount += hilo_step(game_data, standard_tile.value, current_tile.value, option) * 10000;
+        game_data.hi_lo_prize = hilo_step(game_data, standard_tile.value, current_tile.value, option) * 10000;
+        if (game_data.hi_lo_prize != 0)
+        {
+            game_data.hi_lo_result = WIN;
+        }
+        else
+        {
+            game_data.hi_lo_result = LOSE;
+        }
+        game_data.hi_lo_balance.amount += game_data.hi_lo_prize;
         // uint8_t tile_var = gettile(game_data);
         // const auto hilo_tile = table_deck.at(standard_tile);
         // hilo_step(game_data, standard_tile.value, current_tile.value, option, bet);
         // game_data.standard_tile = game_data.current_tile;
         get_odds(game_data, current_tile.value);
-        if (game_data.discarded_tiles.size() >= 19)
+        winhand_check(game_data, game_data.hand_player);
+        if (game_data.winnable == 1)
         {
-            winhand_check(game_data, game_data.hand_player);
-            if (game_data.hand_player.size() == 0)
+            print("You have a winning hand.");
+            // vector<uint8_t> temp_hand = game_data.winning_hand;
+            // sorteye(temp_hand, game_data.eye_idx);
+            // getscore(game_data, temp_hand);
+            // // for (int i = 0; i < game_data.reveal_kong.size(); i++)
+            // // {
+            // //     game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
+            // // }
+            // // for (int i = 0; i < game_data.reveal_kong.size(); i++)
+            // // {
+            // //     game_data.reveal_kong.erase(game_data.reveal_kong.begin());
+            // // }
+            // std::for_each(game_data.reveal_kong.begin(), game_data.reveal_kong.end(), [&game_data](uint8_t const &value) {
+            //     // vector<uint8_t>::iterator value2 = game_data.reveal_kong.find(value);
+            //     vector<uint8_t>::iterator itr = std::find(game_data.reveal_kong.begin(), game_data.reveal_kong.end(), value);
+            //     game_data.winning_hand.insert(game_data.winning_hand.end(), value);
+            //     game_data.reveal_kong.erase(itr);
+            // });
+            // game_data.status = WIN;
+            // // sorteye(temp_hand, game_data.eye_idx);
+            // // getscore(game_data, temp_hand);
+            // print("Well played!");
+        }
+        else
+        {
+            if (game_data.discarded_tiles.size() >= 19)
             {
-                vector<uint8_t> temp_hand = game_data.winning_hand;
-                sorteye(temp_hand, game_data.eye_idx);
-                getscore(game_data, temp_hand);
-                // for (int i = 0; i < game_data.reveal_kong.size(); i++)
-                // {
-                //     game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
-                // }
-                // for (int i = 0; i < game_data.reveal_kong.size(); i++)
-                // {
-                //     game_data.reveal_kong.erase(game_data.reveal_kong.begin());
-                // }
-                std::for_each(game_data.reveal_kong.begin(), game_data.reveal_kong.end(), [&game_data](uint8_t const &value) {
-                    // vector<uint8_t>::iterator value2 = game_data.reveal_kong.find(value);
-                    vector<uint8_t>::iterator itr = std::find(game_data.reveal_kong.begin(), game_data.reveal_kong.end(), value);
-                    game_data.winning_hand.insert(game_data.winning_hand.end(), value);
-                    game_data.reveal_kong.erase(itr);
-                });
-                game_data.status = WIN;
-                // sorteye(temp_hand, game_data.eye_idx);
-                // getscore(game_data, temp_hand);
-                print("Well played!");
+                game_data.status = LOSE;
             }
             else
             {
-                game_data.status = LOSE;
-                print("Your hand didn't win..");
+                print("Keep playing and try again..");
             }
         }
     });
@@ -298,7 +314,15 @@ ACTION mahjonghilo::dclrwinhand(name username)
     check(user.game_data.status == ONGOING, "Game may haven't started yet, may be on trial, or may already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        winhand_check(game_data, game_data.hand_player);
+        // winhand_check(game_data, game_data.hand_player);
+        if (game_data.winnable == 1)
+        {
+            transferhand(game_data, game_data.hand_player.size());
+        }
+        else
+        {
+            print("Your hand didn't win..");
+        }
         if (game_data.hand_player.size() == 0)
         {
             vector<uint8_t> temp_hand = game_data.winning_hand;
@@ -319,7 +343,6 @@ ACTION mahjonghilo::dclrwinhand(name username)
         }
         else
         {
-            game_data.status = LOSE;
             print("Your hand didn't win..");
         }
     });
@@ -337,18 +360,18 @@ ACTION mahjonghilo::withdraw(name username)
     require_auth(username);
     auto user = _users.find(username.value);
     check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred or you are on trial.");
-    check(user->game_data.hi_lo_prize.amount > 0, "You have no prize money.");
-    std::string feedback = "MHL Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.hi_lo_prize.amount); // transfer funds to user
+    check(user->game_data.hi_lo_balance.amount > 0, "You have no prize money.");
+    std::string feedback = "MHL Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.hi_lo_balance.amount); // transfer funds to user
     action{
         permission_level{_self, "active"_n},
         eosio_token,
         "transfer"_n,
-        std::make_tuple(_self, username, user->game_data.hi_lo_prize, feedback)}
+        std::make_tuple(_self, username, user->game_data.hi_lo_balance, feedback)}
         .send();
 
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_prize = DEFAULT_ASSET;
+        game_data.hi_lo_balance = DEFAULT_ASSET;
     });
 }
 

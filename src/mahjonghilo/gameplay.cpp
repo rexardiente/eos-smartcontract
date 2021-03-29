@@ -185,6 +185,7 @@ void mahjonghilo::sumscore(game &gamedata)
         num += tempscore.value;
     }
     gamedata.final_score = num;
+    sorthand(gamedata.score_check);
     while (gamedata.score_check.at(0) == 0)
     {
         gamedata.score_check.erase(gamedata.score_check.begin());
@@ -1337,7 +1338,7 @@ void mahjonghilo::two_rem(game &gamedata, vector<tile> tiles)
     {
 
         gamedata.pair_count += 1;
-        transferhand(gamedata, 2);
+        gamedata.winnable = 1; // transferhand(gamedata, 2);
         // print(tiles[0].value);
         // print("Congratulations, you won!");
         // print(tiles[1].value);
@@ -1359,14 +1360,14 @@ void mahjonghilo::five_rem(game &gamedata, vector<tile> tiles) // AAAKK
             gamedata.pair_count += 1;
             gamedata.eye_idx = 3;
             pung_chow(gamedata, check1);
-            transferhand(gamedata, 5);
+            gamedata.winnable = 1; // transferhand(gamedata, 5);
         }
         else if (check2 == 2 && pair_pung_chow(tiles[2], tiles[3], tiles[4]) == 3)
         {
             gamedata.chow_count += 1;
             gamedata.pair_count += 1;
             gamedata.eye_idx = 0;
-            transferhand(gamedata, 5);
+            gamedata.winnable = 1; // transferhand(gamedata, 5);
         }
         else
         {
@@ -1380,7 +1381,7 @@ void mahjonghilo::five_rem(game &gamedata, vector<tile> tiles) // AAAKK
             gamedata.chow_count += 1;
             gamedata.pair_count += 1;
             gamedata.eye_idx = 3;
-            transferhand(gamedata, 5);
+            gamedata.winnable = 1; // transferhand(gamedata, 5);
         }
         else
         {
@@ -1395,7 +1396,7 @@ void mahjonghilo::five_rem(game &gamedata, vector<tile> tiles) // AAAKK
             gamedata.pair_count += 1;
             gamedata.eye_idx = 0;
             pung_chow(gamedata, check2);
-            transferhand(gamedata, 5);
+            gamedata.winnable = 1; // transferhand(gamedata, 5);
         }
         else
         {
@@ -1409,7 +1410,7 @@ void mahjonghilo::five_rem(game &gamedata, vector<tile> tiles) // AAAKK
             gamedata.chow_count += 1;
             gamedata.pair_count += 1;
             gamedata.eye_idx = 3;
-            transferhand(gamedata, 5);
+            gamedata.winnable = 1; // transferhand(gamedata, 5);
         }
         else
         {
@@ -1429,7 +1430,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
             gamedata.pair_count += 1;
             gamedata.eye_idx = 6;
             pung_chow(gamedata, check1);
-            transferhand(gamedata, 8);
+            gamedata.winnable = 1; // transferhand(gamedata, 8);
         }
         else if (check2 == 2 && pair_pung_chow(tiles[3], tiles[4], tiles[5]) == 2)
         {
@@ -1440,7 +1441,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                 pung_chow(gamedata, check1);
                 gamedata.eye_idx = 3;
                 gamedata.pung_count -= 1;
-                transferhand(gamedata, 8);
+                gamedata.winnable = 1; // transferhand(gamedata, 8);
             }
             else
             {
@@ -1459,7 +1460,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
             gamedata.pair_count += 1;
             gamedata.eye_idx = 0;
             gamedata.chow_count += 2;
-            transferhand(gamedata, 8);
+            gamedata.winnable = 1; // transferhand(gamedata, 8);
         }
         else
         {
@@ -1478,7 +1479,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                 gamedata.eye_idx = 5;
                 gamedata.chow_count += 1;
                 pung_chow(gamedata, check2);
-                transferhand(gamedata, 8);
+                gamedata.winnable = 1; // transferhand(gamedata, 8);
             }
             else if (check3 == 2 && check2 == 2) // 11112233
             {
@@ -1487,7 +1488,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                     gamedata.pair_count += 1;
                     gamedata.eye_idx = 0;
                     gamedata.chow_count += 2;
-                    transferhand(gamedata, 8);
+                    gamedata.winnable = 1; // transferhand(gamedata, 8);
                 }
                 else
                 {
@@ -1502,7 +1503,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                     gamedata.eye_idx = 0;
                     gamedata.chow_count += 1;
                     gamedata.pung_count += 1;
-                    transferhand(gamedata, 8);
+                    gamedata.winnable = 1; // transferhand(gamedata, 8);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 }
                 else
@@ -1519,14 +1520,14 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                 gamedata.pair_count += 1;
                 gamedata.eye_idx = 0;
                 pung_chow(gamedata, check3);
-                transferhand(gamedata, 14);
+                gamedata.winnable = 1; // transferhand(gamedata, 14);
             }
             else if (check3 == 10 && pair_pung_chow(tiles[0], tiles[2], tiles[4]) == 3)
             {
                 gamedata.pair_count += 1;
                 gamedata.eye_idx = 6;
                 gamedata.chow_count += 2;
-                transferhand(gamedata, 8);
+                gamedata.winnable = 1; // transferhand(gamedata, 8);
             }
             else
             {
@@ -1545,7 +1546,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                     gamedata.eye_idx = 2;
                     gamedata.chow_count += 1;
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 8);
+                    gamedata.winnable = 1; // transferhand(gamedata, 8);
                 }
                 else
                 {
@@ -1560,7 +1561,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                     gamedata.pair_count += 1;
                     gamedata.eye_idx = 6;
                     gamedata.chow_count += 2;
-                    transferhand(gamedata, 8);
+                    gamedata.winnable = 1; // transferhand(gamedata, 8);
                 }
                 else
                 {
@@ -1578,7 +1579,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 1;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 8);
+                        gamedata.winnable = 1; // transferhand(gamedata, 8);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[3], tiles[6], tiles[7]) == 3)
@@ -1586,7 +1587,7 @@ void mahjonghilo::eight_rem(game &gamedata, vector<tile> tiles)
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 1;
                         gamedata.chow_count += 2;
-                        transferhand(gamedata, 8);
+                        gamedata.winnable = 1; // transferhand(gamedata, 8);
                     }
                     else
                     {
@@ -1619,7 +1620,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
             gamedata.eye_idx = 9;
             gamedata.chow_count += 1;
             pung_chow(gamedata, check1);
-            transferhand(gamedata, 11);
+            gamedata.winnable = 1; // transferhand(gamedata, 11);
         }
         else if (check2 == 2)
         {
@@ -1629,7 +1630,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                 gamedata.pung_count += 1;
                 gamedata.eye_idx = 9;
                 pung_chow(gamedata, check1);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else if (check10 == 2 && pair_pung_chow(tiles[8], tiles[9], tiles[10]) == 3)
             {
@@ -1637,7 +1638,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                 gamedata.eye_idx = 6;
                 gamedata.chow_count += 1;
                 pung_chow(gamedata, check1);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else
             {
@@ -1652,7 +1653,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                 gamedata.eye_idx = 6;
                 gamedata.pung_count += 1;
                 pung_chow(gamedata, check1);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else if (pair_pung_chow(tiles[8], tiles[9], tiles[10]) == 3)
             {
@@ -1660,7 +1661,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                 gamedata.eye_idx = 6;
                 gamedata.chow_count += 1;
                 pung_chow(gamedata, check1);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else
             {
@@ -1676,7 +1677,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                 gamedata.eye_idx = 8;
                 gamedata.chow_count += 1;
                 pung_chow(gamedata, check1);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else if (check3 == 3 && pair_pung_chow(tiles[3], tiles[4], tiles[5]) == 2) //111222 33334/34444
             {
@@ -1686,7 +1687,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.eye_idx = 3;
                     gamedata.chow_count += 1;
                     pung_chow(gamedata, check1);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 }
                 else
@@ -1711,7 +1712,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                 gamedata.eye_idx = 0;
                 gamedata.chow_count += 2;
                 pung_chow(gamedata, check2);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else
             {
@@ -1739,7 +1740,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.chow_count += 1;
                     pung_chow(gamedata, check2);
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else
                 {
@@ -1755,7 +1756,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.eye_idx = 9;
                     gamedata.chow_count += 2;
                     pung_chow(gamedata, check2);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else if (check4 == 2 && check2 == 2)
                 {
@@ -1764,7 +1765,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 0;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -1786,7 +1787,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.chow_count += 1;
                     gamedata.pung_count += 1;
                     pung_chow(gamedata, check2);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                 }
                 else if (check4 == 2 && pair_pung_chow(tiles[6], tiles[9], tiles[10]) == 3)
@@ -1795,7 +1796,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.eye_idx = 4;
                     gamedata.chow_count += 2;
                     pung_chow(gamedata, check2);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else if (check2 == 2 && pair_pung_chow(tiles[2], tiles[3], tiles[7]) == 3) // 222
                 {
@@ -1806,7 +1807,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 0;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -1835,7 +1836,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.eye_idx = 0;
                     pung_chow(gamedata, check3);
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else
                 {
@@ -1854,7 +1855,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 0;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check4);
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else if (check5 == 3 && pair_pung_chow(tiles[5], tiles[9], tiles[10]) == 3)
                     {
@@ -1863,7 +1864,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.chow_count += 1;
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check4);
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
@@ -1883,14 +1884,14 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 0;
                                 gamedata.chow_count += 3;
-                                transferhand(gamedata, 11);
+                                gamedata.winnable = 1; // transferhand(gamedata, 11);
                             }
                             else if (pair_pung_chow(tiles[1], tiles[5], tiles[7]) == 3)
                             {
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 9;
                                 gamedata.chow_count += 3;
-                                transferhand(gamedata, 11);
+                                gamedata.winnable = 1; // transferhand(gamedata, 11);
                             }
 
                             else
@@ -1912,7 +1913,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                             gamedata.eye_idx = 0;
                             gamedata.chow_count += 2;
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 11);
+                            gamedata.winnable = 1; // transferhand(gamedata, 11);
                         }
                         else
                         {
@@ -1931,7 +1932,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                                 gamedata.chow_count += 1;
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check6);
-                                transferhand(gamedata, 11);
+                                gamedata.winnable = 1; // transferhand(gamedata, 11);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
@@ -1948,7 +1949,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                                 gamedata.chow_count += 1;
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check6);
-                                transferhand(gamedata, 11);
+                                gamedata.winnable = 1; // transferhand(gamedata, 11);
                             }
                             else
                             {
@@ -1975,7 +1976,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.eye_idx = 3;
                     gamedata.chow_count += 1;
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else if (check4 == 10) //  12223 3344 66
                 {
@@ -1984,7 +1985,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 9;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -1999,7 +2000,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 3;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else if (check5 == 3 && pair_pung_chow(tiles[0], tiles[4], tiles[5]) == 3)
                     {
@@ -2007,7 +2008,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 3;
                         gamedata.chow_count += 2;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -2024,7 +2025,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.pair_count += 1;
                     gamedata.eye_idx = 9;
                     gamedata.chow_count += 3;
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else if (check4 == 2)
                 {
@@ -2034,14 +2035,14 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 9;
                         gamedata.chow_count += 2;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[8], tiles[9], tiles[10]) == 3)
                     {
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -2057,7 +2058,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -2072,7 +2073,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 8;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -2090,7 +2091,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                     gamedata.eye_idx = 9;
                     gamedata.chow_count += 3;
                     gamedata.score_check.insert(gamedata.score_check.begin(), 68);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else if (check4 == 2)
                 {
@@ -2100,7 +2101,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 9;
                         gamedata.chow_count += 2;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[8], tiles[9], tiles[10]) == 3)
@@ -2108,7 +2109,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
@@ -2125,7 +2126,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else if (check5 == 1 && pair_pung_chow(tiles[3], tiles[7], tiles[9]) == 3)
                     {
@@ -2134,7 +2135,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                             gamedata.pair_count += 1;
                             gamedata.eye_idx = 2;
                             gamedata.chow_count += 3;
-                            transferhand(gamedata, 11);
+                            gamedata.winnable = 1; // transferhand(gamedata, 11);
                         }
                         else
                         {
@@ -2154,7 +2155,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 8;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 11);
+                        gamedata.winnable = 1; // transferhand(gamedata, 11);
                     }
                     else
                     {
@@ -2168,7 +2169,7 @@ void mahjonghilo::eleven_rem(game &gamedata, vector<tile> tiles) // 11Rem2nd
                                 gamedata.eye_idx = 1;
                                 gamedata.chow_count += 2;
                                 pung_chow(gamedata, check7);
-                                transferhand(gamedata, 11);
+                                gamedata.winnable = 1; // transferhand(gamedata, 11);
                             }
                             else
                             {
@@ -2199,7 +2200,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
         if (check2 > 7 && (pair_check(tiles[12], tiles[13])) == 1)
         {
             gamedata.pair_count += 7;
-            transferhand(gamedata, 14);
+            gamedata.winnable = 1; // transferhand(gamedata, 14);
         }
         else
         {
@@ -2212,7 +2213,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                     gamedata.eye_idx = 0;
                     gamedata.chow_count += 2;
                     pung_chow(gamedata, check3);
-                    transferhand(gamedata, 14);
+                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                 }
                 else
                 {
@@ -2223,7 +2224,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 0;
                         gamedata.chow_count += 3;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check4 == 2 && (pair_pung_chow(tiles[10], tiles[12], tiles[13])) == 3)
@@ -2231,7 +2232,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 0;
                         gamedata.chow_count += 4;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2256,7 +2257,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                 gamedata.eye_idx = 12;
                 gamedata.chow_count += 2;
                 pung_chow(gamedata, check2);
-                transferhand(gamedata, 11);
+                gamedata.winnable = 1; // transferhand(gamedata, 11);
             }
             else if (pair_check(tiles[12], tiles[13]) == 2 && (pair_pung_chow(tiles[11], tiles[12], tiles[13]) == 3))
             {
@@ -2267,7 +2268,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                     gamedata.pung_count -= 1;
                     gamedata.chow_count += 3;
                     pung_chow(gamedata, check2);
-                    transferhand(gamedata, 11);
+                    gamedata.winnable = 1; // transferhand(gamedata, 11);
                 }
                 else
                 {
@@ -2284,7 +2285,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
             if ((pair_check(tiles[12], tiles[13])) == 1)
             {
                 gamedata.pair_count += 7;
-                transferhand(gamedata, 14);
+                gamedata.winnable = 1; // transferhand(gamedata, 14);
             }
             else
             {
@@ -2307,7 +2308,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check3);
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 1 && check3 == 2) // 112233 444 55 66 7
                     {
@@ -2316,7 +2317,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.pair_count += 1;
                             gamedata.eye_idx = 6;
                             gamedata.chow_count += 4;
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -2339,7 +2340,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 6;
                             gamedata.chow_count += 3;
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -2352,7 +2353,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 12;
                         gamedata.chow_count += 3;
                         pung_chow(gamedata, check4);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2368,7 +2369,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 11;
                         gamedata.chow_count += 3;
                         pung_chow(gamedata, check3);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 3 && check3 == 2) // 112233 555 66667 67777
                     {
@@ -2378,7 +2379,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 6;
                             gamedata.chow_count += 3;
                             gamedata.pung_count += 1;
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                             gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
@@ -2401,7 +2402,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                     gamedata.eye_idx = 6;
                     gamedata.chow_count += 2;
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 14);
+                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                 }
                 else
                 {
@@ -2411,7 +2412,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 4;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                     {
@@ -2419,7 +2420,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 6;
                         gamedata.pung_count += 1;
                         gamedata.chow_count += 3;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
@@ -2441,7 +2442,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 8;
                         gamedata.chow_count += 3;
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2455,7 +2456,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 12;
                         gamedata.chow_count += 4;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2470,7 +2471,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 12;
                         gamedata.chow_count += 3;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else if (check10 == 2 && pair_pung_chow(tiles[9], tiles[12], tiles[13]) == 3)
@@ -2478,7 +2479,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 7;
                         gamedata.chow_count += 4;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2504,7 +2505,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                 gamedata.eye_idx = 12;
                 pung_chow(gamedata, check1);
                 pung_chow(gamedata, check2);
-                transferhand(gamedata, 14);
+                gamedata.winnable = 1; // transferhand(gamedata, 14);
             }
             else if (check3 == 2)
             {
@@ -2516,7 +2517,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                     pung_chow(gamedata, check2);
                     gamedata.pung_count -= 1;
                     gamedata.chow_count += 1;
-                    transferhand(gamedata, 14);
+                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                 }
                 else
                 {
@@ -2544,7 +2545,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         pung_chow(gamedata, check1);
                         pung_chow(gamedata, check3);
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2564,7 +2565,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             pung_chow(gamedata, check1);
                             pung_chow(gamedata, check3);
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -2578,7 +2579,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 1;
                         pung_chow(gamedata, check1);
                         pung_chow(gamedata, check3);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2599,7 +2600,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                     gamedata.eye_idx = 6;
                     pung_chow(gamedata, check1);
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 14);
+                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                 }
                 else
                 {
@@ -2610,7 +2611,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check1);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                     {
@@ -2619,7 +2620,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 1;
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check1);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
@@ -2644,7 +2645,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             pung_chow(gamedata, check1);
                             pung_chow(gamedata, check5);
                             gamedata.pung_count -= 1;
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -2656,7 +2657,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 2;
                                 pung_chow(gamedata, check1);
                                 gamedata.pung_count -= 1;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                             {
@@ -2665,7 +2666,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 1;
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check1);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
@@ -2684,7 +2685,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 1;
                             pung_chow(gamedata, check1);
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -2722,7 +2723,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         pung_chow(gamedata, check2);
                         pung_chow(gamedata, check4);
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2739,7 +2740,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check2);
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -2759,7 +2760,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 2;
                             pung_chow(gamedata, check2);
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                         {
@@ -2769,7 +2770,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.pung_count += 1;
                             pung_chow(gamedata, check2);
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                             gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
@@ -2789,7 +2790,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 12;
                                 gamedata.chow_count += 3;
                                 pung_chow(gamedata, check2);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check7 == 2)
                             {
@@ -2800,7 +2801,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.pung_count += 1;
                                     gamedata.chow_count += 2;
                                     pung_chow(gamedata, check2);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else if (pair_check(tiles[12], tiles[13]) == 2 && pair_pung_chow(tiles[11], tiles[12], tiles[13]) == 3)
                                 {
@@ -2808,7 +2809,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 9;
                                     gamedata.chow_count += 3;
                                     pung_chow(gamedata, check2);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -2825,7 +2826,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.chow_count += 2;
                                     pung_chow(gamedata, check2);
                                     pung_chow(gamedata, check8);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -2841,7 +2842,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 11;
                                     gamedata.chow_count += 3;
                                     pung_chow(gamedata, check2);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -2875,7 +2876,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 1;
                             pung_chow(gamedata, check4);
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -2894,7 +2895,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 0;
                                 gamedata.chow_count += 3;
                                 pung_chow(gamedata, check5);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                             {
@@ -2902,7 +2903,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pung_count += 1;
                                 gamedata.chow_count += 2;
                                 pung_chow(gamedata, check5);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
@@ -2922,7 +2923,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 0;
                                     gamedata.chow_count += 3;
                                     pung_chow(gamedata, check7);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -2938,7 +2939,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.pung_count += 1;
                                     gamedata.chow_count += 2;
                                     pung_chow(gamedata, check7);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                     gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                                 }
                                 else
@@ -2975,7 +2976,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                     gamedata.eye_idx = 0;
                     pung_chow(gamedata, check3);
                     pung_chow(gamedata, check4);
-                    transferhand(gamedata, 14);
+                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                 }
                 else
                 {
@@ -2986,7 +2987,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 0;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check3);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                     {
@@ -2995,7 +2996,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 1;
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check3);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                         gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                     }
                     else
@@ -3020,7 +3021,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 2;
                             pung_chow(gamedata, check4);
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -3038,7 +3039,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.pung_count += 1;
                             pung_chow(gamedata, check4);
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                             gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
@@ -3065,7 +3066,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 0;
                                 gamedata.chow_count += 3;
                                 pung_chow(gamedata, check6);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3086,7 +3087,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 0;
                             gamedata.chow_count += 2;
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -3096,7 +3097,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 0;
                                 gamedata.chow_count += 4;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                             {
@@ -3104,7 +3105,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 0;
                                 gamedata.chow_count += 3;
                                 gamedata.pung_count += 1;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3122,7 +3123,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 1;
                             gamedata.pair_count += 1;
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                             gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
@@ -3134,7 +3135,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 0;
                                 gamedata.pair_count += 1;
                                 gamedata.chow_count += 3;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
@@ -3143,7 +3144,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 0;
                                 gamedata.chow_count += 2;
                                 gamedata.pung_count += 2;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
@@ -3166,7 +3167,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 0;
                                 gamedata.pair_count += 1;
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 7);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3201,7 +3202,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 1;
                         pung_chow(gamedata, check4);
                         pung_chow(gamedata, check5);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -3220,7 +3221,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 2;
                             gamedata.chow_count += 3;
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else if (check6 == 3 && pair_pung_chow(tiles[8], tiles[10], tiles[13]) == 3)
                         {
@@ -3229,7 +3230,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 2;
                             gamedata.pung_count += 1;
                             pung_chow(gamedata, check5);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                             gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                         }
                         else
@@ -3248,7 +3249,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 12;
                                 gamedata.chow_count += 4;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check6 == 2)
                             {
@@ -3258,14 +3259,14 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 12;
                                     gamedata.chow_count += 3;
                                     gamedata.pung_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else if (check7 == 2 && pair_pung_chow(tiles[11], tiles[12], tiles[13]) == 3)
                                 {
                                     gamedata.pair_count += 1;
                                     gamedata.eye_idx = 9;
                                     gamedata.chow_count += 4;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3281,7 +3282,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 9;
                                     gamedata.chow_count += 3;
                                     pung_chow(gamedata, check8);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3296,7 +3297,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.pair_count += 1;
                                     gamedata.eye_idx = 11;
                                     gamedata.chow_count += 4;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3327,7 +3328,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 12;
                         gamedata.chow_count += 2;
                         pung_chow(gamedata, check4);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 2 && pair_pung_chow(tiles[9], tiles[10], tiles[11]) == 2)
                     {
@@ -3338,7 +3339,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 3;
                             pung_chow(gamedata, check4);
                             gamedata.pung_count -= 1;
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -3357,7 +3358,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.pair_count += 1;
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 4;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -3380,7 +3381,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 2;
                                 pung_chow(gamedata, check5);
                                 pung_chow(gamedata, check7);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check7 == 1 && check5 == 2)
                             {
@@ -3389,7 +3390,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.pair_count += 1;
                                     gamedata.eye_idx = 6;
                                     gamedata.chow_count += 4;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3410,7 +3411,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 11;
                                 gamedata.chow_count += 3;
                                 pung_chow(gamedata, check5);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3427,14 +3428,14 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 6;
                             gamedata.chow_count += 2;
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else if (check6 == 10 && pair_pung_chow(tiles[6], tiles[8], tiles[10]) == 3)
                         {
                             gamedata.pair_count += 1;
                             gamedata.eye_idx = 12;
                             gamedata.chow_count += 4;
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -3444,7 +3445,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 6;
                                 gamedata.chow_count += 4;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                             {
@@ -3452,7 +3453,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 6;
                                 gamedata.chow_count += 3;
                                 gamedata.pung_count += 1;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
@@ -3473,7 +3474,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 8;
                                 gamedata.chow_count += 3;
                                 pung_chow(gamedata, check7);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3487,7 +3488,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 12;
                                 gamedata.chow_count += 4;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3503,7 +3504,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 12;
                                 gamedata.chow_count += 3;
                                 gamedata.pung_count += 1;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else if (check7 == 2 && pair_pung_chow(tiles[9], tiles[12], tiles[13]) == 3)
@@ -3511,7 +3512,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pair_count += 1;
                                 gamedata.eye_idx = 8;
                                 gamedata.chow_count += 4;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
@@ -3540,7 +3541,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.chow_count += 1;
                         gamedata.pung_count += 1;
                         pung_chow(gamedata, check4);
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else if (check5 == 2 && pair_pung_chow(tiles[9], tiles[10], tiles[11]) == 2)
                     {
@@ -3550,7 +3551,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 9;
                             gamedata.chow_count += 2;
                             pung_chow(gamedata, check4);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -3570,7 +3571,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                         gamedata.eye_idx = 6;
                         gamedata.chow_count += 3;
                         gamedata.pung_count += 1;
-                        transferhand(gamedata, 14);
+                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                     }
                     else
                     {
@@ -3594,7 +3595,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check5);
                                 pung_chow(gamedata, check7);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check7 == 1 && check5 == 2)
                             {
@@ -3604,7 +3605,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 6;
                                     gamedata.chow_count += 3;
                                     gamedata.pung_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3626,7 +3627,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.chow_count += 2;
                                 gamedata.pung_count += 1;
                                 pung_chow(gamedata, check5);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3644,7 +3645,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.chow_count += 1;
                             gamedata.pung_count += 1;
                             pung_chow(gamedata, check6);
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else if (check6 == 10 && pair_pung_chow(tiles[6], tiles[8], tiles[10]) == 3)
                         {
@@ -3652,7 +3653,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             gamedata.eye_idx = 12;
                             gamedata.chow_count += 3;
                             gamedata.pung_count += 1;
-                            transferhand(gamedata, 14);
+                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                         }
                         else
                         {
@@ -3663,7 +3664,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 6;
                                 gamedata.chow_count += 3;
                                 gamedata.pung_count += 1;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                             {
@@ -3671,7 +3672,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 6;
                                 gamedata.chow_count += 2;
                                 gamedata.pung_count += 2;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                             }
                             else
@@ -3691,7 +3692,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 gamedata.eye_idx = 3;
                                 gamedata.chow_count += 2;
                                 pung_chow(gamedata, check6);
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                             }
                             else
                             {
@@ -3702,7 +3703,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 3;
                                     gamedata.chow_count += 4;
                                     pung_chow(gamedata, check6);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else if (check7 == 3 && pair_pung_chow(tiles[8], tiles[12], tiles[13]) == 3)
                                 {
@@ -3711,7 +3712,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 3;
                                     gamedata.chow_count += 3;
                                     gamedata.pung_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                     gamedata.score_check.insert(gamedata.score_check.begin(), 68);
                                 }
                                 else
@@ -3733,7 +3734,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.chow_count += 2;
                                     gamedata.pung_count += 1;
                                     pung_chow(gamedata, check7);
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3748,7 +3749,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 12;
                                     gamedata.chow_count += 3;
                                     gamedata.pung_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3765,7 +3766,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 12;
                                     gamedata.chow_count += 2;
                                     gamedata.pung_count += 2;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else if (check7 == 2 && pair_pung_chow(tiles[9], tiles[12], tiles[13]) == 3)
                                 {
@@ -3773,7 +3774,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     gamedata.eye_idx = 8;
                                     gamedata.chow_count += 3;
                                     gamedata.pung_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 }
                                 else
                                 {
@@ -3800,7 +3801,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                             if (honors_check(tiles[7], tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]) == 1)
                             {
                                 gamedata.pair_count += 1;
-                                transferhand(gamedata, 14);
+                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                             }
                             else
@@ -3823,7 +3824,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 if (pair_check(tiles[5], tiles[6]) == 3 && honors_check(tiles[7], tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]) == 1)
                                 {
                                     gamedata.pair_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                     gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                 }
                                 else
@@ -3843,7 +3844,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 if (pair_check(tiles[5], tiles[6]) == 3 && honors_check(tiles[7], tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]) == 1)
                                 {
                                     gamedata.pair_count += 1;
-                                    transferhand(gamedata, 14);
+                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                     gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                 }
                                 else
@@ -3861,7 +3862,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         if (honors_check(tiles[7], tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]) == 1)
                                         {
                                             gamedata.pair_count += 1;
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                         }
                                         else
@@ -3881,7 +3882,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         if (honors_check(tiles[7], tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]) == 1) // 1919199ESWNRWG
                                         {
                                             gamedata.pair_count += 1;
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                         }
                                         else
@@ -3896,7 +3897,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             if (honors_check(tiles[7], tiles[8], tiles[9], tiles[10], tiles[11], tiles[12], tiles[13]) == 1) // 191919EESWNRWG
                                             {
                                                 gamedata.pair_count += 1;
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                             }
                                             else if (tiles[7].value == 10 && tiles[7].suit == 5)
@@ -3908,7 +3909,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                         if ((tiles[11].suit + 1) == tiles[12].suit && (tiles[12].suit + 1) == tiles[13].suit)
                                                         {
                                                             gamedata.pair_count += 1;
-                                                            transferhand(gamedata, 14);
+                                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                             gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                                         }
                                                         else
@@ -3930,7 +3931,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                             if ((tiles[12].suit + 1) == tiles[13].suit)
                                                             {
                                                                 gamedata.pair_count += 1;
-                                                                transferhand(gamedata, 14);
+                                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                                             }
                                                             else
@@ -3950,7 +3951,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                             if ((tiles[11].suit + 1) == tiles[12].suit && (tiles[12].suit + 1) == tiles[13].suit)
                                                             {
                                                                 gamedata.pair_count += 1;
-                                                                transferhand(gamedata, 14);
+                                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                                             }
                                                             else
@@ -3965,7 +3966,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                                 if ((tiles[12].suit + 1) == tiles[13].suit)
                                                                 {
                                                                     gamedata.pair_count += 1;
-                                                                    transferhand(gamedata, 14);
+                                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                                                 }
                                                                 else
@@ -3978,13 +3979,13 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                                 if (pair_check(tiles[11], tiles[12]) == 1 && tiles[12].suit + 1 == tiles[13].suit) // 191919ESWNRWWG
                                                                 {
                                                                     gamedata.pair_count += 1;
-                                                                    transferhand(gamedata, 14);
+                                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                                                 }
                                                                 else if ((tiles[11].suit + 1) == tiles[12].suit && pair_check(tiles[12], tiles[13]) == 1) // 191919ESWNRWGG
                                                                 {
                                                                     gamedata.pair_count += 1;
-                                                                    transferhand(gamedata, 14);
+                                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 7);
                                                                 }
                                                                 else
@@ -4053,7 +4054,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[5].value == 3 || tiles[5].value == 6)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                         }
                                         else
@@ -4065,7 +4066,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[5].value == 2 || tiles[5].value == 5)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                         }
                                         else
@@ -4087,7 +4088,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[5].value == 3 || tiles[5].value == 6)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                         }
                                         else
@@ -4099,7 +4100,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[5].value == 1 || tiles[5].value == 4)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                         }
                                         else
@@ -4121,7 +4122,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[5].value == 2 || tiles[5].value == 5)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                         }
                                         else
@@ -4133,7 +4134,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[5].value == 1 || tiles[5].value == 4)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                         }
                                         else
@@ -4169,7 +4170,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             {
                                                 if (tiles[5].value == 3 || tiles[5].value == 6)
                                                 {
-                                                    transferhand(gamedata, 14);
+                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                 }
                                                 else
@@ -4189,7 +4190,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             {
                                                 if (tiles[5].value == 2 || tiles[5].value == 5)
                                                 {
-                                                    transferhand(gamedata, 14);
+                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                 }
                                                 else
@@ -4215,7 +4216,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                 {
                                                     if (tiles[4].value == 3)
                                                     {
-                                                        transferhand(gamedata, 14);
+                                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                         gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                     }
                                                     else
@@ -4235,7 +4236,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                 {
                                                     if (tiles[4].value == 2)
                                                     {
-                                                        transferhand(gamedata, 14);
+                                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                         gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                     }
                                                     else
@@ -4271,7 +4272,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             {
                                                 if (tiles[5].value == 3 || tiles[5].value == 6)
                                                 {
-                                                    transferhand(gamedata, 14);
+                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                 }
                                                 else
@@ -4291,7 +4292,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             {
                                                 if (tiles[5].value == 1 || tiles[5].value == 4)
                                                 {
-                                                    transferhand(gamedata, 14);
+                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                 }
                                                 else
@@ -4317,7 +4318,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                 {
                                                     if (tiles[4].value == 3)
                                                     {
-                                                        transferhand(gamedata, 14);
+                                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                         gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                     }
                                                     else
@@ -4337,7 +4338,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                 {
                                                     if (tiles[4].value == 1)
                                                     {
-                                                        transferhand(gamedata, 14);
+                                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                         gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                     }
                                                     else
@@ -4373,7 +4374,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             {
                                                 if (tiles[5].value == 2 || tiles[5].value == 5)
                                                 {
-                                                    transferhand(gamedata, 14);
+                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                 }
                                                 else
@@ -4393,7 +4394,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             {
                                                 if (tiles[5].value == 1 || tiles[5].value == 4)
                                                 {
-                                                    transferhand(gamedata, 14);
+                                                    gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                     gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                 }
                                                 else
@@ -4419,7 +4420,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                 {
                                                     if (tiles[4].value == 2)
                                                     {
-                                                        transferhand(gamedata, 14);
+                                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                         gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                     }
                                                     else
@@ -4439,7 +4440,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                                 {
                                                     if (tiles[4].value == 1)
                                                     {
-                                                        transferhand(gamedata, 14);
+                                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                         gamedata.score_check.insert(gamedata.score_check.begin(), 27);
                                                     }
                                                     else
@@ -4491,7 +4492,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         {
                                             if (tiles[6].value == 3 || tiles[6].value == 6)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4511,7 +4512,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         {
                                             if (tiles[6].value == 3 || tiles[6].value == 6)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4539,7 +4540,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             int check18 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
                                             if (check18 == 4 && tiles[5].value == 3)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4552,7 +4553,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             int check18 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
                                             if (check18 == 4 && tiles[5].value == 2)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4583,7 +4584,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         {
                                             if (tiles[6].value == 3 || tiles[6].value == 6)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4603,7 +4604,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         {
                                             if (tiles[6].value == 1 || tiles[6].value == 4)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4631,7 +4632,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             int check18 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
                                             if (check18 == 4 && tiles[5].value == 3)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4644,7 +4645,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             int check18 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
                                             if (check18 == 4 && tiles[5].value == 1)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4675,7 +4676,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         {
                                             if (tiles[6].value == 1 || tiles[6].value == 4)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4695,7 +4696,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                         {
                                             if (tiles[6].value == 5 || tiles[6].value == 8)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4723,7 +4724,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             int check18 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
                                             if (check18 == 4 && tiles[5].value == 2)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4736,7 +4737,7 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                             int check18 = pair_pung_chow(tiles[5], tiles[6], tiles[7]);
                                             if (check18 == 4 && tiles[5].value == 1)
                                             {
-                                                transferhand(gamedata, 14);
+                                                gamedata.winnable = 1; // transferhand(gamedata, 14);
                                                 gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                             }
                                             else
@@ -4773,12 +4774,12 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[2].value == 2 && tiles[5].value == 3)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                         }
                                         else if (tiles[2].value == 3 && tiles[5].value == 2)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                         }
                                     }
@@ -4786,12 +4787,12 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[2].value == 1 && tiles[5].value == 3)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                         }
                                         else if (tiles[2].value == 3 && tiles[5].value == 1)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                         }
                                     }
@@ -4799,12 +4800,12 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                     {
                                         if (tiles[2].value == 1 && tiles[5].value == 2)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                         }
                                         else if (tiles[2].value == 2 && tiles[5].value == 1)
                                         {
-                                            transferhand(gamedata, 14);
+                                            gamedata.winnable = 1; // transferhand(gamedata, 14);
                                             gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                         }
                                     }
@@ -4837,14 +4838,14 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 {
                                     if (tiles[3].value == 2 && tiles[6].value == 3)
                                     {
-                                        transferhand(gamedata, 14);
-                                        gamedata.score_check.insert(gamedata.score_check.begin(), 35);
+                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
+                                        // gamedata.score_check.insert(gamedata.score_check.begin(), 35);
                                         gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                     }
                                     else if (tiles[3].value == 3 && tiles[6].value == 2)
                                     {
-                                        transferhand(gamedata, 14);
-                                        gamedata.score_check.insert(gamedata.score_check.begin(), 35);
+                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
+                                        // gamedata.score_check.insert(gamedata.score_check.begin(), 35);
                                         gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                     }
                                     else
@@ -4856,14 +4857,14 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 {
                                     if (tiles[3].value == 1 && tiles[6].value == 3)
                                     {
-                                        transferhand(gamedata, 14);
-                                        gamedata.score_check.insert(gamedata.score_check.begin(), 35);
+                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
+                                        // gamedata.score_check.insert(gamedata.score_check.begin(), 35);
                                         gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                     }
                                     else if (tiles[3].value == 3 && tiles[6].value == 1)
                                     {
-                                        transferhand(gamedata, 14);
-                                        gamedata.score_check.insert(gamedata.score_check.begin(), 35);
+                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
+                                        // gamedata.score_check.insert(gamedata.score_check.begin(), 35);
                                         gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                     }
                                     else
@@ -4875,14 +4876,14 @@ void mahjonghilo::fourteen_rem(game &gamedata, vector<tile> tiles) // 14Rem
                                 {
                                     if (tiles[3].value == 1 && tiles[6].value == 2)
                                     {
-                                        transferhand(gamedata, 14);
-                                        gamedata.score_check.insert(gamedata.score_check.begin(), 35);
+                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
+                                        // gamedata.score_check.insert(gamedata.score_check.begin(), 35);
                                         gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                     }
                                     else if (tiles[3].value == 2 && tiles[6].value == 1)
                                     {
-                                        transferhand(gamedata, 14);
-                                        gamedata.score_check.insert(gamedata.score_check.begin(), 35);
+                                        gamedata.winnable = 1; // transferhand(gamedata, 14);
+                                        // gamedata.score_check.insert(gamedata.score_check.begin(), 35);
                                         gamedata.score_check.insert(gamedata.score_check.begin(), 38);
                                     }
                                     else
