@@ -73,8 +73,8 @@ ACTION mahjonghilo::initialize(name username)
             game_data.seat_wind = NORTH;
         }
 
-        // game_data.standard_tile = game_data.current_tile;
-        const auto hilo_tile = table_deck.at(gettile(game_data));
+        game_data.standard_tile = gettile(game_data);
+        const auto hilo_tile = table_deck.at(game_data.standard_tile);
         get_odds(game_data, hilo_tile.value);
     });
 }

@@ -186,7 +186,7 @@ void mahjonghilo::sumscore(game &gamedata)
     }
     gamedata.final_score = num;
     sorthand(gamedata.score_check);
-    while (gamedata.score_check.at(0) == 0)
+    while (gamedata.score_check[0] == 0)
     {
         gamedata.score_check.erase(gamedata.score_check.begin());
     }
@@ -1067,7 +1067,7 @@ void mahjonghilo::transferhand(game &gamedata, int size)
     {
         gamedata.hand_player.erase(gamedata.hand_player.begin());
     }
-    // sorthand(gamedata.winning_hand);
+    sorthand(gamedata.winning_hand);
 }
 
 void mahjonghilo::pung_chow(game &gamedata, int check)
