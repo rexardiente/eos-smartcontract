@@ -221,21 +221,21 @@ ACTION mahjonghilo::playhilo(name username, int option)
         if (game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()))
         {
             winhand_check(game_data, game_data.hand_player);
-        }
-        if (game_data.winnable == 1)
-        {
-            print("You have a winning hand.");
-        }
-        else
-        {
-            if (game_data.discarded_tiles.size() >= 19)
+            if (game_data.winnable == 1)
             {
-                game_data.status = LOSE;
-                print("Draw limits reached.");
+                print("You have a winning hand.");
             }
             else
             {
-                print("Keep playing and try again..");
+                if (game_data.discarded_tiles.size() >= 19)
+                {
+                    game_data.status = LOSE;
+                    print("Draw limits reached.");
+                }
+                else
+                {
+                    print("Keep playing and try again..");
+                }
             }
         }
     });
@@ -251,6 +251,7 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
+        game_data.winnable = 0;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
         game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
     });
@@ -279,6 +280,7 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
         check(check1 == 1 && check2 == 1, "Tiles are not of the same suit and value.");
         if (pair_check(kongtile[0], kongtile[2]) == 1)
         {
+            game_data.winnable = 0;
             for (int i = 0; i < 4; i++)
             {
                 game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
@@ -304,13 +306,12 @@ ACTION mahjonghilo::dclrwinhand(name username)
     check(user.game_data.status == ONGOING, "Game may haven't started yet, may be on trial, or may already ended.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        // winhand_check(game_data, game_data.hand_player);
         if (game_data.winnable == 1)
         {
             transferhand(game_data, game_data.hand_player.size());
             vector<uint8_t> temp_hand = game_data.winning_hand;
             sorteye(temp_hand, game_data.eye_idx);
-            getscore(game_data, temp_hand);
+            // getscore(game_data, temp_hand);
             for (int i = 0; i < game_data.reveal_kong.size(); i++)
             {
                 game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
