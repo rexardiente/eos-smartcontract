@@ -100,6 +100,20 @@ void treasurehunt::showremainingtile(game &game_data)
     }
 }
 
+string treasurehunt::checksum256_to_string_hash()
+{   
+    auto size = transaction_size();
+    char buf[size];
+    check(size == read_transaction(buf, size), "read_transaction failed");
+    checksum256 sha = sha256(buf, size);
+    auto hbytes = sha.extract_as_byte_array();
+    std::string hash_id;
+
+    const char *to_hex = "0123456789abcdef";
+    for (uint32_t i = 0; i < hbytes.size(); ++i) { (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)]; }
+    return hash_id;
+}
+
 asset treasurehunt::generateprize(game gamedata)
 {
     asset game_prize = gamedata.prize;

@@ -54,3 +54,10 @@ Input parameters:
 - `user` (string to include in the output)
 - `prize` (uint64_t to include in the output)
 - `memo` (string to include in the output)
+
+<h1 class="contract">autoplay</h1>
+Stub for autoplay action's ricardian contract parameters
+Input parameters:
+
+- `user` (string to include in the output)
+- `to_open_panel` (vector<uint8_t> to include in the output)

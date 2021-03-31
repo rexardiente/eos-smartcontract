@@ -1,6 +1,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 #include <eosio/transaction.hpp>
+#include <eosio/crypto.hpp>
 #include "config.hpp"
 
 using namespace std;
@@ -51,7 +52,7 @@ private:
     struct [[eosio::table]] user
     {
         name username;
-        uint64_t game_id;
+        string game_id;
         game game_data;
 
         auto primary_key() const
@@ -85,6 +86,7 @@ private:
     void onsettledpay(name to, asset quantity, string memo);
     void showremainingtile(game & game_data);
     void gameupdate(game & game_data);
+    string checksum256_to_string_hash();
 
 public:
     using contract::contract;

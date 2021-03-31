@@ -9,11 +9,12 @@ ACTION treasurehunt::initialize(name username)
     if (itr == _users.end())
     {
         users_table userstbl(_self, username.value);
-        uint64_t gameid = userstbl.available_primary_key();
+        string hash_string = checksum256_to_string_hash();
+        // uint64_t gameid = userstbl.available_primary_key();
 
         _users.emplace(_self, [&](auto &new_users) {
             new_users.username = username;
-            new_users.game_id = gameid;
+            new_users.game_id = hash_string;
         });
     }
 }
