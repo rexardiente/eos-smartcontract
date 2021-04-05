@@ -67,7 +67,7 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
 
 uint8_t mahjonghilo::gettile(game &gamedata)
 {
-    uint8_ deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
+    uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
     // uint8_t deck_tile_idx = 114; // Pick a random tile from the deck
 
     gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
@@ -855,6 +855,10 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 66);
                     }
+                    else if (tiles2[0].value == tiles2[1].value)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    }
                     else
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 0);
@@ -941,6 +945,185 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                         {
                             gamedata.score_check.insert(gamedata.score_check.begin(), 52);
                         }
+                    }
+                }
+                else if (check1 == 22) // 2-8 999 999 DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    if (tiles[12].value == 10)
+                    {
+                        if (tiles[0].suit == tiles2[1].suit || tiles[0].suit == tiles[2].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                        }
+                    }
+                    else
+                    {
+                        if (tiles[0].suit == tiles2[1].suit || tiles[0].suit == tiles[2].suit)
+                        {
+                            if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                            }
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                    // int checktype = 0;
+                    // if (tiles2[0].suit == tiles2[1].suit || tiles2[0].suit == tiles2[2].suit)
+                    // {
+                    //     checktype = checktype;
+                    // }
+                    // else
+                    // {
+                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                    //     checktype = 1;
+                    // }
+                    // if (tiles2[0].value == 8)
+                    // {
+                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                    // }
+                    // else
+                    // {
+                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    // }
+                    // if (checktype == 0)
+                    // {
+                    //     if (tiles[12].value > 9)
+                    //     {
+                    //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                    //     }
+                    //     else
+                    //     {
+                    //         if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
+                    //         {
+                    //             gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                    //         }
+                    //         else
+                    //         {
+                    //             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    //         }
+                    //     }
+                    // }
+                    // else
+                    // {
+                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    // }
+                }
+                else if (check1 == 23 || check1 == 34) // 2-8 2-8/1/9 www www
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    if (tiles2[0].value + 1 == tiles2[1].value && tiles2[0].suit != tiles2[1].suit)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                    }
+                    else if (tiles2[0].value == tiles2[1].value)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                    if (tiles[12].value > 9)
+                    {
+                        if (tiles[0].suit == tiles[3].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                    }
+                    else
+                    {
+                        if (tiles2[0].suit == tiles[12].suit || tiles2[1].suit == tiles[12].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                        }
+                    }
+                }
+                else if (check1 == 24) // 2-8 999 999 www
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    int checktype = 0;
+                    if (tiles2[0].suit == tiles2[1].suit || tiles2[0].suit == tiles2[2].suit)
+                    {
+                        checktype = checktype;
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                        checktype = 1;
+                    }
+                    if (tiles2[0].value == 8)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                    if (checktype == 0)
+                    {
+                        if (tiles[12].value > 9)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        }
+                        else
+                        {
+                            if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                }
+                else if (check1 == 25) // 2-8 999 999 999
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 31);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    if (tiles2[0].value == 8)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                    if (tiles[12].value < 10)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 67);
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
                     }
                 }
                 else

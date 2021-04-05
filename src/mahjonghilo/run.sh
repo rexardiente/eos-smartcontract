@@ -63,6 +63,14 @@ INITIALIZE_GAME()
     
 }
 
+END_GAME()
+{
+    echo "${EXECUTE} Creating new account for \"user1\"..."
+    cleos push action mahjonghilo endgame '["user1"]' -p user1@active #for user1
+    # cleos push action mahjonghilo initialize '["user2"]' -p user2@active #for user2
+    
+}
+
 # RESET_GAME()
 # {
 #     echo "${EXECUTE} Creating new account for \"user1\"..."
@@ -96,7 +104,7 @@ KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user',
 
 TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
 {
-    cleos push action mahjonghilo starttrial '["user1", 10, [34,35,36,77,78,70,71,72,121,122,123,133,134,135]]' -p user1@active
+    cleos push action mahjonghilo starttrial '["user1", 10, [35,36,70,72,71,103,102,101,106,107,108,123,122,121]]' -p user1@active
 }
 
 WINDEC() ## function : dclrwinhand -> to declare a winning hand, parameters : name 'user'   note : game data of the user will be used for checking
@@ -138,9 +146,10 @@ GET_CURRENCY()
 # PLAYHILO
 # DISCARD
 # KONGDEC
-# WINDEC 
+# WINDEC
+# END_GAME 
 # WITHDRAW
-TRIALMODE
+# TRIALMODE
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
