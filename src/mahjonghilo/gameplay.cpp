@@ -68,7 +68,7 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
 uint8_t mahjonghilo::gettile(game &gamedata)
 {
     uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
-    // uint8_t deck_tile_idx = 114; // Pick a random tile from the deck
+    // uint8_t deck_tile_idx = 9; // Pick a random tile from the deck
 
     gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
@@ -1126,6 +1126,54 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                         gamedata.score_check.insert(gamedata.score_check.begin(), 0);
                     }
                 }
+                else if (check1 == 32) // 2-8 2-8 999 DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    if (tiles[12].value == 10)
+                    {
+                        if (tiles[0].suit != tiles2[1].suit)
+                        {
+                            if (tiles[1].suit != tiles2[2].suit)
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            }
+                        }
+                        else
+                        {
+                            if (tiles[1].suit == tiles2[2].suit)
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // if (tiles[0].suit != tiles2[1].suit)
+                        // {
+                        //     if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
+                        //     {
+                        //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        //     }
+                        //     else
+                        //     {
+                        //         gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        //     }
+                        // }
+                        // else
+                        // {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        // }
+                    }
+                }
                 else
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 56); // trial
@@ -1227,7 +1275,6 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
             {
                 gamedata.score_check.insert(gamedata.score_check.begin(), 0);
             }
-
             // vector<int> checksamp = {};
             // for (int i = 0; i < tiles2.size(); i++)
             // {
