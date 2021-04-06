@@ -102,10 +102,10 @@ KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user',
     cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
 }
 
-TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
-{
-    cleos push action mahjonghilo starttrial '["user1", 10, [35,36,70,72,71,103,102,101,106,107,108,123,122,121]]' -p user1@active
-}
+# TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
+# {
+#     cleos push action mahjonghilo starttrial '["user1", 10, [77,78,79,81,82,83,85,86,87,133,134,135,94,95]]' -p user1@active
+# }
 
 WINDEC() ## function : dclrwinhand -> to declare a winning hand, parameters : name 'user'   note : game data of the user will be used for checking
 { 
@@ -139,8 +139,8 @@ GET_CURRENCY()
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
-# COMPILE_CONTRACT
-# DEPLOY_CONTRACT
+COMPILE_CONTRACT
+DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER
 # PLAYHILO
@@ -151,5 +151,5 @@ GET_CURRENCY()
 # WITHDRAW
 # TRIALMODE
 # GET_CURRENCY 
-REMOVE_EXISTING_GAME
+# REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

@@ -121,7 +121,7 @@ private:
         {60, {"Prevalent Wind", 2}},
         {61, {"Seat Wind", 2}},
         {62, {"All Chows", 2}},
-        {63, {"Double Pungs", 2}},
+        // {63, {"Double Pungs", 2}},
         {64, {"Two Concealed Pungs", 2}},
         {65, {"Concealed Kong", 2}},
         {66, {"Mixed Double Pungs", 2}},
@@ -309,7 +309,7 @@ private:
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
-        vector<string> score_type = {};
+        vector<score> score_type = {};
         int final_score;
     };
 

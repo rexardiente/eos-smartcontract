@@ -180,16 +180,16 @@ void mahjonghilo::sumscore(game &gamedata)
         const auto tempscore = score_deck.at(gamedata.score_check[i]);
         if (tempscore.score_name != "No Score")
         {
-            gamedata.score_type.insert(gamedata.score_type.begin(), tempscore.score_name);
+            gamedata.score_type.insert(gamedata.score_type.begin(), tempscore);
         }
         num += tempscore.value;
     }
     gamedata.final_score = num;
-    sorthand(gamedata.score_check);
-    while (gamedata.score_check[0] == 0)
-    {
-        gamedata.score_check.erase(gamedata.score_check.begin());
-    }
+    // sorthand(gamedata.score_check);
+    // while (gamedata.score_check[0] == 0)
+    // {
+    //     gamedata.score_check.erase(gamedata.score_check.begin());
+    // }
 }
 
 // void mahjonghilo::four_pungs(game &gamedata, vector<tile> tiles)

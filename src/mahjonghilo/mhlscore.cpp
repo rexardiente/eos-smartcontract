@@ -438,7 +438,7 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 }
                 else if (check1 == 14) // 999 999 DDD DDD
                 {
-                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 66);
                     if (tiles[12].value > 9)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
@@ -505,7 +505,7 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 else if (check1 == 21) // 999 999 www DDD
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 59);
-                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 66);
                     if (tiles[12].value > 9)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
@@ -565,12 +565,12 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 }
                 else if (check1 == 23) // 999 999 www www
                 {
-                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 66);
                     if (tiles[12].value > 9)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 17);
-                        checkwind = 1;
                         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                        checkwind = 1;
                     }
                     else
                     {
@@ -707,13 +707,9 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 else if (check1 == 14 || check1 == 15) // 2-8 2-8/19 DDD DDD
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
-                    if (tiles2[0].value + 1 == tiles2[1].value && tiles2[0].suit != tiles2[1].suit)
+                    if (tiles2[0].value == tiles2[1].value)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 66);
-                    }
-                    else if (tiles2[0].value == tiles2[1].value)
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 63);
                     }
                     else
                     {
@@ -768,13 +764,9 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 59);
-                    if (tiles2[0].value + 1 == tiles2[1].value && tiles2[0].suit != tiles2[1].suit)
+                    if (tiles2[0].value == tiles2[1].value)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 66);
-                    }
-                    else if (tiles2[0].value == tiles2[1].value)
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 63);
                     }
                     else
                     {
@@ -793,13 +785,27 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                     }
                     else
                     {
-                        if (tiles2[0].suit == tiles[12].suit || tiles2[1].suit == tiles[12].suit)
+                        if (tiles2[0].suit != tiles2[1].suit)
                         {
-                            gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            if (tiles2[0].suit == tiles[12].suit || tiles2[1].suit == tiles[12].suit)
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                            }
                         }
                         else
                         {
-                            gamedata.score_check.insert(gamedata.score_check.begin(), 52);
+                            if (tiles2[0].suit == tiles[12].suit)
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 53);
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
+                            }
                         }
                     }
                 }
@@ -807,7 +813,7 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 59);
-                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 66);
                     if (tiles[12].value == 10)
                     {
                         if (tiles[0].suit == tiles2[1].suit || tiles[0].suit == tiles[2].suit)
@@ -823,7 +829,7 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                     {
                         if (tiles[0].suit == tiles2[1].suit || tiles[0].suit == tiles[2].suit)
                         {
-                            if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
+                            if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles2[2].suit)
                             {
                                 gamedata.score_check.insert(gamedata.score_check.begin(), 75);
                             }
@@ -837,57 +843,13 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
                         }
                     }
-                    // int checktype = 0;
-                    // if (tiles2[0].suit == tiles2[1].suit || tiles2[0].suit == tiles2[2].suit)
-                    // {
-                    //     checktype = checktype;
-                    // }
-                    // else
-                    // {
-                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 52);
-                    //     checktype = 1;
-                    // }
-                    // if (tiles2[0].value == 8)
-                    // {
-                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 66);
-                    // }
-                    // else
-                    // {
-                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                    // }
-                    // if (checktype == 0)
-                    // {
-                    //     if (tiles[12].value > 9)
-                    //     {
-                    //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
-                    //     }
-                    //     else
-                    //     {
-                    //         if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
-                    //         {
-                    //             gamedata.score_check.insert(gamedata.score_check.begin(), 75);
-                    //         }
-                    //         else
-                    //         {
-                    //             gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                    //         }
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                    // }
                 }
                 else if (check1 == 23 || check1 == 34) // 2-8 2-8/1/9 www www
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
-                    if (tiles2[0].value + 1 == tiles2[1].value && tiles2[0].suit != tiles2[1].suit)
+                    if (tiles2[0].value == tiles2[1].value)
                     {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 66);
-                    }
-                    else if (tiles2[0].value == tiles2[1].value)
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 63);
                     }
                     else
                     {
@@ -919,41 +881,16 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 else if (check1 == 24) // 2-8 999 999 www
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
-                    gamedata.score_check.insert(gamedata.score_check.begin(), 63);
-                    int checktype = 0;
-                    if (tiles2[0].suit == tiles2[1].suit || tiles2[0].suit == tiles2[2].suit)
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                    if (tiles[12].value == 11)
                     {
-                        checktype = checktype;
-                    }
-                    else
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 52);
-                        checktype = 1;
-                    }
-                    if (tiles2[0].value == 8)
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 66);
-                    }
-                    else
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                    }
-                    if (checktype == 0)
-                    {
-                        if (tiles[12].value > 9)
+                        if (tiles[0].suit == tiles2[1].suit || tiles[0].suit == tiles2[2].suit)
                         {
                             gamedata.score_check.insert(gamedata.score_check.begin(), 75);
                         }
                         else
                         {
-                            if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
-                            {
-                                gamedata.score_check.insert(gamedata.score_check.begin(), 75);
-                            }
-                            else
-                            {
-                                gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                            }
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
                         }
                     }
                     else
@@ -965,17 +902,9 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 31);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
-                    if (tiles2[0].value == 8)
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 66);
-                    }
-                    else
-                    {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                    }
                     if (tiles[12].value < 10)
                     {
-                        gamedata.score_check.insert(gamedata.score_check.begin(), 67);
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 76);
                     }
                     else
                     {
@@ -986,6 +915,25 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                 {
                     gamedata.score_check.insert(gamedata.score_check.begin(), 51);
                     gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    if (tiles2[0].value == tiles2[1].value)
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                    }
+                    else if (tiles2[0].value + 1 == tiles2[1].value && tiles2[0].value == 7)
+                    {
+                        if (tiles2[0].suit != tiles2[1].suit && tiles2[1].suit != tiles2[2].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 41);
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
                     if (tiles[12].value == 10)
                     {
                         if (tiles[0].suit != tiles2[1].suit)
@@ -1013,21 +961,111 @@ void mahjonghilo::getscore(game &gamedata, vector<uint8_t> &hand)
                     }
                     else
                     {
-                        // if (tiles[0].suit != tiles2[1].suit)
-                        // {
-                        //     if (tiles[12].suit == tiles2[1].suit || tiles[12].suit == tiles[2].suit)
-                        //     {
-                        //         gamedata.score_check.insert(gamedata.score_check.begin(), 75);
-                        //     }
-                        //     else
-                        //     {
-                        //         gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                        //     }
-                        // }
-                        // else
-                        // {
                         gamedata.score_check.insert(gamedata.score_check.begin(), 0);
-                        // }
+                    }
+                }
+                else if (check1 == 33) // 2-8 2-8 2-8 DDD
+                {
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 51);
+                    gamedata.score_check.insert(gamedata.score_check.begin(), 59);
+                    int checktype = 0;
+                    if (tiles2[0].value + 1 == tiles2[1].value && tiles2[1].value + 1 == tiles2[2].value)
+                    {
+                        if (tiles2[0].suit == tiles2[1].suit && tiles2[1].suit == tiles2[2].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 20);
+                            checktype = 1;
+                        }
+                        else if (tiles2[0].suit != tiles2[1].suit && tiles2[1].suit != tiles2[2].suit)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 41);
+                            checktype = 2;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                    else if (tiles2[0].value == tiles2[1].value)
+                    {
+                        if (tiles2[1].value == tiles2[2].value)
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 31);
+                            checktype = 2;
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 66);
+                            if (tiles2[2].suit == tiles2[0].suit || tiles2[2].suit == tiles2[1].suit)
+                            {
+                                checktype = 3;
+                            }
+                            else
+                            {
+                                checktype = 2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                    }
+                    if (tiles[12].value > 1 && tiles[12].value < 9)
+                    {
+                        if (tiles2[3].suit == GREEN)
+                        {
+                            if (tiles2[0].suit == BAMBOO && tiles2[1].suit == BAMBOO)
+                            {
+                                if (tiles2[2].suit == BAMBOO && tiles[12].suit == BAMBOO)
+                                {
+                                    if (tiles2[0].value % 2 == 0 || tiles2[0].value == 3)
+                                    {
+                                        if (tiles2[1].value % 2 == 0 || tiles2[1].value == 3)
+                                        {
+                                            if (tiles2[2].value % 2 == 0 || tiles2[2].value == 3)
+                                            {
+                                                if (tiles[12].value % 2 == 0 || tiles[12].value == 3)
+                                                {
+                                                    gamedata.score_check.insert(gamedata.score_check.begin(), 5);
+                                                }
+                                                else
+                                                {
+                                                    gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                                    }
+                                }
+                                else
+                                {
+                                    gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                                }
+                            }
+                            else
+                            {
+                                gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                            }
+                        }
+                        else
+                        {
+                            gamedata.score_check.insert(gamedata.score_check.begin(), 0);
+                        }
+                    }
+                    else
+                    {
+                        gamedata.score_check.insert(gamedata.score_check.begin(), 0);
                     }
                 }
                 else
