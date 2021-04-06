@@ -385,7 +385,7 @@ public:
                                                                  string memo);
     ACTION initialize(name username);
     ACTION acceptbet(name username, asset quantity);
-    ACTION starttrial(name username, int numgames, vector<int> idx);
+    // ACTION starttrial(name username, int numgames, vector<int> idx);
     ACTION playhilo(name username, int option);
     ACTION discardtile(name username, int idx);
     ACTION dclrkong(name username, vector<int> idx);

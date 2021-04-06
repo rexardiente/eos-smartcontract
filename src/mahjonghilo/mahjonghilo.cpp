@@ -1,4 +1,5 @@
 #include "gameplay.cpp"
+#include "mhlscore.cpp"
 
 // function for accepting bet
 ACTION mahjonghilo::acceptbet(name username, asset quantity)
@@ -78,117 +79,117 @@ ACTION mahjonghilo::initialize(name username)
     });
 }
 
-ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
-{
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    // check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
-    _users.modify(user, username, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.status = ONTRIAL;
-        game_data.hand_player = {};
-        game_data.winning_hand = {};
-        game_data.score_check = {};
-        game_data.score_type = {};
-        game_data.deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
-        // int num1 = numgames % 16;
-        // int num2 = numgames % 4;
-        // if (num1 > 0 && num1 < 5)
-        // {
-        //     game_data.prevalent_wind = EAST;
-        // }
-        // else if (num1 > 4 && num1 < 9)
-        // {
-        //     game_data.prevalent_wind = SOUTH;
-        // }
-        // else if (num1 > 8 && num1 < 13)
-        // {
-        //     game_data.prevalent_wind = WEST;
-        // }
-        // else
-        // {
-        //     game_data.prevalent_wind = NORTH;
-        // }
-        // if (num2 == 1)
-        // {
-        //     game_data.seat_wind = EAST;
-        // }
-        // else if (num2 == 2)
-        // {
-        //     game_data.seat_wind = SOUTH;
-        // }
-        // else if (num2 == 3)
-        // {
-        //     game_data.seat_wind = WEST;
-        // }
-        // else
-        // {
-        //     game_data.seat_wind = NORTH;
-        // }
-        // if (game_data.hand_player.size() != 0)
-        // {
-        //     int size5 = game_data.hand_player.size();
-        //     for (int i = 0; i < size5; i++)
-        //     {
-        //         game_data.hand_player.erase(game_data.hand_player.begin());
-        //     }
-        // }
-        // // else
-        // // {
-        // if (game_data.winning_hand.size() != 0)
-        // {
-        //     int size = game_data.winning_hand.size();
-        //     for (int i = 0; i < size; i++)
-        //     {
-        //         game_data.winning_hand.erase(game_data.winning_hand.begin());
-        //     }
-        //     game_data.pair_count = 0;
-        //     game_data.pung_count = 0;
-        //     game_data.chow_count = 0;
-        //     game_data.final_score = 0;
-        //     int size2 = game_data.score_check.size();
-        //     game_data.deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
-        //     for (int i = 0; i < size2; i++)
-        //     {
-        //         game_data.score_check.erase(game_data.score_check.begin());
-        //     }
-        //     int size3 = game_data.score_type.size();
-        //     for (int i = 0; i < size3; i++)
-        //     {
-        //         game_data.score_type.erase(game_data.score_type.begin());
-        //     }
-        // }
-        //     else
-        //     {
-        //         int size = game_data.hand_player.size();
-        //         for (int i = 0; i < size; i++)
-        //         {
-        //             game_data.hand_player.erase(game_data.hand_player.begin());
-        //         }
-        //     }
-        for (int i = 0; i < idx.size(); i++)
-        {
-            game_data.hand_player.insert(game_data.hand_player.begin(), game_data.deck_player[idx[i] - 1]); // Assign the tile to the first empty slot in the hand
-        }
-        sorthand(game_data.hand_player);
-        winhand_check(game_data, game_data.hand_player);
-        if (game_data.winnable == 1)
-        {
-            transferhand(game_data, game_data.hand_player.size());
-            sorteye(game_data.winning_hand, game_data.eye_idx);
-            getscore(game_data, game_data.winning_hand);
-            sorthand(game_data.score_check);
-            print("Well played!");
-            // print(game_data.final_score);
-        }
-        else
-        {
-            print("Your hand didn't win..");
-        }
-        // }
-        game_data.winnable = 0;
-    });
-}
+// ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
+// {
+//     require_auth(username);
+//     auto &user = _users.get(username.value, "User doesn't exist");
+//     // check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
+//     _users.modify(user, username, [&](auto &modified_user) {
+//         game &game_data = modified_user.game_data;
+//         game_data.status = ONTRIAL;
+//         game_data.hand_player = {};
+//         game_data.winning_hand = {};
+//         game_data.score_check = {};
+//         game_data.score_type = {};
+//         game_data.deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
+//         // int num1 = numgames % 16;
+//         // int num2 = numgames % 4;
+//         // if (num1 > 0 && num1 < 5)
+//         // {
+//         //     game_data.prevalent_wind = EAST;
+//         // }
+//         // else if (num1 > 4 && num1 < 9)
+//         // {
+//         //     game_data.prevalent_wind = SOUTH;
+//         // }
+//         // else if (num1 > 8 && num1 < 13)
+//         // {
+//         //     game_data.prevalent_wind = WEST;
+//         // }
+//         // else
+//         // {
+//         //     game_data.prevalent_wind = NORTH;
+//         // }
+//         // if (num2 == 1)
+//         // {
+//         //     game_data.seat_wind = EAST;
+//         // }
+//         // else if (num2 == 2)
+//         // {
+//         //     game_data.seat_wind = SOUTH;
+//         // }
+//         // else if (num2 == 3)
+//         // {
+//         //     game_data.seat_wind = WEST;
+//         // }
+//         // else
+//         // {
+//         //     game_data.seat_wind = NORTH;
+//         // }
+//         // if (game_data.hand_player.size() != 0)
+//         // {
+//         //     int size5 = game_data.hand_player.size();
+//         //     for (int i = 0; i < size5; i++)
+//         //     {
+//         //         game_data.hand_player.erase(game_data.hand_player.begin());
+//         //     }
+//         // }
+//         // // else
+//         // // {
+//         // if (game_data.winning_hand.size() != 0)
+//         // {
+//         //     int size = game_data.winning_hand.size();
+//         //     for (int i = 0; i < size; i++)
+//         //     {
+//         //         game_data.winning_hand.erase(game_data.winning_hand.begin());
+//         //     }
+//         //     game_data.pair_count = 0;
+//         //     game_data.pung_count = 0;
+//         //     game_data.chow_count = 0;
+//         //     game_data.final_score = 0;
+//         //     int size2 = game_data.score_check.size();
+//         //     game_data.deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
+//         //     for (int i = 0; i < size2; i++)
+//         //     {
+//         //         game_data.score_check.erase(game_data.score_check.begin());
+//         //     }
+//         //     int size3 = game_data.score_type.size();
+//         //     for (int i = 0; i < size3; i++)
+//         //     {
+//         //         game_data.score_type.erase(game_data.score_type.begin());
+//         //     }
+//         // }
+//         //     else
+//         //     {
+//         //         int size = game_data.hand_player.size();
+//         //         for (int i = 0; i < size; i++)
+//         //         {
+//         //             game_data.hand_player.erase(game_data.hand_player.begin());
+//         //         }
+//         //     }
+//         for (int i = 0; i < idx.size(); i++)
+//         {
+//             game_data.hand_player.insert(game_data.hand_player.begin(), game_data.deck_player[idx[i] - 1]); // Assign the tile to the first empty slot in the hand
+//         }
+//         sorthand(game_data.hand_player);
+//         winhand_check(game_data, game_data.hand_player);
+//         if (game_data.winnable == 1)
+//         {
+//             transferhand(game_data, game_data.hand_player.size());
+//             sorteye(game_data.winning_hand, game_data.eye_idx);
+//             getscore(game_data, game_data.winning_hand);
+//             sorthand(game_data.score_check);
+//             print("Well played!");
+//             // print(game_data.final_score);
+//         }
+//         else
+//         {
+//             print("Your hand didn't win..");
+//         }
+//         // }
+//         game_data.winnable = 0;
+//     });
+// }
 
 ACTION mahjonghilo::playhilo(name username, int option)
 {
