@@ -76,7 +76,6 @@ END_GAME()
 #     echo "${EXECUTE} Creating new account for \"user1\"..."
 #     cleos push action mahjonghilo reset '["user1"]' -p mahjonghilo@active #for user1
 #     # cleos push action mahjonghilo initialize '["user2"]' -p user2@active #for user2
-    
 # }
 
 # Create user and game_defaults
@@ -102,10 +101,10 @@ KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user',
     cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
 }
 
-# TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
-# {
-#     cleos push action mahjonghilo starttrial '["user1", 10, [77,78,79,81,82,83,85,86,87,133,134,135,94,95]]' -p user1@active
-# }
+TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
+{
+    cleos push action mahjonghilo starttrial '["user1", 10, [77,78,79,81,82,83,85,86,87,133,134,135,94,95]]' -p user1@active
+}
 
 WINDEC() ## function : dclrwinhand -> to declare a winning hand, parameters : name 'user'   note : game data of the user will be used for checking
 { 

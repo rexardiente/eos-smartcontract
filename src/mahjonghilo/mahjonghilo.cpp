@@ -198,7 +198,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
     // check(, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()) && user.game_data.discarded_tiles.size() < 20, "Discard a tile to draw a new one.");
     // check(, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
-    check(user.game_data.status == ONGOING && user.game_data.hi_lo_balance.amount > 10000, "Not sufficient balance on account");
+    check(user.game_data.status == ONGOING && user.game_data.hi_lo_balance.amount >= 10000, "Not sufficient balance on account");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         // gettile(game_data);

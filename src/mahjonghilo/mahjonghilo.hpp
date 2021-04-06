@@ -59,16 +59,16 @@ private:
 
     const map<uint8_t, score> score_deck = {
         {0, {"No Score", 0}},
-        {1, {"Big Four Winds", 88}},            //
-        {2, {"Big Three Dragons", 88}},         //
+        {1, {"Big Four Winds", 88}},            ///
+        {2, {"Big Three Dragons", 88}},         ///
         {3, {"Four Kongs", 88}},                //
         {4, {"Seven Shift Pairs", 88}},         //
-        {5, {"All Green", 88}},                 //
+        {5, {"All Green", 88}},                 ///
         {6, {"Nine Gates", 88}},                //
-        {7, {"Thirteen Orphans", 88}},          //
-        {8, {"Little Four Winds", 64}},         //
-        {9, {"Little Three Dragons", 64}},      //
-        {10, {"All Honors", 64}},               //
+        {7, {"Thirteen Orphans", 88}},          ///
+        {8, {"Little Four Winds", 64}},         ///
+        {9, {"Little Three Dragons", 64}},      ///
+        {10, {"All Honors", 64}},               ///
         {11, {"Pure Terminal Chows", 64}},      //
         {12, {"Four Concealed Pungs", 64}},     //
         {13, {"All Terminals", 64}},            //
@@ -109,7 +109,7 @@ private:
         // {48, {"Reversible Tiles", 8}},
         {49, {"Two Dragon Pungs", 6}},
         {50, {"Mixed Shifted Chows", 6}},
-        {51, {"All Pungs", 6}},
+        // {51, {"All Pungs", 6}},
         {52, {"All Types", 6}},
         {53, {"Half Flush", 6}},
         // {54, {"Melded Hand", 6}}, -------------
@@ -132,7 +132,7 @@ private:
         {71, {"Short Straight", 1}},
         {72, {"Two Terminal Chows", 1}},
         {73, {"Pung of Terminals or Honour", 1}},
-        // {74, {"Melded Kong", 1}},
+        {74, {"No Available Score, Have a Bonus", 30}},
         {75, {"One Voided Suit", 1}},
         {76, {"No Honors", 1}}};
     // {77, {"Edge Wait", 1}}, -------------

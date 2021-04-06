@@ -175,6 +175,11 @@ void mahjonghilo::sorteye(vector<uint8_t> &hand, int idx)
 void mahjonghilo::sumscore(game &gamedata)
 {
     int num = 0;
+    sorthand(gamedata.score_check);
+    while (gamedata.score_check[0] == 0)
+    {
+        gamedata.score_check.erase(gamedata.score_check.begin());
+    }
     for (int i = 0; i < gamedata.score_check.size(); i++)
     {
         const auto tempscore = score_deck.at(gamedata.score_check[i]);
@@ -185,11 +190,6 @@ void mahjonghilo::sumscore(game &gamedata)
         num += tempscore.value;
     }
     gamedata.final_score = num;
-    // sorthand(gamedata.score_check);
-    // while (gamedata.score_check[0] == 0)
-    // {
-    //     gamedata.score_check.erase(gamedata.score_check.begin());
-    // }
 }
 
 // void mahjonghilo::four_pungs(game &gamedata, vector<tile> tiles)
