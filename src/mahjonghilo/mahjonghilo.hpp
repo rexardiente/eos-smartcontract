@@ -399,4 +399,5 @@ public:
     ACTION settledpay(name to, asset prize, string memo);
     ACTION endgame(name username);
     ACTION end(name username);
+    ACTION del(int size);
 };

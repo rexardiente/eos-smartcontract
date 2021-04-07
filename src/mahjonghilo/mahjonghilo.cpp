@@ -392,6 +392,28 @@ ACTION mahjonghilo::end(name username)
     _users.erase(user);
 }
 
+ACTION mahjonghilo::del(int size)
+{
+    require_auth(_self);
+    auto itr = _users.begin();
+    while (itr != _users.end())
+    {
+        itr = _users.erase(itr);
+    }
+}
+// ACTION mahjonghilo::endall(int size)
+// {
+//     require_auth(_self);
+//     // check(has_auth(_self) || has_auth(username), "Unauthorized user");
+//     // auto &user = _users.get(username.value, "User doesn't exist");
+//     // check(user.game_data.hi_lo_balance.amount == 0.0000 && user.game_data.hi_lo_winnings == 0.0000, "Withdraw your balance before you can end.");
+//     for (int i = 0; i < 5; i++)
+//     {
+//         auto itr = _users.begin();
+//         _users.erase(itr);
+//     }
+// }
+
 // ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
 // {
 //     require_auth(username);

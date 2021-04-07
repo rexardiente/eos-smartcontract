@@ -59,7 +59,7 @@ INITIALIZE_GAME()
 {
     echo "${EXECUTE} Creating new account for \"user1\"..."
     cleos push action mahjonghilo initialize '["user1"]' -p mahjonghilo@active #for user1
-    # cleos push action mahjonghilo initialize '["user2"]' -p user2@active #for user2
+    cleos push action mahjonghilo initialize '["user2"]' -p mahjonghilo@active #for user2
     
 }
 
@@ -83,7 +83,7 @@ REMOVE_EXISTING_GAME()
 {
     echo "${EXECUTE} Deleting existing account for \"user1\"..."
     cleos push action mahjonghilo end '["user1"]' -p mahjonghilo@active #for user1
-    # cleos push action mahjonghilo end '["user2"]' -p user2@active #for user2
+    cleos push action mahjonghilo end '["user2"]' -p mahjonghilo@active #for user2
 }
 
 PLAYHILO() ## function : playhilo -> to draw a tile, parameters : name 'user', uint8_t 'option'(0=skip,1=low,2=draw,3=high)     note : players can play hi-lo with or without deposit, all drawn tiles will be within gamedata
@@ -135,6 +135,11 @@ WITHDRAW()
     cleos push action mahjonghilo withdraw '[ "user1"]' -p user1@active
     # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
 }
+ERASE_ALL()
+{
+    cleos push action mahjonghilo del '[5]' -p mahjonghilo@active
+    # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
+}
 
 
 GET_CURRENCY()
@@ -155,14 +160,15 @@ GET_CURRENCY()
 # INITIALIZE_GAME
 # TRANSFER
 # START_BET
-TRANSFER_WINNINGS
+# TRANSFER_WINNINGS
 # PLAYHILO
 # DISCARD
 # KONGDEC
 # WINDEC
 # END_GAME 
-WITHDRAW
+# WITHDRAW
 # TRIALMODE
 # GET_CURRENCY 
-REMOVE_EXISTING_GAME
-SHOW_EOSIO_CONTRACT_TABLE
+# REMOVE_EXISTING_GAME
+# SHOW_EOSIO_CONTRACT_TABLE
+ERASE_ALL
