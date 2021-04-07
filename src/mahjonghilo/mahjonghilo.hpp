@@ -287,9 +287,12 @@ private:
         asset hi_lo_balance = DEFAULT_ASSET;
         int hi_lo_result = MH_DEFAULT;
         float hi_lo_prize = MH_DEFAULT;
+        float hi_lo_winnings = MH_DEFAULT;
         double low_odds = MH_DEFAULT;
         double draw_odds = MH_DEFAULT;
         double high_odds = MH_DEFAULT;
+        int bet_status = MH_DEFAULT;
+        int option_status = MH_DEFAULT;
         vector<int> sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         uint8_t prevalent_wind;
         uint8_t seat_wind;
@@ -346,7 +349,7 @@ private:
     double roundoff(double var);
     void depositbet(name to, asset quantity);
     void onsettledpay(name to, asset quantity, string memo);
-    uint8_t gettile(game & gamedata);
+    void gettile(game & gamedata);
     void sorthand(vector<uint8_t> & hand);
     void sorteye(vector<uint8_t> & hand, int idx);
     void getscore(game & gamedata, vector<uint8_t> & hand);
@@ -388,6 +391,8 @@ public:
     // ACTION starttrial(name username, int numgames, vector<int> idx);
     ACTION playhilo(name username, int option);
     ACTION discardtile(name username, int idx);
+    ACTION startbet(name username);
+    ACTION wintransfer(name username);
     ACTION dclrkong(name username, vector<int> idx);
     ACTION dclrwinhand(name username);
     ACTION withdraw(name username);

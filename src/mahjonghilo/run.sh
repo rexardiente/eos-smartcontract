@@ -98,7 +98,7 @@ DISCARD() ## function : discardtile -> to discard a tile, parameters : name 'use
 
 KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user', array<uint8_t> 'index'(indexes of the 4 tiles designated as kong)      note : declaring a kong will automatically draw a tile which is also possible for Hi-Lo
 {
-    cleos push action mahjonghilo dclrkong '[ "user1", [0,1,2,3]]' -p user1@active
+    cleos push action mahjonghilo dclrkong '[ "user1", [10,11,12,13]]' -p user1@active
 }
 
 TRIALMODE() ## function : starttrial -> to test out winning hand combinations, parameters : name 'user', array<uint8_t> 'index'(full hand array)
@@ -115,6 +115,18 @@ TRANSFER()
 {
     cleos push action eosio.token transfer '[ "user1", "mahjonghilo", "5.0000 EOS", "MHL Deposit" ]' -p user1@active
     # cleos push action eosio.token transfer '[ "user2", "mahjonghilo", "2.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+}
+
+START_BET()
+{
+    cleos push action mahjonghilo startbet '[ "user1"]' -p user1@active
+    # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
+}
+
+TRANSFER_WINNINGS()
+{
+    cleos push action mahjonghilo wintransfer '[ "user1"]' -p user1@active
+    # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
 }
 
 
@@ -138,17 +150,19 @@ GET_CURRENCY()
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER
+# START_BET
+TRANSFER_WINNINGS
 # PLAYHILO
 # DISCARD
 # KONGDEC
 # WINDEC
 # END_GAME 
-# WITHDRAW
+WITHDRAW
 # TRIALMODE
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

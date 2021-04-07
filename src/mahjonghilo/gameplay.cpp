@@ -65,21 +65,23 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
         .send();
 }
 
-uint8_t mahjonghilo::gettile(game &gamedata)
+void mahjonghilo::gettile(game &gamedata)
 {
     uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
-    // uint8_t deck_tile_idx = 9; // Pick a random tile from the deck
+    // uint8_t deck_tile_idx = 132; // Pick a random tile from the deck
 
     gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
     gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx); // Remove the tile from the deck
     sorthand(gamedata.hand_player);
-    return gamedata.current_tile;
+    tile num = table_deck.at(gamedata.current_tile);
+    gamedata.sumofvalue[num.value - 1] -= 1;
+    // return gamedata.current_tile;
 }
 
 void mahjonghilo::get_odds(game &gamedata, int value)
 {
-    gamedata.sumofvalue[value - 1] -= 1;
+    // gamedata.sumofvalue[value - 1] -= 1;
     double sum, sum1, sum2, num1, num2, num3;
     for (int i = 0; i < gamedata.sumofvalue.size(); i++)
     {
