@@ -174,7 +174,7 @@ ACTION mahjonghilo::wintransfer(name username)
     check(user.game_data.hi_lo_winnings > 0.0000, "No winnings found.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount += game_data.hi_lo_winnings;
+        game_data.hi_lo_balance.amount += game_data.hi_lo_winnings * 10000;
         game_data.hi_lo_winnings = 0;
     });
 }
