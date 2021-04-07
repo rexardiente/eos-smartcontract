@@ -82,9 +82,25 @@ ACTION mahjonghilo::playhilo(name username, int option)
 {
     require_auth(username);
     auto &user = _users.get(username.value, "User doesn't exist");
+    int checking = 0;
+    tile checktile = table_deck.at(user.game_data.standard_tile);
+    if (checktile.value == 1 && option == 1)
+    {
+        checking = 5;
+    }
+    else if (checktile.value == 11 && option == 3)
+    {
+        checking = 10;
+    }
+    else
+    {
+        checking = 1;
+    }
     // check(, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()) && user.game_data.discarded_tiles.size() < 20, "Discard a tile to draw a new one.");
     check(user.game_data.option_status == 1, "No bet yet.");
+    check(checking != 5, "Cannot choose low.");
+    check(checking != 10, "Cannot choose high.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         gettile(game_data);
