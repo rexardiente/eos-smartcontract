@@ -307,8 +307,9 @@ private:
         int pung_count;
         int chow_count;
         int kong_count;
+        int draw_count;
         vector<uint8_t> hand_player = {};
-        vector<uint8_t> discarded_tiles = {};
+        vector<uint8_t> drawn_tiles = {};
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};

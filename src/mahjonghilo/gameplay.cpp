@@ -76,6 +76,8 @@ void mahjonghilo::gettile(game &gamedata)
     sorthand(gamedata.hand_player);
     tile num = table_deck.at(gamedata.current_tile);
     gamedata.sumofvalue[num.value - 1] -= 1;
+    gamedata.draw_count += 1;
+    gamedata.drawn_tiles.insert(gamedata.drawn_tiles.end(), gamedata.current_tile);
     // return gamedata.current_tile;
 }
 
