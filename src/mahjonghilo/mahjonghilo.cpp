@@ -136,6 +136,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
                 if (game_data.drawn_tiles.size() >= 33)
                 {
                     game_data.status = LOSE;
+                    game_data.bet_status = 1;
                     print("Draw limits reached.");
                 }
                 else
@@ -358,6 +359,8 @@ ACTION mahjonghilo::endgame(name username)
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         game_data.status = ONGOING;
+        game_data.bet_status = 1;
+        game_data.option_status = 0;
         game_data.hi_lo_result = MH_DEFAULT;
         // game_data.hi_lo_prize = MH_DEFAULT;
         game_data.low_odds = MH_DEFAULT;
