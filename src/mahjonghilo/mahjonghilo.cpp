@@ -97,7 +97,9 @@ ACTION mahjonghilo::playhilo(name username, int option)
         checking = 1;
     }
     // check(, "Max number of draws reached.");
-    check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()) && user.game_data.drawn_tiles.size() < 34, "Discard a tile to draw a new one.");
+    check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
+    check(user.game_data.drawn_tiles.size() < 34, " Draw limit reached..");
+    check(user.game_data.status == 1, "No ongoing game.");
     check(user.game_data.option_status == 1, "No bet yet.");
     check(checking != 5, "Cannot choose low.");
     check(checking != 10, "Cannot choose high.");
@@ -168,8 +170,8 @@ ACTION mahjonghilo::startbet(name username)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == ONGOING && user.game_data.hi_lo_balance.amount >= 10000, "Not sufficient balance on account or game already ended. ");
-    check(user.game_data.bet_status == 1, "Not sufficient balance on account or game already ended. ");
+    check(user.game_data.hi_lo_balance.amount >= 10000, "Not sufficient balance on account or game already ended. ");
+    check(user.game_data.bet_status == 1, "Game already ended. ");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.hi_lo_balance.amount -= 10000;
