@@ -129,24 +129,46 @@ void mahjonghilo::get_odds(game &gamedata, int value)
         // print(sum2);
         num3 = (sum / sum2) * 0.9;
     }
-    gamedata.low_odds = num1;
+    if (num1 > 1.0000)
+    {
+        gamedata.low_odds = num1;
+    }
+    else
+    {
+        gamedata.low_odds = 1.0000;
+    }
+    if(num2>1.0000)
+    {
     gamedata.draw_odds = num2;
-    gamedata.high_odds = num3;
+    }
+    else
+    {
+            gamedata.draw_odds = 1.0000;
+    }
+
+    if (num3 > 1.0000)
+    {
+        gamedata.high_odds = num3;
+    }
+    else
+    {
+        gamedata.high_odds = 1.0000;
+    }
 }
 
 float mahjonghilo::hilo_step(game gamedata, int prev_tile, int current_tile, int option)
 {
     if (prev_tile > current_tile && option == 1)
     {
-        return 1 + (gamedata.low_odds * 0.9);
+        return 1 * (gamedata.low_odds * 0.9);
     }
     else if (prev_tile == current_tile && option == 2)
     {
-        return 1 + (gamedata.draw_odds * 0.9);
+        return 1 * (gamedata.draw_odds * 0.9);
     }
     else if (prev_tile < current_tile && option == 3)
     {
-        return 1 + (gamedata.high_odds * 0.9);
+        return 1 * (gamedata.high_odds * 0.9);
     }
     else
     {
