@@ -171,7 +171,7 @@ ACTION mahjonghilo::startbet(name username)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.hi_lo_balance.amount >= 10000 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account..");
-    check(user.game_data.bet_status == 1072640819, "Game already ended. ");
+    check(user.game_data.bet_status == 1, "Game already ended. ");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         if (game_data.hi_lo_stake == 0)
