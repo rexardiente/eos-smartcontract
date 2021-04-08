@@ -170,8 +170,8 @@ ACTION mahjonghilo::startbet(name username)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.hi_lo_balance.amount >= 10000 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account or game already ended. ");
-    check(user.game_data.bet_status == 1, "Game already ended. ");
+    check(user.game_data.hi_lo_balance.amount >= 10000 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account..");
+    check(user.game_data.bet_status == 1072640819, "Game already ended. ");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         if (game_data.hi_lo_stake == 0)
@@ -200,8 +200,8 @@ ACTION mahjonghilo::wintransfer(name username)
     check(user.game_data.hi_lo_stake > 0.0000, "No winnings found.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount += (game_data.hi_lo_stake - 1.0000) * 10000;
-        game_data.hi_lo_stake = 1.0000;
+        game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
+        // game_data.hi_lo_stake = 1.0000;
     });
 }
 
@@ -349,6 +349,7 @@ ACTION mahjonghilo::endgame(name username)
     auto hbytes = h.extract_as_byte_array();
     string hash_string = checksum256_to_string(hbytes, hbytes.size()); // convert txID arr to string
     check(user.game_data.status != 0, "No ongoing game..");
+    check(user.game_data.option_status == 0, "Bet in place..");
     _users.modify(user, _self, [&](auto &modified_user) {
         modified_user.game_count += 1;
         game &game_data = modified_user.game_data;
