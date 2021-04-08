@@ -88,7 +88,7 @@ REMOVE_EXISTING_GAME()
 
 PLAYHILO() ## function : playhilo -> to draw a tile, parameters : name 'user', uint8_t 'option'(0=skip,1=low,2=draw,3=high)     note : players can play hi-lo with or without deposit, all drawn tiles will be within gamedata
 {
-    cleos push action mahjonghilo playhilo '["user1", 2]' -p user1@active
+    cleos push action mahjonghilo playhilo '["user1", 3]' -p user1@active
 }
 
 DISCARD() ## function : discardtile -> to discard a tile, parameters : name 'user', uint8_t 'index'(index of the tile desired to be discarded from hand)    note : there will be a message if a player hands reaches certain amount of tiles
@@ -151,7 +151,7 @@ GET_CURRENCY()
 
 # cleos set account permission mahjonghilo active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "mahjonghilo","permission":"eosio.code"},"weight":1}]}'
 
-
+# ERASE_ALL
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
@@ -171,4 +171,3 @@ DEPLOY_CONTRACT
 # GET_CURRENCY 
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
-# ERASE_ALL

@@ -201,7 +201,7 @@ ACTION mahjonghilo::wintransfer(name username)
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
-        // game_data.hi_lo_stake = 1.0000;
+        game_data.hi_lo_stake = 0.0000;
     });
 }
 

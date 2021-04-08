@@ -68,7 +68,7 @@ void mahjonghilo::onsettledpay(name username, asset quantity, string memo)
 void mahjonghilo::gettile(game &gamedata)
 {
     uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
-    // uint8_t deck_tile_idx = 132; // Pick a random tile from the deck
+    // uint8_t deck_tile_idx = 7; // Pick a random tile from the deck
 
     gamedata.hand_player.insert(gamedata.hand_player.begin(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
@@ -119,10 +119,14 @@ void mahjonghilo::get_odds(game &gamedata, int value)
             sum1 += gamedata.sumofvalue[i];
         }
         num1 = (sum / sum1) * 0.9;
-        for (int i = value; i < gamedata.sumofvalue.size(); i++)
-        {
-            sum2 += gamedata.sumofvalue[i];
-        }
+        sum2 = sum - sum1 - gamedata.sumofvalue[value - 1];
+        // for (int j = value; j < 11; j++)
+        // {
+        //     sum2 += gamedata.sumofvalue[j];
+        // }
+        // print(sum);
+        // print("hahahaha");
+        // print(sum2);
         num3 = (sum / sum2) * 0.9;
     }
     gamedata.low_odds = num1;
