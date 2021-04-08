@@ -370,6 +370,11 @@ ACTION mahjonghilo::endgame(name username)
         game_data.winning_hand = {};
         game_data.score_check = {};
         game_data.score_type = {};
+        game_data.pair_count = MH_DEFAULT;
+        game_data.pung_count = MH_DEFAULT;
+        game_data.chow_count = MH_DEFAULT;
+        game_data.kong_count = MH_DEFAULT;
+        game_data.draw_count = MH_DEFAULT;
         game_data.final_score = MH_DEFAULT;
         game_data.current_tile = MH_DEFAULT;
         game_data.standard_tile = MH_DEFAULT;
