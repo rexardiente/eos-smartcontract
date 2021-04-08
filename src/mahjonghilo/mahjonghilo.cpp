@@ -109,8 +109,8 @@ ACTION mahjonghilo::playhilo(name username, int option)
         // float bet = 1.0000;
         const auto standard_tile = table_deck.at(game_data.standard_tile);
         const auto current_tile = table_deck.at(game_data.current_tile);
-        game_data.hi_lo_prize = hilo_step(game_data, standard_tile.value, current_tile.value, option);
-        if (game_data.hi_lo_prize != 0)
+        game_data.hi_lo_stake *= hilo_step(game_data, standard_tile.value, current_tile.value, option);
+        if (game_data.hi_lo_stake != 0)
         {
             game_data.hi_lo_result = WIN;
         }
@@ -118,7 +118,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
         {
             game_data.hi_lo_result = LOSE;
         }
-        game_data.hi_lo_winnings += game_data.hi_lo_prize;
+        // game_data.hi_lo_winnings += game_data.hi_lo_prize;
         // uint8_t tile_var = gettile(game_data);
         // const auto hilo_tile = table_deck.at(standard_tile);
         // hilo_step(game_data, standard_tile.value, current_tile.value, option, bet);
@@ -170,11 +170,19 @@ ACTION mahjonghilo::startbet(name username)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.hi_lo_balance.amount >= 10000, "Not sufficient balance on account or game already ended. ");
+    check(user.game_data.hi_lo_balance.amount >= 10000 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account or game already ended. ");
     check(user.game_data.bet_status == 1, "Game already ended. ");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount -= 10000;
+        if (game_data.hi_lo_stake == 0)
+        {
+            game_data.hi_lo_balance.amount -= 10000;
+            game_data.hi_lo_stake += 1.0000;
+        }
+        else
+        {
+            game_data.hi_lo_stake = game_data.hi_lo_stake;
+        }
         game_data.bet_status = 0;
         game_data.option_status = 1;
         game_data.standard_tile = game_data.current_tile;
@@ -189,11 +197,11 @@ ACTION mahjonghilo::wintransfer(name username)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status != INITIALIZED, "Game haven't started.");
-    check(user.game_data.hi_lo_winnings > 0.0000, "No winnings found.");
+    check(user.game_data.hi_lo_stake > 0.0000, "No winnings found.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount += game_data.hi_lo_winnings * 10000;
-        game_data.hi_lo_winnings = 0;
+        game_data.hi_lo_balance.amount += (game_data.hi_lo_stake - 1.0000) * 10000;
+        game_data.hi_lo_stake = 1.0000;
     });
 }
 
@@ -350,7 +358,7 @@ ACTION mahjonghilo::endgame(name username)
         game_data.sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         game_data.status = ONGOING;
         game_data.hi_lo_result = MH_DEFAULT;
-        game_data.hi_lo_prize = MH_DEFAULT;
+        // game_data.hi_lo_prize = MH_DEFAULT;
         game_data.low_odds = MH_DEFAULT;
         game_data.draw_odds = MH_DEFAULT;
         game_data.high_odds = MH_DEFAULT;
@@ -409,7 +417,7 @@ ACTION mahjonghilo::end(name username)
     // require_auth(_self);
     check(has_auth(_self) || has_auth(username), "Unauthorized user");
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.hi_lo_balance.amount == 0.0000 && user.game_data.hi_lo_winnings == 0.0000, "Withdraw your balance before you can end.");
+    check(user.game_data.hi_lo_balance.amount == 0.0000 && user.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
     _users.erase(user);
 }
 

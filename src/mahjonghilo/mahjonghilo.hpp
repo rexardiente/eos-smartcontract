@@ -286,8 +286,8 @@ private:
         uint8_t status;
         asset hi_lo_balance = DEFAULT_ASSET;
         int hi_lo_result = MH_DEFAULT;
-        float hi_lo_prize = MH_DEFAULT;
-        float hi_lo_winnings = MH_DEFAULT;
+        // float hi_lo_prize = MH_DEFAULT;
+        float hi_lo_stake = MH_DEFAULT;
         double low_odds = MH_DEFAULT;
         double draw_odds = MH_DEFAULT;
         double high_odds = MH_DEFAULT;
