@@ -135,6 +135,8 @@ ACTION mahjonghilo::playhilo(name username, int option)
             {
                 if (game_data.drawn_tiles.size() >= 33)
                 {
+                    game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
+                    game_data.hi_lo_stake = 0.0000;
                     game_data.status = LOSE;
                     game_data.bet_status = 1;
                     print("Draw limits reached.");
@@ -172,7 +174,7 @@ ACTION mahjonghilo::startbet(name username)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.hi_lo_balance.amount >= 10000 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account..");
-    check(user.game_data.bet_status == 1, "Game already ended. ");
+    check(user.game_data.bet_status == 1, "Bet in place.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         if (game_data.hi_lo_stake == 0)
@@ -349,7 +351,7 @@ ACTION mahjonghilo::endgame(name username)
     checksum256 h = sha256(buf, size);
     auto hbytes = h.extract_as_byte_array();
     string hash_string = checksum256_to_string(hbytes, hbytes.size()); // convert txID arr to string
-    check(user.game_data.status != 0, "No ongoing game..");
+    check(user.game_data.status != 0 || user.game_data.status != 1, "No ongoing game..");
     check(user.game_data.option_status == 0, "Bet in place..");
     _users.modify(user, _self, [&](auto &modified_user) {
         modified_user.game_count += 1;
@@ -359,6 +361,8 @@ ACTION mahjonghilo::endgame(name username)
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         game_data.status = ONGOING;
+        game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
+        game_data.hi_lo_stake = 0.0000;
         game_data.bet_status = 1;
         game_data.option_status = 0;
         game_data.hi_lo_result = MH_DEFAULT;
