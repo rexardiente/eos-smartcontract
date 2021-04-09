@@ -351,7 +351,7 @@ ACTION mahjonghilo::endgame(name username)
     checksum256 h = sha256(buf, size);
     auto hbytes = h.extract_as_byte_array();
     string hash_string = checksum256_to_string(hbytes, hbytes.size()); // convert txID arr to string
-    check(user.game_data.status != 0 || user.game_data.status != 1, "No ongoing game..");
+    check(user.game_data.status != 0, "No ongoing game..");
     check(user.game_data.option_status == 0, "Bet in place..");
     _users.modify(user, _self, [&](auto &modified_user) {
         modified_user.game_count += 1;
