@@ -200,6 +200,7 @@ ACTION mahjonghilo::wintransfer(name username)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     check(user.game_data.status != INITIALIZED, "Game haven't started.");
+    check(user.game_data.bet_status == 1, "Bet in place.");
     check(user.game_data.hi_lo_stake > 0.0000, "No winnings found.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
