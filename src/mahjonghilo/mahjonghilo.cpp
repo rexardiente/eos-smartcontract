@@ -163,9 +163,12 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.winnable = 0;
-        // game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
-        game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
+        // game_data.winnable = 0;
+        // // game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
+        // game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
+        tile temptile = table_deck.at(game_data.hand_player[idx]);
+        print(temptile.value);
+        print(temptile.suit);
     });
 }
 
