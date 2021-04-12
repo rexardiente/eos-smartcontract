@@ -157,7 +157,7 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     require_auth(username);
 
     auto &user = _users.get(username.value, "User doesn't exist");
-    check(idx <= 13, "Index should be below 14.");
+    // check(idx <= 13, "Index should be below 14.");
     check(user.game_data.status == ONGOING, "Game already ended.");
     check(user.game_data.drawn_tiles.size() < 34, "Your hand is for declaration(win/lose).");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
@@ -216,8 +216,8 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
 
     auto &user = _users.get(username.value, "User doesn't exist");
     vector<tile> kongtile{};
-    check(idx.size() == 4, "Array size should be equal to 4 to declare a kong.")
-        check(user.game_data.status == ONGOING, "No ongoing game..");
+    // check(idx.size() == 4, "Array size should be equal to 4 to declare a kong.")
+    check(user.game_data.status == ONGOING, "No ongoing game..");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Must have a complete hand to declare a kong.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
