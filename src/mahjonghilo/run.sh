@@ -93,7 +93,7 @@ PLAYHILO() ## function : playhilo -> to draw a tile, parameters : name 'user', u
 
 DISCARD() ## function : discardtile -> to discard a tile, parameters : name 'user', uint8_t 'index'(index of the tile desired to be discarded from hand)    note : there will be a message if a player hands reaches certain amount of tiles
 {
-    cleos push action mahjonghilo discardtile '[ "user1", 5]' -p user1@active
+    cleos push action mahjonghilo discardtile '[ "user1", 13]' -p user1@active
 }
 
 KONGDEC() ## function : dclrkong -> to declare a kong, parameters : name 'user', array<uint8_t> 'index'(indexes of the 4 tiles designated as kong)      note : declaring a kong will automatically draw a tile which is also possible for Hi-Lo
@@ -159,15 +159,15 @@ GET_CURRENCY()
 # DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # TRANSFER
-# TRANSFER_WINNINGS
+TRANSFER_WINNINGS
 # DISCARD
-# START_BET
 # PLAYHILO
+# START_BET
 # KONGDEC
 # WINDEC
 # END_GAME 
-# WITHDRAW
+WITHDRAW
 # TRIALMODE
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
