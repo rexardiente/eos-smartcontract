@@ -98,7 +98,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
     }
     // check(, "Max number of draws reached.");
     check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
-    check(user.game_data.drawn_tiles.size() < 34, " Draw limit reached..");
+    check(user.game_data.draw_count < 34, " Draw limit reached..");
     check(user.game_data.status == 1, "No ongoing game.");
     check(user.game_data.option_status == 1, "No bet yet.");
     check(checking != 5, "Cannot choose low.");
@@ -106,6 +106,10 @@ ACTION mahjonghilo::playhilo(name username, int option)
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         gettile(game_data);
+        if (game_data.hand_player.size() <= 13)
+        {
+            sorthand(game_data.hand_player);
+        }
         // float bet = 1.0000;
         const auto standard_tile = table_deck.at(game_data.standard_tile);
         const auto current_tile = table_deck.at(game_data.current_tile);
@@ -133,7 +137,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
             }
             else
             {
-                if (game_data.drawn_tiles.size() >= 33)
+                if (game_data.draw_count >= 33)
                 {
                     game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
                     game_data.hi_lo_stake = 0.0000;
@@ -159,13 +163,14 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     auto &user = _users.get(username.value, "User doesn't exist");
     // check(idx <= 13, "Index should be below 14.");
     check(user.game_data.status == ONGOING, "Game already ended.");
-    check(user.game_data.drawn_tiles.size() < 34, "Your hand is for declaration(win/lose).");
+    check(user.game_data.draw_count < 34, "Your hand is for declaration(win/lose).");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.winnable = 0;
-        // game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
+        game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
         game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
+        sorthand(game_data.hand_player);
         // tile temptile = table_deck.at(game_data.hand_player[idx]);
         // print(temptile.value);
         // print(temptile.suit);
@@ -378,7 +383,7 @@ ACTION mahjonghilo::endgame(name username)
         game_data.high_odds = MH_DEFAULT;
         game_data.winnable = MH_DEFAULT;
         game_data.hand_player = {};
-        game_data.drawn_tiles = {};
+        // game_data.drawn_tiles = {};
         game_data.reveal_kong = {};
         game_data.winning_hand = {};
         game_data.score_check = {};

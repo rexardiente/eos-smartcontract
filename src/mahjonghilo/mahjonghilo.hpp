@@ -132,7 +132,7 @@ private:
         {71, {"Short Straight", 1}},
         {72, {"Two Terminal Chows", 1}},
         {73, {"Pung of Terminals or Honour", 1}},
-        {74, {"No Available Score, Have a Bonus", 30}},
+        {74, {"No Available Score, Have a Bonus", 5}},
         {75, {"One Voided Suit", 1}},
         {76, {"No Honors", 1}}};
     // {77, {"Edge Wait", 1}}, -------------
@@ -309,7 +309,7 @@ private:
         int kong_count;
         int draw_count;
         vector<uint8_t> hand_player = {};
-        vector<uint8_t> drawn_tiles = {};
+        vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
