@@ -226,7 +226,7 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
     vector<tile> kongtile{};
     // check(idx.size() == 4, "Array size should be equal to 4 to declare a kong.")
     check(user.game_data.status == ONGOING, "No ongoing game..");
-    check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Must have a complete hand to declare a kong.");
+    // check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Must have a complete hand to declare a kong.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         for (int i = 0; i < 4; i++)
