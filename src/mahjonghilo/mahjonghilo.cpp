@@ -383,7 +383,7 @@ ACTION mahjonghilo::endgame(name username)
         game_data.high_odds = MH_DEFAULT;
         game_data.winnable = MH_DEFAULT;
         game_data.hand_player = {};
-        // game_data.drawn_tiles = {};
+        game_data.discarded_tiles = {};
         game_data.reveal_kong = {};
         game_data.winning_hand = {};
         game_data.score_check = {};
