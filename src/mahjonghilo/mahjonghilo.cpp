@@ -105,15 +105,24 @@ ACTION mahjonghilo::playhilo(name username, int option)
     check(checking != 10, "Cannot choose high.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
+        // if(game_data.hi_lo_result==2)
+        // {
+        //     game_data.hi_lo_bet = game_data.hi_lo_stake;
+        // }
+        // else
+        // {
+        //     game_data.hi_lo_bet = 1;
+        // }
         gettile(game_data);
         if (game_data.hand_player.size() <= 13)
         {
             sorthand(game_data.hand_player);
         }
+        game_data.prediction = option;
         // float bet = 1.0000;
         const auto standard_tile = table_deck.at(game_data.standard_tile);
         const auto current_tile = table_deck.at(game_data.current_tile);
-        game_data.hi_lo_stake *= hilo_step(game_data, standard_tile.value, current_tile.value, option);
+        game_data.hi_lo_stake *= hilo_step(game_data, standard_tile.value, current_tile.value);
         if (game_data.hi_lo_stake != 0)
         {
             game_data.hi_lo_result = WIN;
@@ -151,6 +160,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
                 }
             }
         }
+        game_data.hi_lo_bet = 0;
         game_data.bet_status = 1;
         game_data.option_status = 0;
     });
@@ -186,15 +196,26 @@ ACTION mahjonghilo::startbet(name username)
     check(user.game_data.bet_status == 1, "Bet in place.");
     _users.modify(user, username, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        if (game_data.hi_lo_stake == 0)
+        if(game_data.hi_lo_result==2)
         {
-            game_data.hi_lo_balance.amount -= 10000;
-            game_data.hi_lo_stake += 1.0000;
+            game_data.hi_lo_bet = game_data.hi_lo_stake;
         }
         else
         {
-            game_data.hi_lo_stake = game_data.hi_lo_stake;
+            // game_data.hi_lo_bet = 1;
+            game_data.hi_lo_balance.amount -= 10000;
+            game_data.hi_lo_bet += 1.0000;
+            game_data.hi_lo_stake = game_data.hi_lo_bet;
         }
+        // if (game_data.hi_lo_stake == 0)
+        // {
+        //     game_data.hi_lo_balance.amount -= 10000;
+        //     game_data.hi_lo_stake += 1.0000;
+        // }
+        // else
+        // {
+        //     game_data.hi_lo_stake = game_data.hi_lo_stake;
+        // }
         game_data.bet_status = 0;
         game_data.option_status = 1;
         game_data.standard_tile = game_data.current_tile;

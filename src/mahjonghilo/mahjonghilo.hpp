@@ -287,12 +287,14 @@ private:
         asset hi_lo_balance = DEFAULT_ASSET;
         int hi_lo_result = MH_DEFAULT;
         // float hi_lo_prize = MH_DEFAULT;
+        float hi_lo_bet = MH_DEFAULT;
         float hi_lo_stake = MH_DEFAULT;
         double low_odds = MH_DEFAULT;
         double draw_odds = MH_DEFAULT;
         double high_odds = MH_DEFAULT;
         int bet_status = MH_DEFAULT;
         int option_status = MH_DEFAULT;
+        int prediction = MH_DEFAULT;
         vector<int> sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         uint8_t prevalent_wind;
         uint8_t seat_wind;
@@ -364,7 +366,7 @@ private:
     void transferhand(game & gamedata, int size);
     void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
-    float hilo_step(game gamedata, int prev_tile, int current_tile, int option);
+    float hilo_step(game gamedata, int prev_tile, int current_tile);
     int pair_pung_chow(tile tile1, tile tile2, tile tile3);
     int pung_check(tile tile1, tile tile2, tile tile3);
     int pair_check(tile tile1, tile tile2);
