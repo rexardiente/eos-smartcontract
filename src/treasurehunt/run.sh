@@ -50,46 +50,46 @@ SHOW_EOSIO_CONTRACT_TABLE()
 INITIALIZE_GAME()
 {
     echo "${EXECUTE} Creating new game for \"user1\"..."
-    cleos push action treasurehunt initialize '["user1"]' -p user1@active
+    cleos push action treasurehunt initialize '["user1"]' -p treasurehunt@active
 }
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
 {
     echo "${EXECUTE} Deleting existing game for \"user1\"..."
-    cleos push action treasurehunt end '["user1"]' -p user1@active
+    cleos push action treasurehunt end '["user1"]' -p treasurehunt@active
 }
 # Set Game Panel Sequence
 SET_GAME_PANEL()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Panel Set."
     cleos push action treasurehunt setpanel '["user1", [0,1,2,3,4,5,6,7,
-        8,9,10,11,12,13,14,15]]' -p user1@active
+        8,9,10,11,12,13,14,15]]' -p treasurehunt@active
 }
 # Set Game Destination
 SET_DESTINATION()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action treasurehunt destination '["user1", 1]' -p user1@active
+    cleos push action treasurehunt destination '["user1", 1]' -p treasurehunt@active
 }
 
 # Set Game Destination
 SET_ENEMY()
 {
     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-    cleos push action treasurehunt setenemy '["user1", 5]' -p user1@active
+    cleos push action treasurehunt setenemy '["user1", 5]' -p treasurehunt@active
 }
 
 # Enable Set Sail
 GAME_START()
 {
     echo "${EXECUTE} Trigger Set Sail Function..."
-    cleos push action treasurehunt gamestart '["user1", ]' -p user1@active
+    cleos push action treasurehunt gamestart '["user1", ]' -p treasurehunt@active
 }
 
 SELECT_TILE()
 {
     echo "${EXECUTE} Trigger Generate Prize Function..."
-    cleos push action treasurehunt opentile '["user1", 10]' -p user1@active
+    cleos push action treasurehunt opentile '["user1", 10]' -p treasurehunt@active
 }
 
 TRANSFER()
@@ -99,7 +99,7 @@ TRANSFER()
 
 WITHDRAW()
 {
-    cleos push action treasurehunt withdraw '["user1"]' -p user1@active
+    cleos push action treasurehunt withdraw '["user1"]' -p treasurehunt@active
 }
 
 GET_CURRENCY()
@@ -111,7 +111,7 @@ GET_CURRENCY()
 AUTOPLAY()
 {
     echo "${EXECUTE} Trigger AutoPlay Function..."
-    cleos push action treasurehunt autoplay '["user1", [1,5]]' -p user1@active
+    cleos push action treasurehunt autoplay '["user1", [1,5]]' -p treasurehunt@active
 }
 
 # UNLOCK_WALLET
@@ -127,5 +127,5 @@ DEPLOY_CONTRACT
 # SELECT_TILE
 # WITHDRAW
 # GET_CURRENCY
-SHOW_EOSIO_CONTRACT_TABLE
 # REMOVE_EXISTING_GAME
+SHOW_EOSIO_CONTRACT_TABLE

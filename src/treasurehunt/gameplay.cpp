@@ -1,49 +1,49 @@
 #include "treasurehunt.hpp"
 
-void treasurehunt::ondeposit(name from,
-                             name to,
-                             asset quantity,
-                             string memo)
-{
-    if (from == _self)
-    {
-        if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
-        {
-            onsettledpay(to, quantity, memo);
-        }
+// void treasurehunt::ondeposit(name from,
+//                              name to,
+//                              asset quantity,
+//                              string memo)
+// {
+//     if (from == _self)
+//     {
+//         if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
+//         {
+//             onsettledpay(to, quantity, memo);
+//         }
 
-        // we're sending money, do nothing additional
-        return;
-    }
-    check(to == _self, "Not to our contract");
-    check(quantity.symbol.is_valid(), "Invalid quantity");
-    check(quantity.amount > 0, "Only positive quantity allowed");
-    check(quantity.symbol == treasurehunt_symbol, "Invalid EOS Token");
+//         // we're sending money, do nothing additional
+//         return;
+//     }
+//     check(to == _self, "Not to our contract");
+//     check(quantity.symbol.is_valid(), "Invalid quantity");
+//     check(quantity > 0, "Only positive quantity allowed");
+//     check(quantity.symbol == treasurehunt_symbol, "Invalid EOS Token");
 
-    gameready(from, quantity);
-}
+//     gameready(from, quantity);
+// }
 
-void treasurehunt::onsettledpay(name username, asset quantity, string memo)
-{
-    require_auth(_self);
-    action(
-        permission_level{_self, "active"_n},
-        _self,
-        "settledpay"_n,
-        std::make_tuple(username, quantity, memo))
-        .send();
-}
+// void treasurehunt::onsettledpay(name username, asset quantity, string memo)
+// {
+//     require_auth(_self);
+//     action(
+//         permission_level{_self, "active"_n},
+//         _self,
+//         "settledpay"_n,
+//         std::make_tuple(username, quantity, memo))
+//         .send();
+// }
 
-void treasurehunt::gameready(name username, asset quantity)
-{
-    require_auth(username);
-    action(
-        permission_level{_self, "active"_n},
-        _self,
-        "gamestart"_n,
-        std::make_tuple(username, quantity))
-        .send();
-}
+// void treasurehunt::gameready(name username, asset quantity)
+// {
+//     require_auth(username);
+//     action(
+//         permission_level{_self, "active"_n},
+//         _self,
+//         "gamestart"_n,
+//         std::make_tuple(username, quantity))
+//         .send();
+// }
 
 int treasurehunt::rng(const int &range)
 {
@@ -100,11 +100,29 @@ void treasurehunt::showremainingtile(game &game_data)
     }
 }
 
+<<<<<<< Updated upstream
 asset treasurehunt::generateprize(game gamedata)
+=======
+string treasurehunt::checksum256_to_string_hash()
+{   
+    auto size = transaction_size();
+    char buf[size];
+    check(size == read_transaction(buf, size), "read_transaction failed");
+    checksum256 sha = sha256(buf, size);
+    auto hbytes = sha.extract_as_byte_array();
+    std::string hash_id;
+
+    const char *to_hex = "0123456789abcdef";
+    for (uint32_t i = 0; i < hbytes.size(); ++i) { (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)]; }
+    return hash_id;
+}
+
+double treasurehunt::generateprize(game gamedata)
+>>>>>>> Stashed changes
 {
-    asset game_prize = gamedata.prize;
+    double game_prize = gamedata.prize;
     double odds = calculateodds(gamedata);
-    game_prize.amount = (game_prize.amount * odds) * 0.98;
+    game_prize = (game_prize * odds) * 0.98;
     return game_prize;
 }
 
@@ -114,16 +132,16 @@ double treasurehunt::calculateodds(game gamedata)
     return ((double)gamedata.unopentile) / (double)rem_panel;
 }
 
-asset treasurehunt::maxprize(game gamedata)
+double treasurehunt::maxprize(game gamedata)
 {
-    asset game_prize = gamedata.prize;
+    double game_prize = gamedata.prize;
     float rem_panel = gamedata.panel_set.size() - gamedata.enemy_count;
     for (int i = 0; i < rem_panel; i++)
     {
         float odds = (float)(gamedata.panel_set.size() - i) / (float)(rem_panel - i);
-        float current_prize_amount = (game_prize.amount * odds) * 0.98;
+        float current_prize = (game_prize * odds) * 0.98;
 
-        game_prize.amount = current_prize_amount;
+        game_prize = current_prize;
     }
 
     return game_prize;
@@ -146,9 +164,9 @@ void treasurehunt::gameupdate(game &game_data)
     else
     {
         showremainingtile(game_data);
-        game_data.prize = DEFAULT_ASSET;
-        game_data.nextprize = DEFAULT_ASSET;
-        game_data.odds = DEFAULT_ASSET.amount;
+        game_data.prize = EOS_DEFAULT;
+        game_data.nextprize = EOS_DEFAULT;
+        game_data.odds = EOS_DEFAULT;
         game_data.unopentile = EOS_DEFAULT; // reset unopentile to empty
     }
 }

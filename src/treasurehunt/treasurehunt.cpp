@@ -1,32 +1,44 @@
 #include "gameplay.cpp"
 
-ACTION treasurehunt::initialize(name username)
+ACTION treasurehunt::initialize(string user_id)
 {
-    require_auth(username);
-    auto itr = _users.find(username.value);
+    require_auth(_self);
+    auto itr = _users.find(user_id);
     check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
 
     if (itr == _users.end())
     {
+<<<<<<< Updated upstream
         users_table userstbl(_self, username.value);
         uint64_t gameid = userstbl.available_primary_key();
 
         _users.emplace(_self, [&](auto &new_users) {
             new_users.username = username;
             new_users.game_id = gameid;
+=======
+        users_table userstbl(_self, user_id);
+        string hash_string = checksum256_to_string_hash();
+        // uint64_t gameid = userstbl.available_primary_key();
+
+        _users.emplace(_self, [&](auto &new_users) {
+            new_users.user_id = user_id;
+            new_users.game_id = hash_string;
+>>>>>>> Stashed changes
         });
     }
 }
 
-ACTION treasurehunt::setpanel(name username, vector<uint8_t> panelset)
+ACTION treasurehunt::setpanel(string user_id, vector<uint8_t> panelset)
 {
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
+    require_auth(_self);
+    // auto &user = _users.get(username.value, "User doesn't exist");
+    auto itr = _users.find(user_id);
     // check if the user has existing game, else cancel start new game
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(user.game_data.panel_set.empty(), "Game Panel Already Set.");
+    check(itr != _users.end(), "User doesn't exist.");
+    check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->game_data.panel_set.empty(), "Game Panel Already Set.");
 
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(itr, _self, [&](auto &modified_user) {
         vector<tile> new_panel_set;
         for (int i = 0; i < PANEL_SIZE; i++)
         {
@@ -39,63 +51,67 @@ ACTION treasurehunt::setpanel(name username, vector<uint8_t> panelset)
     });
 }
 
-ACTION treasurehunt::destination(name username, uint8_t destination)
+ACTION treasurehunt::destination(string user_id, uint8_t destination)
 {
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
+    require_auth(_self);
+    auto itr = _users.find(user_id);
     // check if the user has existing game, else cancel start new game
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr != _users.end(), "User doesn't exist.");
+    check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     // check(user.game_data.destination == 0, "Game Destination Already Set.");
 
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(itr, _self, [&](auto &modified_user) {
         modified_user.game_data.destination = destination;
     });
 }
 
-ACTION treasurehunt::setenemy(name username, uint8_t enemy_count)
+ACTION treasurehunt::setenemy(string user_id, uint8_t enemy_count)
 {
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(user.game_data.destination > 0, "Set destination first.");
-    check(user.game_data.enemy_count < PANEL_SIZE, "Can't have enemy greater than or equal to 16");
+    require_auth(_self);
+    // auto &user = _users.get(username.value, "User doesn't exist");
+    auto itr = _users.find(user_id);
+    check(itr != _users.end(), "User doesn't exist.");
+    check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->game_data.destination > 0, "Set destination first.");
+    check(itr->game_data.enemy_count < PANEL_SIZE, "Can't have enemy greater than or equal to 16");
 
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(itr, _self, [&](auto &modified_user) {
         modified_user.game_data.enemy_count = enemy_count;
     });
 }
 
 // Note: Game Start will be triggered using Notification..
-ACTION treasurehunt::gamestart(name username, asset quantity)
+ACTION treasurehunt::gamestart(string user_id, double quantity)
 {
     require_auth(_self);
 
-    auto &user = _users.get(username.value, "User doesn't exist");
-    auto itr = _users.find(username.value);
+    // auto &user = _users.get(username.value, "User doesn't exist");
+    auto itr = _users.find(user_id);
 
     check(itr != _users.end(), "Game Doesn't Exist.");
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(itr->game_data.destination == (quantity.amount / 10000), "Deposited amount does not match the selected destination.");
+    check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->game_data.destination == (quantity / 10000), "Deposited amount does not match the selected destination.");
     // check(user.game_data.destination != MAP_DEFAULT, "Destination Not Set.");
     // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
 
-    _users.modify(itr, username, [&](auto &modified_user) {
+    _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.prize = quantity;
         gameupdate(game_data);
     });
 }
 
-ACTION treasurehunt::opentile(name username, uint8_t index)
+ACTION treasurehunt::opentile(string user_id, uint8_t index)
 {
-    require_auth(username);
-    auto user = _users.find(username.value);
+    require_auth(_self);
+    // auto user = _users.find(user_id);
+    auto itr = _users.find(user_id);
 
-    check(user->game_data.win_count != (PANEL_SIZE - user->game_data.enemy_count), "You already found all treasures, feel free to withdraw.");
-    check(user->game_data.status == ONGOING, "Either game has ended or not yet configured.");
-    check(user->game_data.panel_set.at(index).isopen == UNOPENED, "Tile already opened!");
+    check(itr->game_data.win_count != (PANEL_SIZE - itr->game_data.enemy_count), "You already found all treasures, feel free to withdraw.");
+    check(itr->game_data.status == ONGOING, "Either game has ended or not yet configured.");
+    check(itr->game_data.panel_set.at(index).isopen == UNOPENED, "Tile already opened!");
 
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         tile &tile = game_data.panel_set[index];
 
@@ -122,54 +138,64 @@ ACTION treasurehunt::opentile(name username, uint8_t index)
     });
 }
 
-ACTION treasurehunt::end(name username)
-{
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    // check(user.game_data.status == DONE, "End your existing game first.");
-    _users.erase(user);
-}
-
-ACTION treasurehunt::withdraw(name username)
-{
-    require_auth(username);
-    auto user = _users.find(username.value);
-    check(user->game_data.win_count > 0, "You have not found any treasure yet.");
-    check(user->game_data.prize.amount > 0, "You've already lost.");
-    check(user->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
-
-    std::string feedback = "TH Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(user->game_data.prize.amount);
-
-    action{
-        permission_level{_self, "active"_n},
-        eosio_token,
-        "transfer"_n,
-        std::make_tuple(_self, username, user->game_data.prize, feedback)}
-        .send();
-}
-
-ACTION treasurehunt::settledpay(name username, asset prize, string memo)
+ACTION treasurehunt::end(string user_id)
 {
     require_auth(_self);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
-
-    _users.modify(user, username, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.status = DONE;
-        gameupdate(game_data);
-    });
+    // auto &user = _users.get(username.value, "User doesn't exist");
+    auto itr = _users.find(user_id);
+    // check(user.game_data.status == DONE, "End your existing game first.");
+    _users.erase(itr);
 }
 
-ACTION treasurehunt::autoplay(name username, vector<uint8_t> to_open_panel)
+ACTION treasurehunt::withdraw(string user_id)
 {
-    require_auth(username);
-    auto user = _users.find(username.value);
+    require_auth(_self);
+    // auto user = _users.find(user_id);
+    auto itr = _users.find(user_id);
+    check(itr->game_data.win_count > 0, "You have not found any treasure yet.");
+    check(itr->game_data.prize > 0, "You've already lost.");
+    check(itr->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+
+    _users.modify(itr, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.prize = EOS_DEFAULT;
+        // std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
+        // eosio::print(feedback + "\n");
+    });
+    // std::string feedback = "TH Withdraw: " + name{username}.to_string() + " recieved " + std::to_string(itr->game_data.prize);
+
+    // action{
+    //     permission_level{_self, "active"_n},
+    //     eosio_token,
+    //     "transfer"_n,
+    //     std::make_tuple(_self, username, itr->game_data.prize, feedback)}
+    //     .send();
+}
+
+// ACTION treasurehunt::settledpay(string user_id, asset prize, string memo)
+// {
+//     require_auth(_self);
+//     // auto &user = _users.get(username.value, "User doesn't exist");
+//     auto itr = _users.find(user_id);
+//     check(itr->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+
+//     _users.modify(itr, _self, [&](auto &modified_user) {
+//         game &game_data = modified_user.game_data;
+//         game_data.status = DONE;
+//         gameupdate(game_data);
+//     });
+// }
+
+ACTION treasurehunt::autoplay(string user_id, vector<uint8_t> to_open_panel)
+{
+    require_auth(_self);
+    // auto user = _users.find(user_id);
+    auto itr = _users.find(user_id);
 
     // check if game is started, game status and if tile is not open
-    check(user->game_data.status == ONGOING, "Either game has ended or not yet configured.");
+    check(itr->game_data.status == ONGOING, "Either game has ended or not yet configured.");
 
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
 
         for (size_t i = 0; i < to_open_panel.size(); i++)
@@ -191,9 +217,9 @@ ACTION treasurehunt::autoplay(name username, vector<uint8_t> to_open_panel)
                 else
                 {
                     game_data.status = DONE;
-                    game_data.nextprize = DEFAULT_ASSET;
-                    game_data.prize = DEFAULT_ASSET;
-                    game_data.odds = DEFAULT_ASSET.amount;
+                    game_data.nextprize = EOS_DEFAULT;
+                    game_data.prize = EOS_DEFAULT;
+                    game_data.odds = EOS_DEFAULT;
                     break;
                 }
                 game_data.unopentile--;

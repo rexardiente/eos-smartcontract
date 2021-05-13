@@ -42,21 +42,27 @@ private:
         uint8_t destination = MAP_DEFAULT;
         uint8_t status = INITIALIZED;
         uint8_t enemy_count = ENEMY_DEFAULT;
-        asset prize = DEFAULT_ASSET;
+        double prize = EOS_DEFAULT;
         double odds = EOS_DEFAULT;
-        asset nextprize = DEFAULT_ASSET;
-        asset maxprize = DEFAULT_ASSET;
+        double nextprize = EOS_DEFAULT;
+        double maxprize = EOS_DEFAULT;
     };
 
     struct [[eosio::table]] user
     {
+<<<<<<< Updated upstream
         name username;
         uint64_t game_id;
+=======
+        string user_id;
+        int id;
+        string game_id;
+>>>>>>> Stashed changes
         game game_data;
 
-        auto primary_key() const
+        string primary_key() const
         {
-            return username.value;
+            return user_id;
         };
     };
 
@@ -79,10 +85,10 @@ private:
 
     int rng(const int &range);
     double calculateodds(game gamedata);
-    asset generateprize(game game_data);
-    asset maxprize(game gamedata);
-    void gameready(name username, asset quantity);
-    void onsettledpay(name to, asset quantity, string memo);
+    double generateprize(game game_data);
+    double maxprize(game gamedata);
+    // void gameready(string user_id, double quantity);
+    // void onsettledpay(name to, asset quantity, string memo);
     void showremainingtile(game & game_data);
     void gameupdate(game & game_data);
 
@@ -95,18 +101,18 @@ public:
                                                                           _users(receiver, receiver.value),
                                                                           _seeds(receiver, receiver.value) {}
 
-    [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
-                                                                 name to,
-                                                                 asset quantity,
-                                                                 string memo);
-    ACTION initialize(name username);
-    ACTION setpanel(name username, vector<uint8_t> panelset);
-    ACTION destination(name username, uint8_t destination);
-    ACTION setenemy(name username, uint8_t enemy_count);
-    ACTION gamestart(name username, asset quantity);
-    ACTION opentile(name username, uint8_t index);
-    ACTION end(name username);
-    ACTION withdraw(name username);
-    ACTION settledpay(name to, asset prize, string memo);
-    ACTION autoplay(name username, vector<uint8_t> panelset);
+//     [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
+//                                                                  name to,
+//                                                                  asset quantity,
+//                                                                  string memo);
+    ACTION initialize(string user_id);
+    ACTION setpanel(string user_id, vector<uint8_t> panelset);
+    ACTION destination(string user_id, uint8_t destination);
+    ACTION setenemy(string user_id, uint8_t enemy_count);
+    ACTION gamestart(string user_id, double quantity);
+    ACTION opentile(string user_id, uint8_t index);
+    ACTION end(string user_id);
+    ACTION withdraw(string user_id);
+    // ACTION settledpay(name to, asset prize, string memo);
+    ACTION autoplay(string user_id, vector<uint8_t> panelset);
 };
