@@ -100,25 +100,18 @@ void treasurehunt::showremainingtile(game &game_data)
     }
 }
 
-<<<<<<< Updated upstream
-asset treasurehunt::generateprize(game gamedata)
-=======
-string treasurehunt::checksum256_to_string_hash()
-{   
-    auto size = transaction_size();
-    char buf[size];
-    check(size == read_transaction(buf, size), "read_transaction failed");
-    checksum256 sha = sha256(buf, size);
-    auto hbytes = sha.extract_as_byte_array();
-    std::string hash_id;
-
+string treasurehunt::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size)
+{
+    std::string r;
     const char *to_hex = "0123456789abcdef";
-    for (uint32_t i = 0; i < hbytes.size(); ++i) { (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)]; }
-    return hash_id;
+    for (uint32_t i = 0; i < arr.size(); ++i)
+    {
+        (r += to_hex[(arr[i] >> 4)]) += to_hex[(arr[i] & 0x0f)];
+    }
+    return r;
 }
 
 double treasurehunt::generateprize(game gamedata)
->>>>>>> Stashed changes
 {
     double game_prize = gamedata.prize;
     double odds = calculateodds(gamedata);

@@ -50,19 +50,13 @@ private:
 
     struct [[eosio::table]] user
     {
-<<<<<<< Updated upstream
-        name username;
-        uint64_t game_id;
-=======
-        string user_id;
+        // string user_id;
         int id;
-        string game_id;
->>>>>>> Stashed changes
         game game_data;
 
-        string primary_key() const
+        auto primary_key() const
         {
-            return user_id;
+            return id;
         };
     };
 
@@ -91,6 +85,7 @@ private:
     // void onsettledpay(name to, asset quantity, string memo);
     void showremainingtile(game & game_data);
     void gameupdate(game & game_data);
+    string checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size);
 
 public:
     using contract::contract;
@@ -105,14 +100,14 @@ public:
 //                                                                  name to,
 //                                                                  asset quantity,
 //                                                                  string memo);
-    ACTION initialize(string user_id);
-    ACTION setpanel(string user_id, vector<uint8_t> panelset);
-    ACTION destination(string user_id, uint8_t destination);
-    ACTION setenemy(string user_id, uint8_t enemy_count);
-    ACTION gamestart(string user_id, double quantity);
-    ACTION opentile(string user_id, uint8_t index);
-    ACTION end(string user_id);
-    ACTION withdraw(string user_id);
+    ACTION initialize(int id);
+    ACTION setpanel(int id, vector<uint8_t> panelset);
+    ACTION destination(int id, uint8_t destination);
+    ACTION setenemy(int id, uint8_t enemy_count);
+    ACTION gamestart(int id, double quantity);
+    ACTION opentile(int id, uint8_t index);
+    ACTION end(int id);
+    ACTION withdraw(int id);
     // ACTION settledpay(name to, asset prize, string memo);
-    ACTION autoplay(string user_id, vector<uint8_t> panelset);
+    ACTION autoplay(int id, vector<uint8_t> panelset);
 };

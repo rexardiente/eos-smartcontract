@@ -1,38 +1,29 @@
 #include "gameplay.cpp"
 
-ACTION treasurehunt::initialize(string user_id)
+ACTION treasurehunt::initialize(int id)
 {
     require_auth(_self);
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
     check(itr == _users.end(), "Error : Either User has Initialized a Game or has an Existing Game");
 
     if (itr == _users.end())
     {
-<<<<<<< Updated upstream
-        users_table userstbl(_self, username.value);
-        uint64_t gameid = userstbl.available_primary_key();
-
-        _users.emplace(_self, [&](auto &new_users) {
-            new_users.username = username;
-            new_users.game_id = gameid;
-=======
-        users_table userstbl(_self, user_id);
-        string hash_string = checksum256_to_string_hash();
+        users_table userstbl(_self, id);
+        // string hash_string = checksum256_to_string_hash();
         // uint64_t gameid = userstbl.available_primary_key();
 
         _users.emplace(_self, [&](auto &new_users) {
-            new_users.user_id = user_id;
-            new_users.game_id = hash_string;
->>>>>>> Stashed changes
+            new_users.id = id;
+            // new_users.game_id = hash_string;
         });
     }
 }
 
-ACTION treasurehunt::setpanel(string user_id, vector<uint8_t> panelset)
+ACTION treasurehunt::setpanel(int id, vector<uint8_t> panelset)
 {
     require_auth(_self);
     // auto &user = _users.get(username.value, "User doesn't exist");
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
     // check if the user has existing game, else cancel start new game
     check(itr != _users.end(), "User doesn't exist.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
@@ -51,10 +42,10 @@ ACTION treasurehunt::setpanel(string user_id, vector<uint8_t> panelset)
     });
 }
 
-ACTION treasurehunt::destination(string user_id, uint8_t destination)
+ACTION treasurehunt::destination(int id, uint8_t destination)
 {
     require_auth(_self);
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
     // check if the user has existing game, else cancel start new game
     check(itr != _users.end(), "User doesn't exist.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
@@ -65,11 +56,11 @@ ACTION treasurehunt::destination(string user_id, uint8_t destination)
     });
 }
 
-ACTION treasurehunt::setenemy(string user_id, uint8_t enemy_count)
+ACTION treasurehunt::setenemy(int id, uint8_t enemy_count)
 {
     require_auth(_self);
     // auto &user = _users.get(username.value, "User doesn't exist");
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
     check(itr != _users.end(), "User doesn't exist.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     check(itr->game_data.destination > 0, "Set destination first.");
@@ -81,16 +72,16 @@ ACTION treasurehunt::setenemy(string user_id, uint8_t enemy_count)
 }
 
 // Note: Game Start will be triggered using Notification..
-ACTION treasurehunt::gamestart(string user_id, double quantity)
+ACTION treasurehunt::gamestart(int id, double quantity)
 {
     require_auth(_self);
 
     // auto &user = _users.get(username.value, "User doesn't exist");
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
 
     check(itr != _users.end(), "Game Doesn't Exist.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(itr->game_data.destination == (quantity / 10000), "Deposited amount does not match the selected destination.");
+    // check(itr->game_data.destination == (quantity / 10000), "Deposited amount does not match the selected destination.");
     // check(user.game_data.destination != MAP_DEFAULT, "Destination Not Set.");
     // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
 
@@ -101,11 +92,11 @@ ACTION treasurehunt::gamestart(string user_id, double quantity)
     });
 }
 
-ACTION treasurehunt::opentile(string user_id, uint8_t index)
+ACTION treasurehunt::opentile(int id, uint8_t index)
 {
     require_auth(_self);
     // auto user = _users.find(user_id);
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
 
     check(itr->game_data.win_count != (PANEL_SIZE - itr->game_data.enemy_count), "You already found all treasures, feel free to withdraw.");
     check(itr->game_data.status == ONGOING, "Either game has ended or not yet configured.");
@@ -138,20 +129,20 @@ ACTION treasurehunt::opentile(string user_id, uint8_t index)
     });
 }
 
-ACTION treasurehunt::end(string user_id)
+ACTION treasurehunt::end(int id)
 {
     require_auth(_self);
     // auto &user = _users.get(username.value, "User doesn't exist");
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
     // check(user.game_data.status == DONE, "End your existing game first.");
     _users.erase(itr);
 }
 
-ACTION treasurehunt::withdraw(string user_id)
+ACTION treasurehunt::withdraw(int id)
 {
     require_auth(_self);
     // auto user = _users.find(user_id);
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
     check(itr->game_data.win_count > 0, "You have not found any treasure yet.");
     check(itr->game_data.prize > 0, "You've already lost.");
     check(itr->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
@@ -172,11 +163,11 @@ ACTION treasurehunt::withdraw(string user_id)
     //     .send();
 }
 
-// ACTION treasurehunt::settledpay(string user_id, asset prize, string memo)
+// ACTION treasurehunt::settledpay(int id, asset prize, string memo)
 // {
 //     require_auth(_self);
 //     // auto &user = _users.get(username.value, "User doesn't exist");
-//     auto itr = _users.find(user_id);
+//     auto itr = _users.find(id);
 //     check(itr->game_data.status == ONGOING, "Game has ended and prize is already transferred.");
 
 //     _users.modify(itr, _self, [&](auto &modified_user) {
@@ -186,11 +177,11 @@ ACTION treasurehunt::withdraw(string user_id)
 //     });
 // }
 
-ACTION treasurehunt::autoplay(string user_id, vector<uint8_t> to_open_panel)
+ACTION treasurehunt::autoplay(int id, vector<uint8_t> to_open_panel)
 {
     require_auth(_self);
     // auto user = _users.find(user_id);
-    auto itr = _users.find(user_id);
+    auto itr = _users.find(id);
 
     // check if game is started, game status and if tile is not open
     check(itr->game_data.status == ONGOING, "Either game has ended or not yet configured.");
