@@ -83,7 +83,7 @@ SET_ENEMY()
     cleos push action treasurehunt setenemy '["1", 5]' -p treasurehunt@active
 }
 
-# Enable Set Sail
+
 GAME_START()
 {
     echo "${EXECUTE} Trigger Set Sail Function..."
