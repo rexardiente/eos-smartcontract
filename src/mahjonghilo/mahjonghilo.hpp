@@ -284,7 +284,7 @@ private:
         string game_id;
         vector<uint8_t> deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
         uint8_t status;
-        asset hi_lo_balance = DEFAULT_ASSET;
+        double hi_lo_balance = MH_DEFAULT;
         int hi_lo_result = MH_DEFAULT;
         // float hi_lo_prize = MH_DEFAULT;
         float hi_lo_bet = MH_DEFAULT;
@@ -321,13 +321,14 @@ private:
 
     struct [[eosio::table]] user
     {
-        name username;
+        // name username;
+        int id;
         int game_count;
         game game_data;
 
         auto primary_key() const
         {
-            return username.value;
+            return id;
         };
     };
 
@@ -350,8 +351,8 @@ private:
 
     int rng(const int &range);
     double roundoff(double var);
-    void depositbet(name to, asset quantity);
-    void onsettledpay(name to, asset quantity, string memo);
+    // void depositbet(name to, asset quantity);
+    // void onsettledpay(name to, asset quantity, string memo);
     void gettile(game & gamedata);
     void sorthand(vector<uint8_t> & hand);
     void sorteye(vector<uint8_t> & hand, int idx);
@@ -385,22 +386,22 @@ public:
                                                                          _users(receiver, receiver.value),
                                                                          _seeds(receiver, receiver.value) {}
 
-    [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
-                                                                 name to,
-                                                                 asset quantity,
-                                                                 string memo);
-    ACTION initialize(name username);
-    ACTION acceptbet(name username, asset quantity);
-    // ACTION starttrial(name username, int numgames, vector<int> idx);
-    ACTION playhilo(name username, int option);
-    ACTION discardtile(name username, int idx);
-    ACTION startbet(name username);
-    ACTION wintransfer(name username);
-    ACTION dclrkong(name username, vector<int> idx);
-    ACTION dclrwinhand(name username);
-    ACTION withdraw(name username);
-    ACTION settledpay(name to, asset prize, string memo);
-    ACTION endgame(name username);
-    ACTION end(name username);
+    // [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
+    //                                                              name to,
+    //                                                              asset quantity,
+    //                                                              string memo);
+    ACTION initialize(int id);
+    ACTION addbet(int id, double quantity);
+    // ACTION starttrial(int id, int numgames, vector<int> idx);
+    ACTION playhilo(int id, int option);
+    ACTION discardtile(int id, int idx);
+    ACTION startbet(int id);
+    ACTION wintransfer(int id);
+    ACTION dclrkong(int id, vector<int> idx);
+    ACTION dclrwinhand(int id);
+    ACTION withdraw(int id);
+    // ACTION settledpay(name to, double prize, string memo);
+    ACTION endgame(int id);
+    ACTION end(int id);
     ACTION del(int size);
 };

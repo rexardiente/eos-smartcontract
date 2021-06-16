@@ -1,31 +1,31 @@
 #include "gameplay.cpp"
 #include "mhlscore.cpp"
 
-// function for accepting bet
-ACTION mahjonghilo::acceptbet(name username, asset quantity)
+// function for adding bet
+ACTION mahjonghilo::addbet(int id, double quantity)
 {
     require_auth(_self);
-    auto itr = _users.find(username.value);
+    auto itr = _users.find(id);
     // check(itr == _users.end(), "Either User has Initialized a Game or has an Existing Game");
-    auto user = _users.find(username.value);
+    auto user = _users.find(id);
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount += quantity.amount;
+        game_data.hi_lo_balance += quantity;
     });
 }
 
-ACTION mahjonghilo::initialize(name username)
+ACTION mahjonghilo::initialize(int id)
 {
     require_auth(_self);
     // Ensure this action is authorized by the player
-    if (_users.find(username.value) == _users.end())
+    if (_users.find(id) == _users.end())
     {
-        _users.emplace(_self, [&](auto &new_user) { new_user.username = username; });
+        _users.emplace(_self, [&](auto &new_user) { new_user.id = id; });
     }
 
-    auto itr = _users.find(username.value);
+    auto itr = _users.find(id);
     check(itr != _users.end(), "User or Game Doesn't Exist.");
-    uint64_t id = 0;
+    // uint64_t id = 0;
     auto size = transaction_size();
     char buf[size];
     check(size == read_transaction(buf, size), "read_transaction failed");
@@ -37,6 +37,7 @@ ACTION mahjonghilo::initialize(name username)
         modified_user.game_count += 1;
         game &game_data = modified_user.game_data;
         const int game_count = modified_user.game_count;
+        // game_data.hi_lo_balance += quantity;
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.status = ONGOING;
         game_data.bet_status = 1;
@@ -78,10 +79,10 @@ ACTION mahjonghilo::initialize(name username)
     });
 }
 
-ACTION mahjonghilo::playhilo(name username, int option)
+ACTION mahjonghilo::playhilo(int id, int option)
 {
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
+    require_auth(_self);
+    auto &user = _users.get(id, "User doesn't exist");
     int checking = 0;
     tile checktile = table_deck.at(user.game_data.standard_tile);
     if (checktile.value == 1 && option == 1)
@@ -103,7 +104,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
     check(user.game_data.option_status == 1, "No bet yet.");
     check(checking != 5, "Cannot choose low.");
     check(checking != 10, "Cannot choose high.");
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         // if(game_data.hi_lo_result==2)
         // {
@@ -148,7 +149,7 @@ ACTION mahjonghilo::playhilo(name username, int option)
             {
                 if (game_data.draw_count >= 33)
                 {
-                    game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
+                    game_data.hi_lo_balance += game_data.hi_lo_stake;
                     game_data.hi_lo_stake = 0.0000;
                     game_data.status = LOSE;
                     game_data.bet_status = 1;
@@ -166,16 +167,16 @@ ACTION mahjonghilo::playhilo(name username, int option)
     });
 }
 
-ACTION mahjonghilo::discardtile(name username, int idx)
+ACTION mahjonghilo::discardtile(int id, int idx)
 {
-    require_auth(username);
+    require_auth(_self);
 
-    auto &user = _users.get(username.value, "User doesn't exist");
+    auto &user = _users.get(id, "User doesn't exist");
     // check(idx <= 13, "Index should be below 14.");
     check(user.game_data.status == ONGOING, "Game already ended.");
     check(user.game_data.draw_count < 34, "Your hand is for declaration(win/lose).");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.winnable = 0;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
@@ -187,14 +188,14 @@ ACTION mahjonghilo::discardtile(name username, int idx)
     });
 }
 
-ACTION mahjonghilo::startbet(name username)
+ACTION mahjonghilo::startbet(int id)
 {
-    require_auth(username);
+    require_auth(_self);
 
-    auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.hi_lo_balance.amount >= 10000 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account..");
+    auto &user = _users.get(id, "User doesn't exist");
+    check(user.game_data.hi_lo_balance >= 1 || user.game_data.hi_lo_stake != 0, "Not sufficient balance on account..");
     check(user.game_data.bet_status == 1, "Bet in place.");
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         if(game_data.hi_lo_result==2)
         {
@@ -203,13 +204,13 @@ ACTION mahjonghilo::startbet(name username)
         else
         {
             // game_data.hi_lo_bet = 1;
-            game_data.hi_lo_balance.amount -= 10000;
+            game_data.hi_lo_balance -= 1;
             game_data.hi_lo_bet += 1.0000;
             game_data.hi_lo_stake = game_data.hi_lo_bet;
         }
         // if (game_data.hi_lo_stake == 0)
         // {
-        //     game_data.hi_lo_balance.amount -= 10000;
+        //     game_data.hi_lo_balance -= 10000;
         //     game_data.hi_lo_stake += 1.0000;
         // }
         // else
@@ -224,31 +225,31 @@ ACTION mahjonghilo::startbet(name username)
     });
 }
 
-ACTION mahjonghilo::wintransfer(name username)
+ACTION mahjonghilo::wintransfer(int id)
 {
-    require_auth(username);
+    require_auth(_self);
 
-    auto &user = _users.get(username.value, "User doesn't exist");
+    auto &user = _users.get(id, "User doesn't exist");
     check(user.game_data.status != INITIALIZED, "Game haven't started.");
     check(user.game_data.bet_status == 1, "Bet in place.");
     check(user.game_data.hi_lo_stake > 0.0000, "No winnings found.");
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
+        game_data.hi_lo_balance += game_data.hi_lo_stake;
         game_data.hi_lo_stake = 0.0000;
     });
 }
 
-ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
+ACTION mahjonghilo::dclrkong(int id, vector<int> idx)
 {
-    require_auth(username);
+    require_auth(_self);
 
-    auto &user = _users.get(username.value, "User doesn't exist");
+    auto &user = _users.get(id, "User doesn't exist");
     vector<tile> kongtile{};
     // check(idx.size() == 4, "Array size should be equal to 4 to declare a kong.")
     check(user.game_data.status == ONGOING, "No ongoing game..");
     // check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Must have a complete hand to declare a kong.");
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         for (int i = 0; i < 4; i++)
         {
@@ -282,12 +283,12 @@ ACTION mahjonghilo::dclrkong(name username, vector<int> idx)
     });
 }
 
-ACTION mahjonghilo::dclrwinhand(name username)
+ACTION mahjonghilo::dclrwinhand(int id)
 {
-    require_auth(username);
-    auto &user = _users.get(username.value, "User doesn't exist");
+    require_auth(_self);
+    auto &user = _users.get(id, "User doesn't exist");
     check(user.game_data.status == ONGOING, "Game already ended.");
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         if (game_data.winnable == 1)
         {
@@ -337,46 +338,46 @@ ACTION mahjonghilo::dclrwinhand(name username)
     });
 }
 
-ACTION mahjonghilo::settledpay(name username, asset prize, string memo)
+// ACTION mahjonghilo::settledpay(int id, asset prize, string memo)
+// {
+//     require_auth(_self);
+//     auto &user = _users.get(id, "User doesn't exist");
+//     check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
+// }
+
+ACTION mahjonghilo::withdraw(int id)
 {
     require_auth(_self);
-    auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.status == ONGOING, "Game has ended and prize is already transferred.");
-}
-
-ACTION mahjonghilo::withdraw(name username)
-{
-    require_auth(username);
-    auto user = _users.find(username.value);
+    auto user = _users.find(id);
     check(user->game_data.status != INITIALIZED, "Game has ended and prize is already transferred or you are on trial.");
-    check(user->game_data.hi_lo_balance.amount > 0, "You have no prize money.");
-    std::string feedback = "MHL Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.hi_lo_balance.amount); // transfer funds to user
-    action{
-        permission_level{_self, "active"_n},
-        eosio_token,
-        "transfer"_n,
-        std::make_tuple(_self, username, user->game_data.hi_lo_balance, feedback)}
-        .send();
+    check(user->game_data.hi_lo_balance > 0, "You have no prize money.");
+    // std::string feedback = "MHL Withdraw: " + name{id}.to_string() + " received " + std::to_string(user->game_data.hi_lo_balance); // transfer funds to user
+    // action{
+    //     permission_level{_self, "active"_n},
+    //     eosio_token,
+    //     "transfer"_n,
+    //     std::make_tuple(_self, id, user->game_data.hi_lo_balance, feedback)}
+    //     .send();
 
-    _users.modify(user, username, [&](auto &modified_user) {
+    _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_balance = DEFAULT_ASSET;
+        game_data.hi_lo_balance = MH_DEFAULT;
     });
 }
 
-ACTION mahjonghilo::endgame(name username)
+ACTION mahjonghilo::endgame(int id)
 {
-    require_auth(username);
+    require_auth(_self);
 
-    auto &user = _users.get(username.value, "User doesn't exist");
+    auto &user = _users.get(id, "User doesn't exist");
     // check(user.game_data.status == ONGOING, "Game may haven't started yet, may on an ongoing trial, or may already ended.");
     // // check(user.game_data.drawn_tiles.size() < 34, "Your hand is for declaration(win/lose).");
     // // check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
-    // _users.modify(user, username, [&](auto &modified_user) {
+    // _users.modiuseritr, _self, [&](auto &modified_user) {
     //     game &game_data = modified_user.game_data;
 
     // });
-    uint64_t id = 0;
+    // uint64_t id = 0;
     auto size = transaction_size();
     char buf[size];
     check(size == read_transaction(buf, size), "read_transaction failed");
@@ -393,7 +394,7 @@ ACTION mahjonghilo::endgame(name username)
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         game_data.status = ONGOING;
-        game_data.hi_lo_balance.amount += game_data.hi_lo_stake * 10000;
+        game_data.hi_lo_balance += game_data.hi_lo_stake;
         game_data.hi_lo_stake = 0.0000;
         game_data.bet_status = 1;
         game_data.option_status = 0;
@@ -457,12 +458,12 @@ ACTION mahjonghilo::endgame(name username)
     });
 }
 
-ACTION mahjonghilo::end(name username)
+ACTION mahjonghilo::end(int id)
 {
-    // require_auth(_self);
-    check(has_auth(_self) || has_auth(username), "Unauthorized user");
-    auto &user = _users.get(username.value, "User doesn't exist");
-    check(user.game_data.hi_lo_balance.amount == 0.0000 && user.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
+    require_auth(_self);
+    // check(has_auth(_self) || has_auth(id), "Unauthorized user");
+    auto &user = _users.get(id, "User doesn't exist");
+    check(user.game_data.hi_lo_balance == 0.0000 && user.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
     _users.erase(user);
 }
 
@@ -478,9 +479,9 @@ ACTION mahjonghilo::del(int size)
 // ACTION mahjonghilo::endall(int size)
 // {
 //     require_auth(_self);
-//     // check(has_auth(_self) || has_auth(username), "Unauthorized user");
-//     // auto &user = _users.get(username.value, "User doesn't exist");
-//     // check(user.game_data.hi_lo_balance.amount == 0.0000 && user.game_data.hi_lo_winnings == 0.0000, "Withdraw your balance before you can end.");
+//     // check(has_auth(_self) || has_auth(id), "Unauthorized user");
+//     // auto &user = _users.get(id, "User doesn't exist");
+//     // check(user.game_data.hi_lo_balance == 0.0000 && user.game_data.hi_lo_winnings == 0.0000, "Withdraw your balance before you can end.");
 //     for (int i = 0; i < 5; i++)
 //     {
 //         auto itr = _users.begin();
@@ -488,12 +489,12 @@ ACTION mahjonghilo::del(int size)
 //     }
 // }
 
-// ACTION mahjonghilo::starttrial(name username, int numgames, vector<int> idx)
+// ACTION mahjonghilo::starttrial(int id, int numgames, vector<int> idx)
 // {
-//     require_auth(username);
-//     auto &user = _users.get(username.value, "User doesn't exist");
+//     require_auth(_self);
+//     auto &user = _users.get(id, "User doesn't exist");
 //     // check(user.game_data.status == INITIALIZED || user.game_data.status == ONTRIAL, "Cannot do a trial. Initialize a new game.");
-//     _users.modify(user, username, [&](auto &modified_user) {
+//     _users.userify(itr, _self, [&](auto &modified_user) {
 //         game &game_data = modified_user.game_data;
 //         game_data.status = ONTRIAL;
 //         game_data.hand_player = {};
