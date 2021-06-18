@@ -1,132 +1,110 @@
 #include "ghostquest.hpp"
 #include <string>
 
-void ghostquest::ondeposit(name from,
-                           name to,
-                           asset quantity,
-                           string memo)
-{
-    if (from == _self)
-    {
-        if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
-        {
-            onsettledpay(to, quantity, memo);
-        }
 
-        // we're sending money, do nothing additional
-        return;
-    }
-    check(to == _self, "Not to our contract");
-    check(quantity.symbol.is_valid(), "Invalid quantity");
-    check(quantity.amount > 0, "Only positive quantity allowed");
-    check(quantity.symbol == ghostquest_symbol, "Invalid EOS Token");
+// void ghostquest::ondeposit(name from,
+//                            name to,
+//                            asset quantity,
+//                            string memo)
+// {
+//     if (from == _self)
+//     {
+//         if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
+//         {
+//             onsettledpay(to, quantity, memo);
+//         }
 
-    std::string str = memo.substr(9);
-    if (memo.find("ADD_LIFE") != std::string::npos)
-    {
-        int key = stoi(str);
-        set_add_life(from, quantity, key);
-    }
-    else
-    {
-        int limit = stoi(str);
-        summon_ready(from, quantity, limit);
-    }
-}
+//         // we're sending money, do nothing additional
+//         return;
+//     }
+//     check(to == _self, "Not to our contract");
+//     check(quantity.symbol.is_valid(), "Invalid quantity");
+//     check(quantity.amount > 0, "Only positive quantity allowed");
+//     check(quantity.symbol == ghostquest_symbol, "Invalid EOS Token");
 
-void ghostquest::summon_ready(name username, asset quantity, int limit) // trigger summoning after transfer transaction
-{
-    require_auth(username);
+//     std::string str = memo.substr(9);
+//     if (memo.find("ADD_LIFE") != std::string::npos)
+//     {
+//         int key = stoi(str);
+//         set_add_life(from, quantity, key);
+//     }
+//     else
+//     {
+//         int limit = stoi(str);
+//         summon_ready(from, quantity, limit);
+//     }
+// }
 
-    action( //generate characters
-        permission_level{_self, "active"_n},
-        _self,
-        "genchar"_n,
-        std::make_tuple(username, quantity, limit))
-        .send();
-}
 
-void ghostquest::set_add_life(name username, asset quantity, int key) // trigger adding life after transfer transaction
-{
-    require_auth(username);
+// void ghostquest::onsettledpay(name username, asset quantity, string memo)
+// {
+//     require_auth(_self);
+//     action(
+//         permission_level{_self, "active"_n},
+//         _self,
+//         "settledpay"_n,
+//         std::make_tuple(username, quantity, memo))
+//         .send();
+// }
 
-    action( // add life
-        permission_level{_self, "active"_n},
-        _self,
-        "addlife"_n,
-        std::make_tuple(username, quantity, key))
-        .send();
-}
-
-void ghostquest::onsettledpay(name username, asset quantity, string memo)
-{
-    require_auth(_self);
-    action(
-        permission_level{_self, "active"_n},
-        _self,
-        "settledpay"_n,
-        std::make_tuple(username, quantity, memo))
-        .send();
-}
-
-void ghostquest::gen_stat(ghost &initial_ghost) // function for generating monster/s status
-{
-    initial_ghost.attack = 25 + rng(50);
-    initial_ghost.defense = 25 + rng(50);
-    initial_ghost.speed = 25 + rng(50);
-    initial_ghost.luck = 25 + rng(50);
-    int sum = initial_ghost.attack + initial_ghost.defense + initial_ghost.speed + initial_ghost.luck + initial_ghost.hitpoints;
-    if (sum > 199 && sum < 286)
-    {
-        initial_ghost.ghost_level = 1;
-    }
-    else if (sum > 285 && sum < 311)
-    {
-        initial_ghost.ghost_level = 2;
-    }
-    else if (sum > 310 && sum < 341)
-    {
-        initial_ghost.ghost_level = 3;
-    }
-    else if (sum > 340 && sum < 386)
-    {
-        initial_ghost.ghost_level = 4;
-    }
-    else
-    {
-        initial_ghost.ghost_level = 5;
-    }
-    if (initial_ghost.attack > initial_ghost.defense)
-    {
-        if (initial_ghost.attack > initial_ghost.speed && initial_ghost.attack > initial_ghost.luck)
-        {
-            initial_ghost.ghost_class = 1;
-        }
-        else if (initial_ghost.speed > initial_ghost.luck)
-        {
-            initial_ghost.ghost_class = 3;
-        }
-        else
-        {
-            initial_ghost.ghost_class = 4;
-        }
-    }
-    else
-    {
-        if (initial_ghost.defense > initial_ghost.speed && initial_ghost.defense > initial_ghost.luck)
-        {
-            initial_ghost.ghost_class = 2;
-        }
-        else if (initial_ghost.speed > initial_ghost.luck)
-        {
-            initial_ghost.ghost_class = 3;
-        }
-        else
-        {
-            initial_ghost.ghost_class = 4;
-        }
-    }
-}
+// void ghostquest::gen_stat(ghost &initial_ghost) // function for generating monster/s status
+// {
+//     initial_ghost.attack = 25 + rng(50);
+//     initial_ghost.defense = 25 + rng(50);
+//     initial_ghost.speed = 25 + rng(50);
+//     initial_ghost.luck = 25 + rng(50);
+//     int sum = initial_ghost.attack + initial_ghost.defense + initial_ghost.speed + initial_ghost.luck + initial_ghost.hitpoints;
+//     if (sum > 199 && sum < 286)
+//     {
+//         initial_ghost.ghost_level = 1;
+//     }
+//     else if (sum > 285 && sum < 311)
+//     {
+//         initial_ghost.ghost_level = 2;
+//     }
+//     else if (sum > 310 && sum < 341)
+//     {
+//         initial_ghost.ghost_level = 3;
+//     }
+//     else if (sum > 340 && sum < 386)
+//     {
+//         initial_ghost.ghost_level = 4;
+//     }
+//     else
+//     {
+//         initial_ghost.ghost_level = 5;
+//     }
+//     if (initial_ghost.attack > initial_ghost.defense)
+//     {
+//         if (initial_ghost.attack > initial_ghost.speed && initial_ghost.attack > initial_ghost.luck)
+//         {
+//             initial_ghost.ghost_class = 1;
+//         }
+//         else if (initial_ghost.speed > initial_ghost.luck)
+//         {
+//             initial_ghost.ghost_class = 3;
+//         }
+//         else
+//         {
+//             initial_ghost.ghost_class = 4;
+//         }
+//     }
+//     else
+//     {
+//         if (initial_ghost.defense > initial_ghost.speed && initial_ghost.defense > initial_ghost.luck)
+//         {
+//             initial_ghost.ghost_class = 2;
+//         }
+//         else if (initial_ghost.speed > initial_ghost.luck)
+//         {
+//             initial_ghost.ghost_class = 3;
+//         }
+//         else
+//         {
+//             initial_ghost.ghost_class = 4;
+//         }
+//     }
+// }
 
 void ghostquest::battle_step(map<int, ghost>::iterator &ghost1, map<int, ghost>::iterator &ghost2) // battle process
 {
@@ -207,7 +185,7 @@ void ghostquest::damage_step(map<int, ghost>::iterator &attacker, map<int, ghost
         }
     }
     defender->second.hitpoints = ((defender->second.hitpoints - fnldmg) < 0) ? 0 : defender->second.hitpoints - fnldmg; // Hitpoints reduction
-    print("Round " + std::to_string(round) + ". Character of " + name{defender->second.owner}.to_string() + " took " + std::to_string(fnldmg) + " damage from character of " + name{attacker->second.owner}.to_string() + " .. ");
+    print("Round " + std::to_string(round) + ". Character of " + std::to_string(defender->second.owner_id) + " took " + std::to_string(fnldmg) + " damage from character of " + std::to_string(attacker->second.owner_id) + " .. ");
 }
 
 void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::iterator &winner) // modify status and other data values for both characters
@@ -232,7 +210,7 @@ void ghostquest::result_step(map<int, ghost>::iterator &loser, map<int, ghost>::
 void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost) // generate prize after battle
 {
     float house_edge;
-    float init_prize = ghost->second.character_life * 10000;
+    float init_prize = ghost->second.character_life;
     if (ghost->second.battle_count < 21)
     {
         house_edge = init_prize * 0.06;
@@ -253,7 +231,7 @@ void ghostquest::calculate_prize(map<int, ghost>::iterator &ghost) // generate p
     {
         house_edge = init_prize * 0.1;
     }
-    ghost->second.prize.amount = init_prize - house_edge;
+    ghost->second.prize = init_prize - house_edge;
 }
 
 void ghostquest::eliminated_withdrawn(map<int, ghost>::iterator &ghost) // disable characters by removing stats
@@ -262,13 +240,13 @@ void ghostquest::eliminated_withdrawn(map<int, ghost>::iterator &ghost) // disab
     ghost->second.character_life = 0;
     ghost->second.initial_hp = 0;
     ghost->second.hitpoints = 0;
-    ghost->second.ghost_class = 0;
-    ghost->second.ghost_level = 0;
+    // ghost->second.ghost_class = 0;
+    // ghost->second.ghost_level = 0;
     ghost->second.attack = 0;
     ghost->second.defense = 0;
     ghost->second.speed = 0;
     ghost->second.luck = 0;
-    ghost->second.prize.amount = 0;
+    ghost->second.prize = 0;
 }
 
 int ghostquest::rng(const int &range)

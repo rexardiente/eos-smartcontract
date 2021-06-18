@@ -9,6 +9,8 @@ EXECUTE="> "
 
 # Cleos Wallet Password
 # PW5KgmdCJdBjcgfBazCCKvYB8Lbzgrs6AvMhXamKe7FvwQQWYxt1P
+# PW5KNqqcca9vDQ1UBDYwejsY78GwLay3RP7qWG9EaabsjvdCozFWF -- DonutFactory1 MacBook
+
 
 UNLOCK_WALLET()
 {
@@ -56,48 +58,64 @@ SHOW_EOSIO_CONTRACT_TABLE()
 INITIALIZE_GAME()
 {
     echo "${EXECUTE} Creating new game for \"user1, user2\"..."
-    cleos push action ghostquest initialize '["user1"]' -p user1@active #for user1
-    cleos push action ghostquest initialize '["user2"]' -p user2@active #for user2
+    cleos push action ghostquest initialize '["1"]' -p ghostquest@active #for user1
+    # cleos push action ghostquest initialize '["user2"]' -p user2@active #for user2
     
 }
+
+# generate character
+GEN_CHAR()
+{
+    cleos push action ghostquest genchar '["1", 1, 5]' -p ghostquest@active 
+}
+
+
+
+# add life to characters
+
+ADD_LIFE()
+{
+    cleos push action ghostquest addlife '["1", 1, 1]' -p ghostquest@active 
+}
+
 # Create user and game_defaults
 REMOVE_EXISTING_GAME()
 {
     echo "${EXECUTE} Deleting existing game for \"user1, user2\"..."
-    cleos push action ghostquest end '["user1"]' -p user1@active #for user1
-    cleos push action ghostquest end '["user2"]' -p user2@active #for user2
+    cleos push action ghostquest end '["1"]' -p ghostquest@active #for user1
+    # cleos push action ghostquest end '["user2"]' -p user2@active #for user2
 }
 
 # SET_SUMMON_COUNT()
 # {
 #     echo "${EXECUTE} Configuring \"user1\" Game Destination."
-#     cleos push action ghostquest summoncount '["user1", 4, 10]' -p user1@active #for user1
+#     cleos push action ghostquest summoncount '["1", 4, 10]' -p ghostquest@active #for user1
 #     cleos push action ghostquest summoncount '["user2", 4, 10]' -p user2@active #for user2
 # }
 
-TRANSFER()
-{
-    # cleos push action eosio.token transfer '[ "user1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user1@active
-    # cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
-    cleos push action eosio.token transfer '[ "user1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user1@active
-    cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
-}
+# TRANSFER()
+# {
+#     # cleos push action eosio.token transfer '[ "1", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p ghostquest@active
+#     # cleos push action eosio.token transfer '[ "user2", "ghostquest", "5.0000 EOS", "BTTL_LMT=10" ]' -p user2@active
+#     # cleos push action eosio.token transfer '[ "1", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p ghostquest@active
+#     # cleos push action eosio.token transfer '[ "user2", "ghostquest", "2.0000 EOS", "ADD_LIFE=1" ]' -p user2@active
+# }
 
 
 BATTLE()
 {
-    cleos push action ghostquest battle '[ "user1", 1, "user2", 1]' -p ghostquest@active
+    cleos push action ghostquest battle '[ "1", 1, "user2", 1]' -p ghostquest@active
 }
 
 WITHDRAW()
 {
-    cleos push action ghostquest withdraw '[ "user1", 1]' -p user1@active
-    cleos push action ghostquest withdraw '[ "user2", 1]' -p user2@active
+    cleos push action ghostquest withdraw '[ "1", 1]' -p ghostquest@active
+    # cleos push action ghostquest withdraw '[ "user2", 1]' -p user2@active
 }
 
 ELIMINATE()
 {
-    cleos push action ghostquest eliminate '[ "user1", 1]' -p user1@active
+    cleos push action ghostquest eliminate '[ "1", 1]' -p ghostquest@active
 }
 
 GET_CURRENCY()
@@ -107,19 +125,27 @@ GET_CURRENCY()
     cleos get currency balance eosio.token user2 EOS
 }
 
+ERASE_ALL()
+{
+    cleos push action ghostquest delall '[5]' -p ghostquest@active
+}
+
 # cleos set account permission ghostquest active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "ghostquest","permission":"eosio.code"},"weight":1}]}'
 
 
-#UNLOCK_WALLET
-#CREATE_ACCOUNT_WALLET
-#SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# ERASE_ALL
+# UNLOCK_WALLET
+# CREATE_ACCOUNT_WALLET
+# SET_PERMISSION
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
 # INITIALIZE_GAME
+# GEN_CHAR
+# ADD_LIFE
 # TRANSFER   # note : transfer has two types, for summon and for add life
 # BATTLE
 # WITHDRAW
 # ELIMINATE
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
