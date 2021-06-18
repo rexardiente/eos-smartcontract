@@ -1,5 +1,7 @@
 {
     "files.associations": {
+        "__tree": "cpp",
+        "map": "cpp",
         "__bit_reference": "cpp",
         "__functional_base": "cpp",
         "__node_handle": "cpp",
@@ -16,8 +18,6 @@
         "system_error": "cpp",
         "tuple": "cpp",
         "type_traits": "cpp",
-        "vector": "cpp",
-        "string": "cpp",
-        "iosfwd": "cpp"
+        "vector": "cpp"
     }
 }
