@@ -343,8 +343,8 @@ private:
         }
     };
 
-    using users_table = eosio::multi_index<"users" _n, user>;
-    using seeds_table = eosio::multi_index<"seeds" _n, seed>;
+    using users_table = eosio::multi_index<"users"_n, user>;
+    using seeds_table = eosio::multi_index<"seeds"_n, seed>;
 
     users_table _users;
     seeds_table _seeds;
