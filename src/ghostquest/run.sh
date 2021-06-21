@@ -109,7 +109,7 @@ BATTLE()
 
 WITHDRAW()
 {
-    cleos push action ghostquest withdraw '[ "1", 1]' -p ghostquest@active
+    cleos push action ghostquest withdraw '[ "1", "67f5a86fe2278fcd6a4b352fb4e0cb0"]' -p ghostquest@active
     # cleos push action ghostquest withdraw '[ "user2", 1]' -p user2@active
 }
 
