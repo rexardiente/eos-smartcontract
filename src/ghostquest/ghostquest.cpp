@@ -62,7 +62,7 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
         game &game_data = modified_user.game_data;
         for (int i = counter; i < (counter + quantity); i++) // summon character/characters and hitpoints
         {
-            string key = hash_string.substr(DEFAULT, 30) + to_string(i);
+            string key = hash_string.substr(0, 30) + to_string(i);
             ghost new_ghost;
             new_ghost.owner_id = id;
             new_ghost.prize = 1;
