@@ -365,7 +365,7 @@ private:
 
     struct game
     {
-        map<int, ghost> character;
+        map<string, ghost> character;
         uint8_t status = INITIALIZED;
     };
 
@@ -399,15 +399,16 @@ private:
     seeds_table _seeds;
 
     int rng(const int &range);
+    string checksum256_to_string_hash();
     // void summon_ready(name username, asset quantity, int limit);
     // void onsettledpay(name to, asset quantity, string memo);
     // void gen_stat(ghost & initghost);
-    void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2);
-    void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round);
-    void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner);
+    // void battle_step(map<int, ghost>::iterator & ghost1, map<int, ghost>::iterator & ghost2);
+    // void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round);
+    // void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner);
     // void set_add_life(name username, asset quantity, int key);
-    void calculate_prize(map<int, ghost>::iterator & ghost);
-    void eliminated_withdrawn(map<int, ghost>::iterator & ghost);
+    void calculate_prize(map<string, ghost>::iterator & ghost);
+    void eliminated_withdrawn(map<string, ghost>::iterator & ghost);
 
 public:
     using contract::contract;
@@ -423,12 +424,12 @@ public:
     //                                                              asset quantity,
     //                                                              string memo);
     ACTION initialize(int id);
-    ACTION battle(int id1, int ghost1_key, int id2, int ghost2_key);
-    ACTION withdraw(int id, int key);
+    // ACTION battle(int id1, int ghost1_key, int id2, int ghost2_key);
+    ACTION withdraw(int id, string key);
     // ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(int id, double quantity, int limit);
-    ACTION addlife(int id, double quantity, int key);
-    ACTION eliminate(int id, int key);
+    ACTION addlife(int id, double quantity, string key);
+    ACTION eliminate(int id, string key);
     ACTION end(int id);
     ACTION delall(int size);
 };

@@ -55,12 +55,14 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
     auto &user = _users.get(id, "User doesn't exist");
     auto itr = _users.find(id);
     int counter = user.game_data.character.size();
+    string hash_string = checksum256_to_string_hash();
     check(itr != _users.end(), "Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         for (int i = counter; i < (counter + quantity); i++) // summon character/characters and hitpoints
         {
+            string key = hash_string.substr(DEFAULT, 30) + to_string(i);
             ghost new_ghost;
             new_ghost.owner_id = id;
             new_ghost.prize = 1;
@@ -81,19 +83,19 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
             // hitpoints formula - 100 + [(1-1)*8) + rng(1*8) 
             // new_ghost.initial_hp = 100 + rng(50);
             // gen_stat(new_ghost); // generate status for character
-            game_data.character.insert(game_data.character.end(), pair<int, ghost>(i + 1, new_ghost));
+            game_data.character.insert(game_data.character.end(), pair<string, ghost>(key, new_ghost));
         }
     });
 }
 
 
-ACTION ghostquest::addlife(int id, double quantity, int key) // add life/lives after transfer transaction
+ACTION ghostquest::addlife(int id, double quantity, string key) // add life/lives after transfer transaction
 {
     require_auth(_self);
 
     auto &user = _users.get(id, "User doesn't exist");
     auto characters = user.game_data.character;
-    map<int, ghost>::iterator itr = characters.find(key);
+    map<string, ghost>::iterator itr = characters.find(key);
     check(itr->second.character_life > 0, "Character cease to exist.");
     itr->second.character_life += quantity;
 
@@ -104,37 +106,37 @@ ACTION ghostquest::addlife(int id, double quantity, int key) // add life/lives a
 }
 
 
-ACTION ghostquest::battle(int id1, int ghost1_key, int id2, int ghost2_key) // battle action
-{
-    require_auth(_self);
-    auto &user1 = _users.get(id1, "User doesn't exist.");
-    auto &user2 = _users.get(id2, "User doesn't exist.");
-    auto characters1 = user1.game_data.character;
-    map<int, ghost>::iterator itr1 = characters1.find(ghost1_key);
-    auto characters2 = user2.game_data.character;
-    map<int, ghost>::iterator itr2 = characters2.find(ghost2_key);
+// ACTION ghostquest::battle(int id1, int ghost1_key, int id2, int ghost2_key) // battle action
+// {
+//     require_auth(_self);
+//     auto &user1 = _users.get(id1, "User doesn't exist.");
+//     auto &user2 = _users.get(id2, "User doesn't exist.");
+//     auto characters1 = user1.game_data.character;
+//     map<int, ghost>::iterator itr1 = characters1.find(ghost1_key);
+//     auto characters2 = user2.game_data.character;
+//     map<int, ghost>::iterator itr2 = characters2.find(ghost2_key);
 
-    itr1->second.hitpoints = itr1->second.initial_hp;
-    itr2->second.hitpoints = itr2->second.initial_hp;
-    check(itr1->second.enemy_fought.find(itr2->first) == itr1->second.enemy_fought.end(), "Enemy already fought before.");
-    check(itr2->second.enemy_fought.find(itr1->first) == itr2->second.enemy_fought.end(), "Enemy already fought before.");
-    check(itr1->second.character_life == itr2->second.character_life, "Match not allowed.");
-    check(itr1->second.battle_count <= itr1->second.battle_limit, "Battle limit reached.");
-    check(itr2->second.battle_count <= itr2->second.battle_limit, "Battle limit reached.");
-    battle_step(itr1, itr2);                                                                                                  // whole battle step
-    itr1->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
-    itr2->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
-    itr1->second.enemy_fought.insert(itr1->second.enemy_fought.end(), pair<uint64_t, name>(itr2->first, itr2->second.owner_id)); // insert enemy fought into history
-    itr2->second.enemy_fought.insert(itr2->second.enemy_fought.end(), pair<uint64_t, name>(itr1->first, itr1->second.owner_id)); // insert enemy fought into history
-    _users.modify(user1, _self, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.character = characters1;
-    });
-    _users.modify(user2, _self, [&](auto &modified_user) {
-        game &game_data = modified_user.game_data;
-        game_data.character = characters2;
-    });
-}
+//     itr1->second.hitpoints = itr1->second.initial_hp;
+//     itr2->second.hitpoints = itr2->second.initial_hp;
+//     check(itr1->second.enemy_fought.find(itr2->first) == itr1->second.enemy_fought.end(), "Enemy already fought before.");
+//     check(itr2->second.enemy_fought.find(itr1->first) == itr2->second.enemy_fought.end(), "Enemy already fought before.");
+//     check(itr1->second.character_life == itr2->second.character_life, "Match not allowed.");
+//     check(itr1->second.battle_count <= itr1->second.battle_limit, "Battle limit reached.");
+//     check(itr2->second.battle_count <= itr2->second.battle_limit, "Battle limit reached.");
+//     battle_step(itr1, itr2);                                                                                                  // whole battle step
+//     itr1->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
+//     itr2->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
+//     itr1->second.enemy_fought.insert(itr1->second.enemy_fought.end(), pair<uint64_t, name>(itr2->first, itr2->second.owner_id)); // insert enemy fought into history
+//     itr2->second.enemy_fought.insert(itr2->second.enemy_fought.end(), pair<uint64_t, name>(itr1->first, itr1->second.owner_id)); // insert enemy fought into history
+//     _users.modify(user1, _self, [&](auto &modified_user) {
+//         game &game_data = modified_user.game_data;
+//         game_data.character = characters1;
+//     });
+//     _users.modify(user2, _self, [&](auto &modified_user) {
+//         game &game_data = modified_user.game_data;
+//         game_data.character = characters2;
+//     });
+// }
 
 // ACTION ghostquest::settledpay(int id, asset prize, string memo)
 // {
@@ -153,7 +155,7 @@ ACTION ghostquest::battle(int id1, int ghost1_key, int id2, int ghost2_key) // b
 //         game_data.hi_lo_balance += quantity;
 //     });
 //////////////
-ACTION ghostquest::withdraw(int id, int key)
+ACTION ghostquest::withdraw(int id, string key)
 {
     require_auth(_self);
     auto user = _users.find(id);
@@ -168,7 +170,7 @@ ACTION ghostquest::withdraw(int id, int key)
     //     std::make_tuple(_self, username, user->game_data.character.find(key)->second.prize, feedback)}
     //     .send();
     auto characters = user->game_data.character;
-    map<int, ghost>::iterator itr = characters.find(key);
+    map<string, ghost>::iterator itr = characters.find(key);
     eliminated_withdrawn(itr); // modify withdrawn character
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
@@ -176,7 +178,7 @@ ACTION ghostquest::withdraw(int id, int key)
     });
 }
 
-ACTION ghostquest::eliminate(int id, int key) // generate stats of monsters after transfer transaction
+ACTION ghostquest::eliminate(int id, string key) // generate stats of monsters after transfer transaction
 {
     require_auth(_self);
 
