@@ -150,6 +150,7 @@ ACTION treasurehunt::withdraw(int id)
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.prize = EOS_DEFAULT;
+        game_data.status = DONE;
         // std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (game_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         // eosio::print(feedback + "\n");
     });
