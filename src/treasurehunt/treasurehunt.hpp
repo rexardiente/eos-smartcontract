@@ -1,6 +1,8 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 #include <eosio/transaction.hpp>
+#include <eosio/crypto.hpp>
+#include <string>
 #include "config.hpp"
 
 using namespace std;
@@ -36,6 +38,7 @@ private:
 
     struct game
     {
+        string game_id;
         vector<tile> panel_set;
         uint8_t unopentile = PANEL_SIZE;
         uint8_t win_count = EOS_DEFAULT;

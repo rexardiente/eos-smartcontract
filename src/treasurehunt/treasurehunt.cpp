@@ -1,4 +1,5 @@
 #include "gameplay.cpp"
+#include <string>
 
 ACTION treasurehunt::initialize(int id)
 {
@@ -49,6 +50,8 @@ ACTION treasurehunt::destination(int id, uint8_t destination)
     // check if the user has existing game, else cancel start new game
     check(itr != _users.end(), "User doesn't exist.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    check(destination %5 == 0 || destination ==1, "Please input valid destination.");
+    check(destination <=10, "Please input valid destination.");
     // check(user.game_data.destination == 0, "Game Destination Already Set.");
 
     _users.modify(itr, _self, [&](auto &modified_user) {
@@ -62,6 +65,7 @@ ACTION treasurehunt::setenemy(int id, uint8_t enemy_count)
     // auto &user = _users.get(username.value, "User doesn't exist");
     auto itr = _users.find(id);
     check(itr != _users.end(), "User doesn't exist.");
+    check(enemy_count>0&&enemy_count<16, "Please input valid enemy count.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     check(itr->game_data.destination > 0, "Set destination first.");
     check(itr->game_data.enemy_count < PANEL_SIZE, "Can't have enemy greater than or equal to 16");
@@ -84,10 +88,16 @@ ACTION treasurehunt::gamestart(int id, double quantity)
     // check(itr->game_data.destination == (quantity / 10000), "Deposited amount does not match the selected destination.");
     // check(user.game_data.destination != MAP_DEFAULT, "Destination Not Set.");
     // check(user.game_data.enemy_count != 0, "Numbers of Enemies Not Set.");
-
+    auto size = transaction_size();
+    char buf[size];
+    check(size == read_transaction(buf, size), "read_transaction failed");
+    checksum256 h = sha256(buf, size);
+    auto hbytes = h.extract_as_byte_array();
+    string hash_string = checksum256_to_string(hbytes, hbytes.size()); // convert txID arr to string
     _users.modify(itr, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.prize = quantity;
+        game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         gameupdate(game_data);
     });
 }

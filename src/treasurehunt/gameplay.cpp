@@ -1,5 +1,4 @@
 #include "treasurehunt.hpp"
-
 // void treasurehunt::ondeposit(name from,
 //                              name to,
 //                              asset quantity,
@@ -110,6 +109,17 @@ string treasurehunt::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t
     }
     return r;
 }
+
+// string mahjonghilo::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size)
+// {
+//     std::string r;
+//     const char *to_hex = "0123456789abcdef";
+//     for (uint32_t i = 0; i < arr.size(); ++i)
+//     {
+//         (r += to_hex[(arr[i] >> 4)]) += to_hex[(arr[i] & 0x0f)];
+//     }
+//     return r;
+// }
 
 double treasurehunt::generateprize(game gamedata)
 {
