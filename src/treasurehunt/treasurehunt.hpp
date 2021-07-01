@@ -113,4 +113,5 @@ public:
     ACTION withdraw(int id);
     // ACTION settledpay(name to, asset prize, string memo);
     ACTION autoplay(int id, vector<uint8_t> panelset);
+    ACTION del(int size);
 };

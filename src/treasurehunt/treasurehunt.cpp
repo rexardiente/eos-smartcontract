@@ -231,3 +231,13 @@ ACTION treasurehunt::autoplay(int id, vector<uint8_t> to_open_panel)
         }
     });
 }
+
+ACTION treasurehunt::del(int size)
+{
+    require_auth(_self);
+    auto itr = _users.begin();
+    while (itr != _users.end())
+    {
+        itr = _users.erase(itr);
+    }
+}
