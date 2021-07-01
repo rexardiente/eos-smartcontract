@@ -119,6 +119,12 @@ AUTOPLAY()
     cleos push action treasurehunt autoplay '["1", [1,5]]' -p treasurehunt@active
 }
 
+ERASE_ALL()
+{
+    cleos push action treasurehunt del '[5]' -p treasurehunt@active
+    # cleos push action treasurehunt withdraw '[ "user2"]' -p user2@active
+}
+
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 COMPILE_CONTRACT
@@ -135,3 +141,4 @@ DEPLOY_CONTRACT
 # GET_CURRENCY
 # REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
+#ERASE_ALL
