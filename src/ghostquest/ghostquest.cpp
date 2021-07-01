@@ -54,7 +54,7 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
 
     auto &user = _users.get(id, "User doesn't exist");
     auto itr = _users.find(id);
-    int counter = user.game_data.character.size();
+    int counter = user.game_data.characters.size();
     string hash_string = checksum256_to_string_hash();
     check(itr != _users.end(), "Game Doesn't Exist.");
     check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
@@ -63,7 +63,7 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
         for (int i = counter; i < (counter + quantity); i++) // summon character/characters and hitpoints
         {
             string key = hash_string.substr(0, 30) + to_string(i);
-            ghost new_ghost;
+            character new_ghost;
             new_ghost.owner_id = id;
             new_ghost.prize = 1;
             new_ghost.battle_limit = limit;
@@ -83,7 +83,7 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
             // hitpoints formula - 100 + [(1-1)*8) + rng(1*8) 
             // new_ghost.initial_hp = 100 + rng(50);
             // gen_stat(new_ghost); // generate status for character
-            game_data.character.insert(game_data.character.end(), pair<string, ghost>(key, new_ghost));
+            game_data.characters.insert(game_data.characters.end(), pair<string, character>(key, new_ghost));
         }
     });
 }
@@ -94,14 +94,14 @@ ACTION ghostquest::addlife(int id, double quantity, string key) // add life/live
     require_auth(_self);
 
     auto &user = _users.get(id, "User doesn't exist");
-    auto characters = user.game_data.character;
-    map<string, ghost>::iterator itr = characters.find(key);
+    auto characters = user.game_data.characters;
+    map<string, character>::iterator itr = characters.find(key);
     check(itr->second.character_life > 0, "Character cease to exist.");
     itr->second.character_life += quantity;
 
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character = characters;
+        game_data.characters = characters;
     });
 }
 
@@ -155,13 +155,51 @@ ACTION ghostquest::addlife(int id, double quantity, string key) // add life/live
 //         game_data.hi_lo_balance += quantity;
 //     });
 //////////////
+
+ACTION ghostquest::battleresult(string gameid, pair<string, int> winner, pair<string, int> loser) // battle action
+{
+    require_auth(_self);
+    check(winner.second != loser.second, "Same Character are not allowed to match");
+    check(winner.first != loser.first, "Same Character are not allowed to match");
+    auto &winner_player = _users.get(winner.second, "User doesn't exist.");
+    auto &loser_player = _users.get(loser.second, "User doesn't exist.");
+
+    map<string, character> player1_characters = winner_player.game_data.characters;
+    map<string, character> player2_characters = loser_player.game_data.characters;
+    vector<map<string, character>::iterator> itr{player1_characters.find(winner.first), player2_characters.find(loser.first)};
+
+    check(itr[0]->second.character_life != 0, winner.first + " No remaining HP.");
+    check(itr[1]->second.character_life != 0, loser.first + " No remaining HP.");
+    check(itr[0]->second.battle_count <= itr[0]->second.battle_limit, winner.first + " reached battle limit.");
+    check(itr[1]->second.battle_count <= itr[1]->second.battle_limit, loser.first + " reached battle limit.");
+
+    // update each players battle details..
+    for_each(itr.begin(), itr.end(), [&](map<string, character>::iterator &n) {
+        // n->second.match_history.insert(n->second.match_history.end(), pair<string, battle_history>(gameid, current_battle));
+        // n->second.last_match = time_executed;
+        n->second.battle_count += 1;
+    });
+
+    _users.modify(winner_player, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        itr[0]->second.character_life += 1;
+        game_data.characters = player1_characters;
+    });
+    _users.modify(loser_player, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        itr[1]->second.character_life -= 1;
+        if (itr[1]->second.character_life == 0) { itr[1]->second.status = ELIMINATED; }
+        game_data.characters = player2_characters;
+    });
+}
+
 ACTION ghostquest::withdraw(int id, string key)
 {
     require_auth(_self);
     auto user = _users.find(id);
-    check(user->game_data.character.find(key)->second.character_life > 0, "Ghost doesn't exist.");
-    check(user->game_data.character.find(key)->second.status != 3, "Ghost is currently in battle.");
-    check(user->game_data.character.find(key)->second.battle_count > 0, "Ghost has not been in a battle.");
+    check(user->game_data.characters.find(key)->second.character_life > 0, "Ghost doesn't exist.");
+    check(user->game_data.characters.find(key)->second.status != 3, "Ghost is currently in battle.");
+    check(user->game_data.characters.find(key)->second.battle_count > 0, "Ghost has not been in a battle.");
     // std::string feedback = "GQ Withdraw: " + name{username}.to_string() + " received " + std::to_string(user->game_data.character.find(key)->second.prize.amount); // transfer funds to user
     // action{
     //     permission_level{_self, "active"_n},
@@ -169,12 +207,12 @@ ACTION ghostquest::withdraw(int id, string key)
     //     "transfer"_n,
     //     std::make_tuple(_self, username, user->game_data.character.find(key)->second.prize, feedback)}
     //     .send();
-    auto characters = user->game_data.character;
-    map<string, ghost>::iterator itr = characters.find(key);
+    auto characters = user->game_data.characters;
+    map<string, character>::iterator itr = characters.find(key);
     eliminated_withdrawn(itr); // modify withdrawn character
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character = characters;
+        game_data.characters = characters;
     });
 }
 
@@ -183,11 +221,11 @@ ACTION ghostquest::eliminate(int id, string key) // generate stats of monsters a
     require_auth(_self);
 
     auto &user = _users.get(id, "User doesn't exist");
-    check(user.game_data.character.at(key).status != 3, "Character in battle.");
+    check(user.game_data.characters.at(key).status != 3, "Character in battle.");
 
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.character.erase(key);
+        game_data.characters.erase(key);
     });
 }
 

@@ -353,7 +353,7 @@ private:
     //         {107, {"Ennma", 108, 5, 5, 5, 5, 5, 5}}};
     
 
-    struct ghost
+    struct character
     {
         int owner_id;
         string ghost_name;
@@ -373,7 +373,7 @@ private:
         int battle_limit = LMT_DEFAULT;
         uint64_t battle_count = GQ_DEFAULT;
         uint64_t last_match = GQ_DEFAULT;
-        map<uint64_t, name> enemy_fought;
+        map<uint64_t, string> enemy_fought;
         // std::chrono::time_point<std::chrono::steady_clock> last_battle;
         // vector<fight_log> battle_log;
 
@@ -385,7 +385,7 @@ private:
 
     struct game
     {
-        map<string, ghost> character;
+        map<string, character> characters;
         uint8_t status = INITIALIZED;
     };
 
@@ -427,8 +427,8 @@ private:
     // void damage_step(map<int, ghost>::iterator & attacker, map<int, ghost>::iterator & defender, int round);
     // void result_step(map<int, ghost>::iterator & loser, map<int, ghost>::iterator & winner);
     // void set_add_life(name username, asset quantity, int key);
-    void calculate_prize(map<string, ghost>::iterator & ghost);
-    void eliminated_withdrawn(map<string, ghost>::iterator & ghost);
+    void calculate_prize(map<string, character>::iterator & character);
+    void eliminated_withdrawn(map<string, character>::iterator & character);
 
 public:
     using contract::contract;
@@ -445,6 +445,7 @@ public:
     //                                                              string memo);
     ACTION initialize(int id);
     // ACTION battle(int id1, int ghost1_key, int id2, int ghost2_key);
+    ACTION battleresult(string gameid, pair<string, int> winner, pair<string, int> loser); // battle action
     ACTION withdraw(int id, string key);
     // ACTION settledpay(name to, asset prize, string memo);
     ACTION genchar(int id, double quantity, int limit);

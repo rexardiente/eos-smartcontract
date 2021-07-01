@@ -66,7 +66,7 @@ INITIALIZE_GAME()
 # generate character
 GEN_CHAR()
 {
-    cleos push action ghostquest genchar '["1", 1, 5]' -p ghostquest@active 
+    cleos push action ghostquest genchar '["1", 5, 5]' -p ghostquest@active 
 }
 
 
@@ -75,7 +75,7 @@ GEN_CHAR()
 
 ADD_LIFE()
 {
-    cleos push action ghostquest addlife '["1", 1, "67f5a86fe2278fcd6a4b352fb4e0cb0"]' -p ghostquest@active 
+    cleos push action ghostquest addlife '["1", 1, "811ce0a35d231565370dcb3692e9310"]' -p ghostquest@active 
 }
 
 # Create user and game_defaults
@@ -109,7 +109,7 @@ BATTLE()
 
 WITHDRAW()
 {
-    cleos push action ghostquest withdraw '[ "1", "67f5a86fe2278fcd6a4b352fb4e0cb0"]' -p ghostquest@active
+    cleos push action ghostquest withdraw '[ "1", "811ce0a35d231565370dcb3692e9310"]' -p ghostquest@active
     # cleos push action ghostquest withdraw '[ "user2", 1]' -p user2@active
 }
 
@@ -138,7 +138,7 @@ ERASE_ALL()
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
 # COMPILE_CONTRACT
-DEPLOY_CONTRACT
+# DEPLOY_CONTRACT
 # INITIALIZE_GAME
 # GEN_CHAR
 # ADD_LIFE
@@ -147,5 +147,5 @@ DEPLOY_CONTRACT
 # WITHDRAW
 # ELIMINATE
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE

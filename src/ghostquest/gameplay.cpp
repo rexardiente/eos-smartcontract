@@ -2,23 +2,23 @@
 #include <string>
 
 
-void ghostquest::calculate_prize(map<string, ghost>::iterator &ghost) // generate prize after battle
+void ghostquest::calculate_prize(map<string, character>::iterator &character) // generate prize after battle
 {
     float house_edge;
-    float init_prize = ghost->second.character_life;
-    if (ghost->second.battle_count < 21)
+    float init_prize = character->second.character_life;
+    if (character->second.battle_count < 21)
     {
         house_edge = init_prize * 0.06;
     }
-    else if (ghost->second.battle_count > 20 && ghost->second.battle_count < 41)
+    else if (character->second.battle_count > 20 && character->second.battle_count < 41)
     {
         house_edge = init_prize * 0.07;
     }
-    else if (ghost->second.battle_count > 40 && ghost->second.battle_count < 61)
+    else if (character->second.battle_count > 40 && character->second.battle_count < 61)
     {
         house_edge = init_prize * 0.08;
     }
-    else if (ghost->second.battle_count > 60 && ghost->second.battle_count < 81)
+    else if (character->second.battle_count > 60 && character->second.battle_count < 81)
     {
         house_edge = init_prize * 0.09;
     }
@@ -26,22 +26,22 @@ void ghostquest::calculate_prize(map<string, ghost>::iterator &ghost) // generat
     {
         house_edge = init_prize * 0.1;
     }
-    ghost->second.prize = init_prize - house_edge;
+    character->second.prize = init_prize - house_edge;
 }
 
-void ghostquest::eliminated_withdrawn(map<string, ghost>::iterator &ghost) // disable characters by removing stats
+void ghostquest::eliminated_withdrawn(map<string, character>::iterator &character) // disable characters by removing stats
 {
-    ghost->second.status = 6;
-    ghost->second.character_life = 0;
-    ghost->second.initial_hp = 0;
-    ghost->second.hitpoints = 0;
-    // ghost->second.ghost_class = 0;
-    // ghost->second.ghost_level = 0;
-    ghost->second.attack = 0;
-    ghost->second.defense = 0;
-    ghost->second.speed = 0;
-    ghost->second.luck = 0;
-    ghost->second.prize = 0;
+    character->second.status = 6;
+    character->second.character_life = 0;
+    character->second.initial_hp = 0;
+    character->second.hitpoints = 0;
+    // character->second.character_class = 0;
+    // character->second.character_level = 0;
+    character->second.attack = 0;
+    character->second.defense = 0;
+    character->second.speed = 0;
+    character->second.luck = 0;
+    character->second.prize = 0;
 }
 
 int ghostquest::rng(const int &range)
