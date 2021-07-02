@@ -50,8 +50,8 @@ ACTION treasurehunt::destination(int id, uint8_t destination)
     // check if the user has existing game, else cancel start new game
     check(itr != _users.end(), "User doesn't exist.");
     check(itr->game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
-    check(destination %5 == 0 || destination ==1, "Please input valid destination.");
-    check(destination <=10, "Please input valid destination.");
+    check(destination %10== 0 || destination ==1, "Please input valid destination.");
+    check(destination <=20, "Please input valid destination.");
     // check(user.game_data.destination == 0, "Game Destination Already Set.");
 
     _users.modify(itr, _self, [&](auto &modified_user) {
