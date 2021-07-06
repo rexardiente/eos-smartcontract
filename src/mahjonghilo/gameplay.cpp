@@ -69,7 +69,7 @@ void mahjonghilo::gettile(game &gamedata)
 {
     // uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
     // uint8_t deck_tile_idx = 109; // Pick a random tile from the deck
-    uint8_t counter = 1;
+    uint8_t counter = 0;
     uint8_t deck_tile_idx = counter;
     gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
@@ -159,7 +159,14 @@ void mahjonghilo::get_odds(game &gamedata, int value)
     }
     else
     {
-        gamedata.draw_odds = 1.0000;
+        if(gamedata.sumofvalue[value-1]!=0)
+        {
+            gamedata.draw_odds = 1.0000;
+        }
+        else
+        {
+            gamedata.draw_odds = 0.0000;
+        }
     }
 
     if (num3 > 1.0000)
