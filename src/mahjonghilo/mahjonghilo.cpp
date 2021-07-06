@@ -93,6 +93,10 @@ ACTION mahjonghilo::playhilo(int id, int option)
     {
         checking = 10;
     }
+    else if(user.game_data.sumofvalue[checktile.value-1]==0 && option == 3)
+    {
+        checking = 15;
+    }
     else
     {
         checking = 1;
@@ -104,6 +108,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
     check(user.game_data.option_status == 1, "No bet yet.");
     check(checking != 5, "Cannot choose low.");
     check(checking != 10, "Cannot choose high.");
+    check(checking != 15, "Cannot choose high.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         // if(game_data.hi_lo_result==2)
