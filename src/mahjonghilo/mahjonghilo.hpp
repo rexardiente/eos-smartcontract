@@ -14,7 +14,7 @@ class [[eosio::contract("mahjonghilo")]] mahjonghilo : public eosio::contract
 private:
     const symbol mahjonghilo_symbol;
     const name eosio_token;
-
+    int sampctr =1;
     enum static_values : int8_t
     {
         MH_DEFAULT = 0,
