@@ -161,8 +161,17 @@ void treasurehunt::gameupdate(game &game_data)
 
     if (game_data.status == ONGOING)
     {
+        if(game_data.win_count!=16-game_data.enemy_count)
+        {
         game_data.nextprize = generateprize(game_data);
         game_data.odds = calculateodds(game_data);
+        }
+        else
+        {
+        game_data.nextprize = EOS_DEFAULT;
+        game_data.odds = EOS_DEFAULT;
+        }
+        
     }
     else
     {
