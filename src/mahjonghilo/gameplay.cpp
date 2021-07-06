@@ -97,8 +97,7 @@ void mahjonghilo::get_odds(game &gamedata, int value)
     {
         sum += gamedata.sumofvalue[i];
     }
-    var = (y < 10) ? 30 : 40;
-
+    // var = (y < 10) ? 30 : 40;
     num2 = sum!= 0 ? (sum / gamedata.sumofvalue[value - 1]) * 0.9 : 0;
     if (value == 1)
     {
