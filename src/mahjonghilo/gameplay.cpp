@@ -84,7 +84,7 @@ void mahjonghilo::gettile(game &gamedata)
     }
     else
     {
-        counter+=36;
+        counter+=32;
     }
     // gamedata.drawn_tiles.insert(gamedata.drawn_tiles.end(), gamedata.current_tile);
     // return gamedata.current_tile;
