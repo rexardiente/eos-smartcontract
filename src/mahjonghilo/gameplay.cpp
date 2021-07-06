@@ -69,7 +69,7 @@ void mahjonghilo::gettile(game &gamedata)
 {
     // uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
     // uint8_t deck_tile_idx = 109; // Pick a random tile from the deck
-    uint8_t deck_tile_idx = 0;
+    uint8_t deck_tile_idx = 32;
     gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
     gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx); // Remove the tile from the deck
