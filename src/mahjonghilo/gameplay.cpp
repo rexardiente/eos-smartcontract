@@ -78,7 +78,7 @@ void mahjonghilo::gettile(game &gamedata)
     tile num = table_deck.at(gamedata.current_tile);
     gamedata.sumofvalue[num.value - 1] -= 1;
     gamedata.draw_count += 1;
-    if(sampctr<=4)
+    if(sampctr%36<4)
     {
         sampctr++;
     }
