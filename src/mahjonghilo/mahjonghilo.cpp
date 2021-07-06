@@ -174,6 +174,7 @@ ACTION mahjonghilo::discardtile(int id, int idx)
     auto &user = _users.get(id, "User doesn't exist");
     // check(idx <= 13, "Index should be below 14.");
     check(user.game_data.status == ONGOING, "Game already ended.");
+    check(user.game_data.hand_player.size() < (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Discard a tile to play Hi-Low..";
     check(user.game_data.draw_count < 34, "Your hand is for declaration(win/lose).");
     check(user.game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _users.modify(user, _self, [&](auto &modified_user) {
