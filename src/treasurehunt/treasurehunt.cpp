@@ -126,6 +126,11 @@ ACTION treasurehunt::opentile(int id, uint8_t index)
             game_data.prize = generateprize(game_data);
             tile.iswin = 1;
             game_data.win_count++; // count number of chest found
+            if(game_data.win_count==PANEL_SIZE - game_data.enemy_count)
+            {
+                game_data.next_prize = EOS_DEFAULT;
+                game_data.odds = EOS_DEFAULT;
+            }
             game_data.unopentile--;
         }
         else
