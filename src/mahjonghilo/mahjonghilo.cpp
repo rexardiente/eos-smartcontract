@@ -357,6 +357,7 @@ ACTION mahjonghilo::withdraw(int id)
     auto user = _users.find(id);
     check(user->game_data.status != INITIALIZED, "Game has ended and prize is already transferred or you are on trial.");
     check(user->game_data.hi_lo_balance > 0, "You have no prize money.");
+    check(user->game_data.hi_lo_stake == 0, "Transfer your winnings to withdraw.");
     // std::string feedback = "MHL Withdraw: " + name{id}.to_string() + " received " + std::to_string(user->game_data.hi_lo_balance); // transfer funds to user
     // action{
     //     permission_level{_self, "active"_n},
