@@ -174,6 +174,21 @@ ACTION mahjonghilo::playhilo(int id, int option)
     });
 }
 
+ACTION mahjonghilo::resetbet(int id)
+{
+    require_auth(_self);
+
+    auto &user = _users.get(id, "User doesn't exist");
+    // check(idx <= 13, "Index should be below 14.");
+    check(user.game_data.status == ONGOING, "Game already ended.");
+    check(user.game_data.hi_lo_result == LOSE, "Game already ended.");
+    _users.modify(user, _self, [&](auto &modified_user) {
+        game &game_data = modified_user.game_data;
+        game_data.hi_lo_stake = 0.0000;
+        // print(temptile.suit);
+    });
+}
+
 ACTION mahjonghilo::discardtile(int id, int idx)
 {
     require_auth(_self);
@@ -205,12 +220,12 @@ ACTION mahjonghilo::startbet(int id)
     check(user.game_data.bet_status == 1, "Bet in place.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        if(game_data.hi_lo_result==3 && game_data.hi_lo_stake!=0)
-        {
-            game_data.hi_lo_stake = 0.0000;
-        }
-        else
-        {        
+        // if(game_data.hi_lo_result==3 && game_data.hi_lo_stake!=0)
+        // {
+        //     game_data.hi_lo_stake = 0.0000;
+        // }
+        // else
+        // {        
             if(game_data.hi_lo_result==2 && game_data.hi_lo_stake != 0)
                 {
                     game_data.hi_lo_bet = game_data.hi_lo_stake;
@@ -222,7 +237,7 @@ ACTION mahjonghilo::startbet(int id)
                     game_data.hi_lo_bet += 1.0000;
                     game_data.hi_lo_stake = game_data.hi_lo_bet;
                 }
-        }
+        // }
         // if (game_data.hi_lo_stake == 0)
         // {
         //     game_data.hi_lo_balance -= 10000;
@@ -247,8 +262,8 @@ ACTION mahjonghilo::wintransfer(int id)
     auto &user = _users.get(id, "User doesn't exist");
     check(user.game_data.status != INITIALIZED, "Game haven't started.");
     check(user.game_data.bet_status == 1, "Bet in place.");
-    check(user.game_data.hi_lo_result != 3, "Last hi-lo was a lost.");
-    // check(user.game_data.hi_lo_stake > 0.0000, "No winnings found.");
+    // check(user.game_data.hi_lo_result != 3, "Last hi-lo was a lost.");
+    check(user.game_data.hi_lo_stake > 0.0000, "No winnings found.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.hi_lo_balance += game_data.hi_lo_stake;

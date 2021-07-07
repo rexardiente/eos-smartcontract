@@ -390,6 +390,7 @@ public:
     //                                                              asset quantity,
     //                                                              string memo);
     ACTION initialize(int id);
+    ACTION resetbet(int id);
     ACTION addbet(int id, double quantity);
     // ACTION starttrial(int id, int numgames, vector<int> idx);
     ACTION playhilo(int id, int option);
