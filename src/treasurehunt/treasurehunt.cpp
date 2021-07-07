@@ -121,7 +121,8 @@ ACTION treasurehunt::opentile(int id, uint8_t index)
         float chance = available / (PANEL_SIZE - game_data.win_count) * 100;
 
         // out of 100, if generated result is lesser than win chance, it means win
-        if (chance < 101)
+        // if (chance < 101)
+        if(chance < rng(100))
         {
             game_data.prize = generateprize(game_data);
             tile.iswin = 1;
