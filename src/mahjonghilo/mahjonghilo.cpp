@@ -111,6 +111,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
     check(checking != 15, "Cannot choose high.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
+        float current_stake = game_data.hi_lo_stake;
         // if(game_data.hi_lo_result==2)
         // {
         //     game_data.hi_lo_bet = game_data.hi_lo_stake;
@@ -136,6 +137,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
         else
         {
             game_data.hi_lo_result = LOSE;
+            game_data.hi_lo_stake = current_stake;
         }
         // game_data.hi_lo_winnings += game_data.hi_lo_prize;
         // uint8_t tile_var = gettile(game_data);
@@ -203,16 +205,23 @@ ACTION mahjonghilo::startbet(int id)
     check(user.game_data.bet_status == 1, "Bet in place.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        if(game_data.hi_lo_result==2 && game_data.hi_lo_stake != 0)
+        if(game_data.hi_lo_result==3 && game_data.hi_lo_stake!=0)
         {
-            game_data.hi_lo_bet = game_data.hi_lo_stake;
+            game_data.hi_lo_stake = 0.0000;
         }
         else
-        {
-            // game_data.hi_lo_bet = 1;
-            game_data.hi_lo_balance -= 1;
-            game_data.hi_lo_bet += 1.0000;
-            game_data.hi_lo_stake = game_data.hi_lo_bet;
+        {        
+            if(game_data.hi_lo_result==2 && game_data.hi_lo_stake != 0)
+                {
+                    game_data.hi_lo_bet = game_data.hi_lo_stake;
+                }
+            else
+                {
+                    // game_data.hi_lo_bet = 1;
+                    game_data.hi_lo_balance -= 1;
+                    game_data.hi_lo_bet += 1.0000;
+                    game_data.hi_lo_stake = game_data.hi_lo_bet;
+                }
         }
         // if (game_data.hi_lo_stake == 0)
         // {
