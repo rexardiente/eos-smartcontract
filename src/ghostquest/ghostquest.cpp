@@ -57,7 +57,7 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
     int counter = user.game_data.characters.size();
     string hash_string = checksum256_to_string_hash();
     check(itr != _users.end(), "Game Doesn't Exist.");
-    check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
+    // check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         for (int i = counter; i < (counter + quantity); i++) // summon character/characters and hitpoints
@@ -69,7 +69,7 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
             new_ghost.battle_limit = limit;
             new_ghost.status = SUMMONED;
             new_ghost.character_life = 1;
-            new_ghost.status = STANDBY;
+            // new_ghost.status = STANDBY;
             base_stat tempstat = stat_deck[rng(stat_deck.size())];
             new_ghost.ghost_name = tempstat.ghost_name;
             new_ghost.ghost_id = tempstat.ghost_id;

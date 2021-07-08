@@ -386,13 +386,13 @@ private:
     struct game
     {
         map<string, character> characters;
-        uint8_t status = INITIALIZED;
+        // uint8_t status = INITIALIZED;
     };
 
     struct [[eosio::table]] user
     {
         int id;
-        uint64_t game_id;
+        // uint64_t game_id;
         game game_data;
 
         auto primary_key() const
