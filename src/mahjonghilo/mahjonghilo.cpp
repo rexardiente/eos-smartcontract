@@ -249,6 +249,7 @@ ACTION mahjonghilo::startbet(int id)
         // }
         game_data.bet_status = 0;
         game_data.option_status = 1;
+        game_data.hi_lo_outcome = MH_DEFAULT;
         game_data.standard_tile = game_data.current_tile;
         const auto hilo_tile = table_deck.at(game_data.standard_tile);
         get_odds(game_data, hilo_tile.value);
