@@ -367,7 +367,7 @@ private:
     void transferhand(game & gamedata, int size);
     void pung_chow(game & gamedata, int check);
     void get_odds(game & gamedata, int value);
-    float hilo_step(game gamedata, int prev_tile, int current_tile);
+    float hilo_step(game & gamedata, int prev_tile, int current_tile);
     int pair_pung_chow(tile tile1, tile tile2, tile tile3);
     int pung_check(tile tile1, tile tile2, tile tile3);
     int pair_check(tile tile1, tile tile2);

@@ -180,7 +180,7 @@ void mahjonghilo::get_odds(game &gamedata, int value)
     }
 }
 
-float mahjonghilo::hilo_step(game gamedata, int prev_tile, int current_tile)
+float mahjonghilo::hilo_step(game & gamedata, int prev_tile, int current_tile)
 {
     // int option = gamedata.prediction;
     if (prev_tile > current_tile)
