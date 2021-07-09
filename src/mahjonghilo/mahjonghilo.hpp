@@ -285,6 +285,7 @@ private:
         uint8_t status;
         double hi_lo_balance = MH_DEFAULT;
         int hi_lo_result = MH_DEFAULT;
+        int hi_lo_outcome = MH_DEFAULT;
         // float hi_lo_prize = MH_DEFAULT;
         float hi_lo_bet = MH_DEFAULT;
         float hi_lo_stake = MH_DEFAULT;

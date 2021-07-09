@@ -183,17 +183,37 @@ void mahjonghilo::get_odds(game &gamedata, int value)
 float mahjonghilo::hilo_step(game gamedata, int prev_tile, int current_tile)
 {
     // int option = gamedata.prediction;
-    if (prev_tile > current_tile && gamedata.prediction == 1)
+    if (prev_tile > current_tile)
     {
-        return gamedata.low_odds;
+        gamedata.hi_lo_outcome = 1;
+        if(gamedata.prediction == 1)
+        {return gamedata.low_odds;}
+        else
+        {
+            return 0;
+        }
+        
     }
-    else if (prev_tile == current_tile && gamedata.prediction == 2)
+    else if (prev_tile == current_tile)
     {
-        return gamedata.draw_odds;
+        gamedata.hi_lo_outcome = 2;
+        if(gamedata.prediction == 2)
+        {return gamedata.draw_odds;}
+        else
+        {
+            return 0;
+        }
     }
-    else if (prev_tile < current_tile && gamedata.prediction == 3)
+    else if (prev_tile < current_tile)
     {
-        return gamedata.high_odds;
+        gamedata.hi_lo_outcome = 3;
+        if(gamedata.prediction == 3)
+        {return gamedata.high_odds;}
+        else
+        {
+            return 0;
+        }
+        
     }
     else
     {
