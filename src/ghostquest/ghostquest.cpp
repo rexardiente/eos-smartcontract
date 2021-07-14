@@ -222,7 +222,7 @@ ACTION ghostquest::eliminate(int id, string key) // generate stats of monsters a
 
     auto &user = _users.get(id, "User doesn't exist");
     check(user.game_data.characters.at(key).status != 3, "Character in battle.");
-
+    check(user->game_data.characters.find(key)->second.character_life == 0, "Ghost doesn't exist.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.characters.erase(key);
