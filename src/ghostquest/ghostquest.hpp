@@ -362,6 +362,7 @@ private:
         uint64_t character_life = LIFE_DEFAULT;
         int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
+        uint64_t created_at;
         // uint64_t ghost_class = CLASS_DEFAULT;
         // uint64_t ghost_level = LVL_DEFAULT;
         uint64_t status = GQ_DEFAULT;

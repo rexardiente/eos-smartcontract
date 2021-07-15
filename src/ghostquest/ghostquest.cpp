@@ -60,6 +60,8 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
     // check(user.game_data.status == INITIALIZED, "Has an existing game, can't start a new game.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
+        auto current_time = current_time_point().time_since_epoch()._count;
+        
         for (int i = counter; i < (counter + quantity); i++) // summon character/characters and hitpoints
         {
             string key = hash_string.substr(0, 30) + to_string(i);
@@ -79,11 +81,13 @@ ACTION ghostquest::genchar(int id, double quantity, int limit) // generate chara
             new_ghost.defense = 25 +rng(8) + ((tempstat.base_def-1)*9);
             new_ghost.speed = 25 +rng(8) + ((tempstat.base_spd-1)*9);
             new_ghost.luck = 25 +rng(8) + ((tempstat.base_lck-1)*9);
+            new_ghost.created_at = current_time;
             // status formula - 24 + [(1-1)*8) + rng(1*8)
             // hitpoints formula - 100 + [(1-1)*8) + rng(1*8) 
             // new_ghost.initial_hp = 100 + rng(50);
             // gen_stat(new_ghost); // generate status for character
             game_data.characters.insert(game_data.characters.end(), pair<string, character>(key, new_ghost));
+            current_time +=1;
         }
     });
 }
