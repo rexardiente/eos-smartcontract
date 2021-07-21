@@ -33,7 +33,7 @@ void ghostquest::eliminated_withdrawn(map<string, character>::iterator &characte
 {
     character->second.status = 6;
     character->second.character_life = 0;
-    character->second.initial_hp = 0;
+    // character->second.initial_hp = 0;
     character->second.hitpoints = 0;
     // character->second.character_class = 0;
     // character->second.character_level = 0;
