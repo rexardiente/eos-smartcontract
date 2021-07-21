@@ -360,7 +360,7 @@ private:
         int ghost_id;
         int rarity;
         uint64_t character_life = LIFE_DEFAULT;
-        int initial_hp = HP_DEFAULT;
+        // int initial_hp = HP_DEFAULT;
         int hitpoints = HP_DEFAULT;
         uint64_t created_at;
         // uint64_t ghost_class = CLASS_DEFAULT;

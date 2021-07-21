@@ -119,7 +119,9 @@ ACTION ghostquest::addlife(int id, double quantity, string key) // add life/live
 //     map<int, ghost>::iterator itr1 = characters1.find(ghost1_key);
 //     auto characters2 = user2.game_data.character;
 //     map<int, ghost>::iterator itr2 = characters2.find(ghost2_key);
-
+       
+    //    int char_hp1 = itr1->second.hitpoints;
+    //    int char_hp2 = itr2->second.hitpoints;
 //     itr1->second.hitpoints = itr1->second.initial_hp;
 //     itr2->second.hitpoints = itr2->second.initial_hp;
 //     check(itr1->second.enemy_fought.find(itr2->first) == itr1->second.enemy_fought.end(), "Enemy already fought before.");
@@ -132,6 +134,8 @@ ACTION ghostquest::addlife(int id, double quantity, string key) // add life/live
 //     itr2->second.last_match = current_time_point().elapsed._count;                                                            // time of the last match
 //     itr1->second.enemy_fought.insert(itr1->second.enemy_fought.end(), pair<uint64_t, name>(itr2->first, itr2->second.owner_id)); // insert enemy fought into history
 //     itr2->second.enemy_fought.insert(itr2->second.enemy_fought.end(), pair<uint64_t, name>(itr1->first, itr1->second.owner_id)); // insert enemy fought into history
+        // itr1->second.hitpoints = char_hp1;
+        // itr2->second.hitpoints = char_hp2;
 //     _users.modify(user1, _self, [&](auto &modified_user) {
 //         game &game_data = modified_user.game_data;
 //         game_data.character = characters1;
