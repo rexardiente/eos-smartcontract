@@ -67,8 +67,8 @@ double mahjonghilo::roundoff(double var)
 
 void mahjonghilo::gettile(game &gamedata)
 {
-    uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
-    // uint8_t deck_tile_idx = 109; // Pick a random tile from the deck
+    // uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
+    uint8_t deck_tile_idx = 1; // Pick a random tile from the deck
     // uint8_t deck_tile_idx = 64;
     gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
