@@ -147,6 +147,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
         // get_odds(game_data, current_tile.value);
         if (game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()))
         {
+            sorthand(game_data.hand_player);
             winhand_check(game_data, game_data.hand_player);
             if (game_data.winnable == 1)
             {
