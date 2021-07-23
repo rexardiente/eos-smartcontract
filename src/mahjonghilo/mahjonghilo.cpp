@@ -147,7 +147,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
         // get_odds(game_data, current_tile.value);
         if (game_data.hand_player.size() == (14 + user.game_data.kong_count - user.game_data.reveal_kong.size()))
         {
-            sorthand(game_data.hand_player);
+            // sorthand(game_data.hand_player);
             winhand_check(game_data, game_data.hand_player);
             if (game_data.winnable == 1)
             {
@@ -169,7 +169,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
                 }
             }
         }
-        game_data.hi_lo_bet = 0;
+        // game_data.hi_lo_bet = 0;
         game_data.bet_status = 1;
         game_data.option_status = 0;
     });
@@ -202,6 +202,9 @@ ACTION mahjonghilo::discardtile(int id, int idx)
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.winnable = 0;
+        game_data.pung_count = MH_DEFAULT;
+        game_data.pair_count = MH_DEFAULT;
+        game_data.chow_count = MH_DEFAULT;
         game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
         game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
         sorthand(game_data.hand_player);

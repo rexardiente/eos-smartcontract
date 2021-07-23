@@ -67,8 +67,8 @@ double mahjonghilo::roundoff(double var)
 
 void mahjonghilo::gettile(game &gamedata)
 {
-    // uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
-    uint8_t deck_tile_idx = 1; // Pick a random tile from the deck
+    uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
+    // uint8_t deck_tile_idx = 1; //  Pick a random tile from the deck
     // uint8_t deck_tile_idx = 64;
     gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
@@ -278,9 +278,10 @@ void mahjonghilo::sumscore(game &gamedata)
 void mahjonghilo::winhand_check(game &gamedata, vector<uint8_t> &hand)
 {
     vector<tile> remtiles = {};
+    sorthand(hand);
     for (int i = 0; i < gamedata.hand_player.size(); i++)
     {
-        remtiles.insert(remtiles.end(), table_deck.at(gamedata.hand_player[i]));
+        remtiles.insert(remtiles.end(), table_deck.at(hand[i]));
     }
     if (remtiles.size() == 2)
     {
