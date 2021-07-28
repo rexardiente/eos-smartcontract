@@ -137,7 +137,7 @@ ACTION mahjonghilo::playhilo(int id, int option)
         else
         {
             game_data.hi_lo_result = LOSE;
-            game_data.hi_lo_stake = current_stake;
+            game_data.hi_lo_bet = current_stake;
         }
         // game_data.hi_lo_winnings += game_data.hi_lo_prize;
         // uint8_t tile_var = gettile(game_data);
@@ -185,7 +185,7 @@ ACTION mahjonghilo::resetbet(int id)
     check(user.game_data.hi_lo_result == LOSE, "Game already ended.");
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
-        game_data.hi_lo_stake = 0.0000;
+        game_data.hi_lo_bet = 0.0000;
         // print(temptile.suit);
     });
 }
@@ -399,6 +399,8 @@ ACTION mahjonghilo::withdraw(int id)
     _users.modify(user, _self, [&](auto &modified_user) {
         game &game_data = modified_user.game_data;
         game_data.hi_lo_balance = MH_DEFAULT;
+        game_data.hi_lo_stake = MH_DEFAULT;
+        game_data.hi_lo_bet = MH_DEFAULT;
     });
 }
 

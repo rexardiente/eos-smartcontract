@@ -141,11 +141,19 @@ WITHDRAW()
     cleos push action mahjonghilo withdraw '[ "1"]' -p mahjonghilo@active
     # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
 }
+
+RESETBET()
+{
+    cleos push action mahjonghilo resetbet '[ "1"]' -p mahjonghilo@active
+    # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
+}
+
 ERASE_ALL()
 {
     cleos push action mahjonghilo del '[5]' -p mahjonghilo@active
     # cleos push action mahjonghilo withdraw '[ "user2"]' -p user2@active
 }
+# ACTION mahjonghilo::resetbet(int id)
 
 
 GET_CURRENCY()
@@ -171,10 +179,11 @@ GET_CURRENCY()
 # KONGDEC
 # WINDEC
 # END_GAME
+# RESETBET
 # TRANSFER_WINNINGS 
 # WITHDRAW
 # TRIALMODE
 # TRANSFER
 # GET_CURRENCY 
-# REMOVE_EXISTING_GAME
+REMOVE_EXISTING_GAME
 SHOW_EOSIO_CONTRACT_TABLE
