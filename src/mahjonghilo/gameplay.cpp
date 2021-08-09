@@ -4345,12 +4345,12 @@ string mahjonghilo::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t 
 }
 
 
-void mahjonghilo::winhand_check(game &gamedata, vector<uint8_t> &hand)
-{
-    vector<tile> remtiles = {};
-    sorthand(hand);
+// void mahjonghilo::winhand_check(game &gamedata, vector<uint8_t> &hand)
+// {
+//     vector<tile> remtiles = {};
+//     sorthand(hand);
 
-}
+// }
 
 // 111 123
 // 111 234
