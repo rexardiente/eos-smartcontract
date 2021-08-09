@@ -273,6 +273,7 @@ ACTION mahjonghilo::wintransfer(int id)
         game &game_data = modified_user.game_data;
         game_data.hi_lo_balance += game_data.hi_lo_stake;
         game_data.hi_lo_stake = 0.0000;
+        game_data.hi_lo_bet = 0.0000;
     });
 }
 

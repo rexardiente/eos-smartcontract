@@ -4343,3 +4343,73 @@ string mahjonghilo::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t 
     }
     return r;
 }
+
+
+void mahjonghilo::winhand_check(game &gamedata, vector<uint8_t> &hand)
+{
+    vector<tile> remtiles = {};
+    sorthand(hand);
+
+}
+
+// 111 123
+// 111 234
+
+// 123 334455
+
+    // if ((pair_pung_chow(tile1, tile2, tile3)) == 2) -> 111
+    // {
+    //     if ((pair_pung_chow(tile4, tile5, tile6)) == 2) -> 111 222
+    //     {
+    //         return 4;
+    //     }
+    //     else if ((pair_pung_chow(tile4, tile5, tile6)) == 3) -> 111 234
+    //     {
+    //         return 5;
+    //     }
+    //     else
+    //     {
+    //         return 0;
+    //     }
+    // }
+    // else if ((pair_pung_chow(tile1, tile2, tile3)) == 3)
+    // {
+    //     if ((pair_pung_chow(tile4, tile5, tile6)) == 2)
+    //     {
+    //         return 6;
+    //     }
+    //     else if ((pair_pung_chow(tile4, tile5, tile6)) == 3)
+    //     {
+    //         return 7;
+    //     }
+    //     else
+    //     {
+    //         return 0;
+    //     }
+    // }
+    // else if ((pair_pung_chow(tile1, tile2, tile3)) == 1)
+    // {
+    //     if ((pair_check(tile3, tile4)) == 1 && (pair_check(tile5, tile6)) == 1)
+    //     {
+    //         if ((pair_pung_chow(tile1, tile3, tile5)) == 3)
+    //         {
+    //             return 8;
+    //         }
+    //         else if (pair_check(tile3, tile5) == 2)
+    //         {
+    //             return 9;
+    //         }
+    //         else
+    //         {
+    //             return 10;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         return 0;
+    //     }
+    // }
+    // else
+    // {
+    //     return 0;
+    // }

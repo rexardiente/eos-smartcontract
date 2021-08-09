@@ -58,29 +58,29 @@ private:
 
     const map<uint8_t, score> score_deck = {
         {0, {"No Score", 0}},
-        {1, {"Big Four Winds", 88}},            ///
-        {2, {"Big Three Dragons", 88}},         ///
-        {3, {"Four Kongs", 88}},                //
+        // -- {1, {"Big Four Winds", 88}},            ///
+        // -- {2, {"Big Three Dragons", 88}},         ///
+        // -- {3, {"Four Kongs", 88}},                //
         {4, {"Seven Shift Pairs", 88}},         //
-        {5, {"All Green", 88}},                 ///
-        {6, {"Nine Gates", 88}},                //
-        {7, {"Thirteen Orphans", 88}},          ///
-        {8, {"Little Four Winds", 64}},         ///
-        {9, {"Little Three Dragons", 64}},      ///
-        {10, {"All Honors", 64}},               ///
+        // -- {5, {"All Green", 88}},                 ///
+        // -- {6, {"Nine Gates", 88}},                //
+        // -- {7, {"Thirteen Orphans", 88}},          ///
+        // -- {8, {"Little Four Winds", 64}},         ///
+        // -- {9, {"Little Three Dragons", 64}},      ///
+        // -- {10, {"All Honors", 64}},               ///
         {11, {"Pure Terminal Chows", 64}},      //
-        {12, {"Four Concealed Pungs", 64}},     //
-        {13, {"All Terminals", 64}},            //
+        // -- {12, {"Four Concealed Pungs", 64}},     //
+        // -- {13, {"All Terminals", 64}},            //
         {14, {"Quadruple Chows", 48}},          //
         {15, {"Four Pure Shifted Pungs", 48}},  //
         {16, {"Four Pure Shifted Chows", 32}},  //
-        {17, {"All Terminals and Honors", 32}}, //
-        {18, {"Three Kongs", 32}},              //
-        // {19, {"Pure Triple Chow", 24}}, -------------
+        // -- {17, {"All Terminals and Honors", 32}}, //
+        // -- {18, {"Three Kongs", 32}},              //
+        // {19, {"Pure Triple Chow", 24}}, 
         {20, {"Pure Shifted Pungs", 24}},               //
         {21, {"All Even Pungs", 24}},                   //
         {22, {"Seven Pairs", 24}},                      //
-        {23, {"Full Flush", 24}},                       //
+        // -- {23, {"Full Flush", 24}},                       //
         {24, {"Upper Tiles", 24}},                      //
         {25, {"Middle Tiles", 24}},                     //
         {26, {"Lower Tiles", 24}},                      //
@@ -110,10 +110,10 @@ private:
         {50, {"Mixed Shifted Chows", 6}},
         // {51, {"All Pungs", 6}},
         {52, {"All Types", 6}},
-        {53, {"Half Flush", 6}},
+        // -- {53, {"Half Flush", 6}},
         // {54, {"Melded Hand", 6}}, -------------
         // {55, {"Two Melded Kongs", 4}}, -------------
-        {56, {"Outside Hand", 4}},
+        // -- {56, {"Outside Hand", 4}},
         // {57, {"Last Tile", 4}},
         // {58, {"Fully Concealed Hands", 4}},
         {59, {"Dragon Pung", 2}},
@@ -126,7 +126,7 @@ private:
         {66, {"Mixed Double Pungs", 2}},
         {67, {"All Simples", 2}},
         {68, {"Tile Hog", 2}},
-        {69, {"Pure Double Chows", 1}},
+        // -- {69, {"Pure Double Chows", 1}},
         {70, {"Mixed Double Chows", 1}},
         {71, {"Short Straight", 1}},
         {72, {"Two Terminal Chows", 1}},
