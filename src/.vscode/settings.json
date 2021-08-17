@@ -18,6 +18,13 @@
         "type_traits": "cpp",
         "vector": "cpp",
         "string": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "map": "cpp",
+        "utility": "cpp",
+        "__hash_table": "cpp",
+        "__string": "cpp",
+        "__tree": "cpp",
+        "string_view": "cpp",
+        "unordered_map": "cpp"
     }
 }
