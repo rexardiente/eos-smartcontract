@@ -434,11 +434,13 @@ ACTION mahjonghilo::endgame(int id)
         game_data.game_id = hash_string.substr(0, 30) + to_string(rng(100));
         game_data.sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         game_data.status = ONGOING;
+        game_data.status = MH_DEFAULT;
         game_data.hi_lo_balance += game_data.hi_lo_stake;
         game_data.hi_lo_stake = 0.0000;
         game_data.bet_status = 1;
         game_data.option_status = 0;
         game_data.hi_lo_result = MH_DEFAULT;
+        game_data.hi_lo_outcome = MH_DEFAULT;
         // game_data.hi_lo_prize = MH_DEFAULT;
         game_data.low_odds = MH_DEFAULT;
         game_data.draw_odds = MH_DEFAULT;
