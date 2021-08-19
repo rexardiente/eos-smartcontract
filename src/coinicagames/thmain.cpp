@@ -15,6 +15,7 @@ ACTION coinicagames::thinitialize(int id)
     }
 }
 
+// ACTION thinit(int id, uint8_t destination, uint8_t enemy_count, vector<uint8_t> panels);
 ACTION coinicagames::thsetpanel(int id, vector<uint8_t> panelset)
 {
     require_auth(_self);

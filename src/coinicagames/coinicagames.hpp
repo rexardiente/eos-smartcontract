@@ -244,7 +244,6 @@ private:
         double nextprize = DEFAULT;
         double maxprize = DEFAULT;
     };
-
     struct character
     {
         int owner_id;
@@ -265,54 +264,42 @@ private:
         uint64_t last_match = DEFAULT;
         map<uint64_t, string> enemy_fought;
     };
-
     struct gqgame
     {
         map<string, character> characters;
-        // uint8_t status = INITIALIZED;
     };
-
     struct [[eosio::table]] ghostquest
     {
         int id;
-        // uint64_t game_id;
         gqgame gqgame_data;
-
         auto primary_key() const
         {
             return id;
         };
     };
-
     struct [[eosio::table]] thunt
     {
         // string user_id;
         int id;
         thgame thgame_data;
-
         auto primary_key() const
         {
             return id;
         };
     };
-
     struct [[eosio::table]] seed
     {
         uint64_t key = 1;   // default key '1'
         uint32_t value = 1; // default value of 1
-
         auto primary_key() const
         {
             return key;
         }
     };
-
-    // using mahjonghilo_table = eosio::multi_index<"mahjonghilos"_n, mahjonghilo>;
     using ghostquests_table = eosio::multi_index<"ghostquests"_n, ghostquest>;
     using thunts_table = eosio::multi_index<"thunts"_n, thunt>;
     using seeds_table = eosio::multi_index<"seeds"_n, seed>;
-
-    // mahjonghilo_table _mahjonghilos;
+    
     ghostquests_table _ghostquests;
     thunts_table _thunts;
     seeds_table _seeds;
@@ -324,8 +311,6 @@ private:
     double calculateodds(thgame thgamedata);
     double generateprize(thgame thgame_data);
     double maxprize(thgame thgamedata);
-    // void gameready(string user_id, double quantity);
-    // void onsettledpay(name to, asset quantity, string memo);
     void showremainingtile(thgame &thgame_data);
     void gameupdate(thgame &thgame_data);
     
@@ -347,15 +332,9 @@ public:
     ACTION gqeliminate(int id, string key);
     ACTION gqend(int id);
     ACTION gqdelall(int size);
-    // ACTION thinit(int id, uint8_t destination, uint8_t enemy_count, vector<uint8_t> panels);
-    ACTION thinitialize(int id);
-    ACTION thsetpanel(int id, vector<uint8_t> panels);
-    ACTION thdstination(int id, uint8_t destination);
-    ACTION thsetenemy(int id, uint8_t enemy_count);
-    ACTION thgamestart(int id, double quantity);
+    ACTION thinitialize(int id, uint8_t destination, uint8_t enemy_count, vector<uint8_t> panels, double quantity);
     ACTION thopentile(int id, uint8_t index);
     ACTION thend(int id);
     ACTION thwithdraw(int id);
     ACTION thautoplay(int id, vector<uint8_t> panelset);
-    ACTION thdel(int size);
 };

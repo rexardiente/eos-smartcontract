@@ -115,26 +115,20 @@ double coinicagames::maxprize(thgame thgamedata)
 
 void coinicagames::gameupdate(thgame &thgame_data)
 {
-    if (thgame_data.status == DEFAULT)
-    {
-        thgame_data.maxprize = maxprize(thgame_data);
-        thgame_data.status = TH_ONGOING;
-    }
     if (thgame_data.status == TH_ONGOING)
     {
         if(thgame_data.win_count!=16-thgame_data.enemy_count)
         {
-        thgame_data.nextprize = generateprize(thgame_data);
-        thgame_data.odds = calculateodds(thgame_data);
+            thgame_data.nextprize = generateprize(thgame_data);
+            thgame_data.odds = calculateodds(thgame_data);
         }
         else
         {
-        thgame_data.nextprize = DEFAULT;
-        thgame_data.odds = DEFAULT;
+            thgame_data.nextprize = DEFAULT;
+            thgame_data.odds = DEFAULT;
         }
     }
-    if (thgame_data.status == TH_DONE)
-    {
+    if (thgame_data.status == TH_DONE) {
         showremainingtile(thgame_data);
         thgame_data.prize = DEFAULT;
         thgame_data.nextprize = DEFAULT;
