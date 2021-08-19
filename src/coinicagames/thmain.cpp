@@ -114,9 +114,7 @@ ACTION coinicagames::thopentile(int id, uint8_t index)
 
     _thunts.modify(itr, _self, [&](auto &modified_thunt) {
         thgame &thgame_data = modified_thunt.thgame_data;
-        tile &tile = thgame_data.panel_set[index];
 
-        tile.isopen = 1;
         float available = TH_PANEL_SIZE - thgame_data.enemy_count - thgame_data.win_count;
         float chance = available / (TH_PANEL_SIZE - thgame_data.win_count) * 100;
 
@@ -125,7 +123,7 @@ ACTION coinicagames::thopentile(int id, uint8_t index)
         if(chance < rng(100))
         {
             thgame_data.prize = generateprize(thgame_data);
-            tile.iswin = 1;
+            thgame_data.panel_set[index].iswin = 1;
             thgame_data.win_count++; // count number of chest found
             thgame_data.unopentile--;
         }
@@ -133,11 +131,8 @@ ACTION coinicagames::thopentile(int id, uint8_t index)
         {
             thgame_data.status = DONE;
         }
-
-
+        thgame_data.panel_set[index].isopen = 1;
         gameupdate(thgame_data);
-        // std::string feedback = name{username}.to_string() + ": opened tile " + std::to_string(index) + " -> " + (thgame_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
-        // eosio::print(feedback + "\n");
     });
 }
 

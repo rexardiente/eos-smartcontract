@@ -83,37 +83,56 @@ string coinicagames::checksum256_to_string_hash()
     return hash_id;
 }
 
+// 15 ALL
+// 5 enemy
+// 10
+// 0 tile = lost
 
 void coinicagames::showremainingtile(thgame &thgame_data)
 {
     check(thgame_data.status == TH_DONE, "Game hasn't ended yet.");
-    // thgame &thgame_data = user_info.game_data;
-
     int available_tile = thgame_data.unopentile - thgame_data.enemy_count;
+    // vector<thtile> panel_set = thgame_data.panel_set;
+    // thgame_data.panel_set.size()
+    for (size_t i = 0; i < TH_PANEL_SIZE; i++) {
+        //  uint8_t key; // panel index(panel_idx)
+        // uint8_t isopen = TH_IS_OPEN_PANEL;
+        // uint8_t iswin = TH_IS_WIN_PANEL;
+        if (thgame_data.panel_set.at(i).isopen == 0) {
+            // check 
 
-    // need optimization because if RNG result is always OPENED status,
-    // then it will take time to finish
-    while (available_tile > 0)
-    {
-        int random_result = rng(15);
-        if (thgame_data.panel_set.at(random_result).isopen == 0)
-        {
-            thgame_data.panel_set.at(random_result).isopen = 1;
-            thgame_data.panel_set.at(random_result).iswin = 1;
-            available_tile--;
-        }
-    }
-
-    // open all panels and show treasures and enemies
-    for (int i = 0; i < TH_PANEL_SIZE; i++)
-    {
-        if (thgame_data.panel_set.at(i).isopen == 0 && thgame_data.panel_set.at(i).iswin == 0)
-        {
+            int prime = 65537;
+            int old_seed = 15;
+            auto new_seed_value = (old_seed + current_time_point().elapsed.count()) % prime;
+            // Store the updated seed value in the table
+            old_seed = new_seed_value;
+            // Get the random result in desired range
+            if ((new_seed_value % TH_PANEL_SIZE) && available_tile > 0) {
+                thgame_data.panel_set.at(i).iswin = 1;
+                available_tile --;
+            }
             thgame_data.panel_set.at(i).isopen = 1;
         }
     }
+    // while (available_tile > 0)
+    // {
+    //     int random_result = rng(15);
+    //     if (thgame_data.panel_set.at(random_result).isopen == 0)
+    //     {
+    //         thgame_data.panel_set.at(random_result).isopen = 1;
+    //         thgame_data.panel_set.at(random_result).iswin = 1;
+    //         available_tile--;
+    //     }
+    // }
+    // // open all panels and show treasures and enemies
+    // for (int i = 0; i < TH_PANEL_SIZE; i++)
+    // {
+    //     if (thgame_data.panel_set.at(i).isopen == 0 && thgame_data.panel_set.at(i).iswin == 0)
+    //     {
+    //         thgame_data.panel_set.at(i).isopen = 1;
+    //     }
+    // }
 }
-
 
 double coinicagames::generateprize(thgame thgamedata)
 {
@@ -167,7 +186,7 @@ void coinicagames::gameupdate(thgame &thgame_data)
         }
         
     }
-    else
+    if (thgame_data.status == TH_DONE)
     {
         showremainingtile(thgame_data);
         thgame_data.prize = TH_DEFAULT;

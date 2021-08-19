@@ -379,12 +379,6 @@ public:
                                                                          _ghostquests(receiver, receiver.value),
                                                                          _thunts(receiver, receiver.value),
                                                                          _seeds(receiver, receiver.value) {}
-
-    // [[eosio::on_notify("eosio.token::transfer")]] void ondeposit(name from,
-    //                                                              name to,
-    //                                                              asset quantity,
-    //                                                              string memo);
-
     ACTION gqinitialize(int id);
     ACTION gqbttlrslt(string gameid, pair<string, int> winner, pair<string, int> loser); // battle action
     ACTION gqwithdraw(int id, string key);
