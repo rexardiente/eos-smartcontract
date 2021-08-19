@@ -1,9 +1,5 @@
-#include <map>
-#include <string>
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
-#include <eosio/transaction.hpp>
-#include <eosio/crypto.hpp>
 #include "config.hpp"
 
 using namespace std;
@@ -14,15 +10,29 @@ class [[eosio::contract("coinicagames")]] coinicagames : public eosio::contract
 private:
     const symbol coinica_symbol;
     const name eosio_token;
-
+    enum static_values : int64_t
+    {
+        DEFAULT = 0,
+        GQ_SUMMONED = 1,
+        GQ_STANDBY = 2,
+        GQ_INBATTLE = 3,
+        GQ_WINNER = 4,
+        GQ_LOSER = 5,
+        GQ_ELIMINATED = 6,
+        GQ_IDLE = 7,
+        GQ_ONGOING = 1,
+        GQ_DONE = 2,
+        TH_PANEL_SIZE = 16,
+        TH_ONGOING = 1,
+        TH_DONE = 2,
+    };
     struct thtile
     {
-        uint8_t key; // panel index(panel_idx)
-        uint8_t isopen = TH_IS_OPEN_PANEL;
-        uint8_t iswin = TH_IS_WIN_PANEL;
+        uint8_t key;
+        uint8_t isopen = DEFAULT;
+        uint8_t iswin = DEFAULT;
     };
-
-        struct base_stat
+    struct base_stat
     {   
         string ghost_name;
         int ghost_id;
@@ -33,10 +43,7 @@ private:
         int base_spd;
         int base_lck;
     };
-
-
-
-        const vector<base_stat> stat_deck = {
+    const vector<base_stat> stat_deck = {
         {"KoTengu", 1, 1, 1, 1, 1, 2, 1},
         {"FoxGhost", 2, 1, 1, 2, 1, 1, 1},
         {"KoKappa", 3, 1, 1, 2, 1, 1, 1},
@@ -223,56 +230,19 @@ private:
         {"Ubume", 107, 5, 5, 5, 5, 5, 5},  
         {"Ennma", 108, 5, 5, 5, 5, 5, 5}
     };
-
-
-    
-    enum static_values : int64_t
-    {
-        GQ_DEFAULT = 0, // --> for ghostquest
-        LIFE_DEFAULT = 0, // --> for ghostquest
-        HP_DEFAULT = 0, // --> for ghostquest
-        STAT_DEFAULT = 0, // --> for ghostquest
-        BL_DEFAULT = 0, // --> for ghostquest
-        LVL_DEFAULT = 0, // --> for ghostquest
-        LMT_DEFAULT = 0, // --> for ghostquest
-        CLASS_DEFAULT = 0, // --> for ghostquest
-        GQ_SUMMONED = 1, // --> for ghostquest
-        GQ_STANDBY = 2, // --> for ghostquest
-        GQ_INBATTLE = 3, // --> for ghostquest
-        GQ_WINNER = 4, // --> for ghostquest
-        GQ_LOSER = 5, // --> for ghostquest
-        GQ_ELIMINATED = 6, // --> for ghostquest
-        GQ_IDLE = 7, // --> for ghostquest
-        GQ_INITIALIZED = 0, // --> for ghostquest
-        GQ_ONGOING = 1, // --> for ghostquest
-        GQ_DONE = 2, // --> for ghostquest
-        TH_DEFAULT = 0,
-        TH_PANEL_SIZE = 16,
-        TH_IS_OPEN_PANEL = 0,
-        TH_IS_WIN_PANEL = 0,
-        TH_PRIZE_DEFAULT = 0,
-        TH_ENEMY_DEFAULT = 0,
-        TH_INITIALIZED = 0,
-        TH_ONGOING = 1,
-        TH_DONE = 2,
-        TH_UNOPENED = 0, // for checking
-        TH_MAP_DEFAULT = 0
-    };
-
-
     struct thgame
     {
         string game_id;
         vector<thtile> panel_set;
         uint8_t unopentile = TH_PANEL_SIZE;
-        uint8_t win_count = TH_DEFAULT;
-        uint8_t destination = TH_MAP_DEFAULT;
-        uint8_t status = TH_INITIALIZED;
-        uint8_t enemy_count = TH_ENEMY_DEFAULT;
-        double prize = TH_DEFAULT;
-        double odds = TH_DEFAULT;
-        double nextprize = TH_DEFAULT;
-        double maxprize = TH_DEFAULT;
+        uint8_t win_count = DEFAULT;
+        uint8_t destination = DEFAULT;
+        uint8_t status = DEFAULT;
+        uint8_t enemy_count = DEFAULT;
+        double prize = DEFAULT;
+        double odds = DEFAULT;
+        double nextprize = DEFAULT;
+        double maxprize = DEFAULT;
     };
 
     struct character
@@ -281,29 +251,19 @@ private:
         string ghost_name;
         int ghost_id;
         int rarity;
-        uint64_t character_life = LIFE_DEFAULT;
-        // int initial_hp = HP_DEFAULT;
-        int hitpoints = HP_DEFAULT;
+        uint64_t character_life = DEFAULT;
+        int hitpoints = DEFAULT;
         uint64_t created_at;
-        // uint64_t ghost_class = CLASS_DEFAULT;
-        // uint64_t ghost_level = LVL_DEFAULT;
-        uint64_t status = GQ_DEFAULT;
-        int attack = STAT_DEFAULT;
-        int defense = STAT_DEFAULT;
-        int speed = STAT_DEFAULT;
-        int luck = STAT_DEFAULT;
-        double prize = GQ_DEFAULT;
-        int battle_limit = LMT_DEFAULT;
-        uint64_t battle_count = GQ_DEFAULT;
-        uint64_t last_match = GQ_DEFAULT;
+        uint64_t status = DEFAULT;
+        int attack = DEFAULT;
+        int defense = DEFAULT;
+        int speed = DEFAULT;
+        int luck = DEFAULT;
+        double prize = DEFAULT;
+        int battle_limit = DEFAULT;
+        uint64_t battle_count = DEFAULT;
+        uint64_t last_match = DEFAULT;
         map<uint64_t, string> enemy_fought;
-        // std::chrono::time_point<std::chrono::steady_clock> last_battle;
-        // vector<fight_log> battle_log;
-
-        // auto primary_key() const
-        // {
-        //     return key;
-        // }
     };
 
     struct gqgame
@@ -387,8 +347,9 @@ public:
     ACTION gqeliminate(int id, string key);
     ACTION gqend(int id);
     ACTION gqdelall(int size);
+    // ACTION thinit(int id, uint8_t destination, uint8_t enemy_count, vector<uint8_t> panels);
     ACTION thinitialize(int id);
-    ACTION thsetpanel(int id, vector<uint8_t> panelset);
+    ACTION thsetpanel(int id, vector<uint8_t> panels);
     ACTION thdstination(int id, uint8_t destination);
     ACTION thsetenemy(int id, uint8_t enemy_count);
     ACTION thgamestart(int id, double quantity);

@@ -1,3 +1,4 @@
+#include <eosio/crypto.hpp>
 #include "gameplay.cpp"
 
 // function for initializing the a game
@@ -281,7 +282,7 @@ ACTION coinicagames::thsetpanel(int id, vector<uint8_t> panelset)
     auto itr = _thunts.find(id);
     // check if the user has existing game, else cancel start new game
     check(itr != _thunts.end(), "User doesn't exist.");
-    check(itr->thgame_data.status == TH_INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->thgame_data.status == DEFAULT, "Has an existing game, can't start a new game.");
     check(itr->thgame_data.panel_set.empty(), "Game Panel Already Set.");
 
     _thunts.modify(itr, _self, [&](auto &modified_thunt) {
@@ -303,7 +304,7 @@ ACTION coinicagames::thdstination(int id, uint8_t destination)
     auto itr = _thunts.find(id);
     // check if the user has existing game, else cancel start new game
     check(itr != _thunts.end(), "User doesn't exist.");
-    check(itr->thgame_data.status == TH_INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->thgame_data.status == DEFAULT, "Has an existing game, can't start a new game.");
     check(destination %10== 0 || destination ==1, "Please input valid destination.");
     check(destination <=20, "Please input valid destination.");
     // check(user.thgame_data.destination == 0, "Game Destination Already Set.");
@@ -320,7 +321,7 @@ ACTION coinicagames::thsetenemy(int id, uint8_t enemy_count)
     auto itr = _thunts.find(id);
     check(itr != _thunts.end(), "User doesn't exist.");
     check(enemy_count>0&&enemy_count<16, "Please input valid enemy count.");
-    check(itr->thgame_data.status == TH_INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->thgame_data.status == DEFAULT, "Has an existing game, can't start a new game.");
     check(itr->thgame_data.destination > 0, "Set destination first.");
     check(itr->thgame_data.enemy_count < TH_PANEL_SIZE, "Can't have enemy greater than or equal to 16");
 
@@ -338,7 +339,7 @@ ACTION coinicagames::thgamestart(int id, double quantity)
     auto itr = _thunts.find(id);
 
     check(itr != _thunts.end(), "Game Doesn't Exist.");
-    check(itr->thgame_data.status == TH_INITIALIZED, "Has an existing game, can't start a new game.");
+    check(itr->thgame_data.status == DEFAULT, "Has an existing game, can't start a new game.");
     // check(itr->thgame_data.destination == (quantity / 10000), "Deposited amount does not match the selected destination.");
     // check(user.thgame_data.destination != MAP_DEFAULT, "Destination Not Set.");
     // check(user.thgame_data.enemy_count != 0, "Numbers of Enemies Not Set.");
@@ -364,7 +365,7 @@ ACTION coinicagames::thopentile(int id, uint8_t index)
 
     check(itr->thgame_data.win_count != (TH_PANEL_SIZE - itr->thgame_data.enemy_count), "You already found all treasures, feel free to withdraw.");
     check(itr->thgame_data.status == TH_ONGOING, "Either game has ended or not yet configured.");
-    check(itr->thgame_data.panel_set.at(index).isopen == TH_UNOPENED, "Tile already opened!");
+    check(itr->thgame_data.panel_set.at(index).isopen == DEFAULT, "Tile already opened!");
 
     _thunts.modify(itr, _self, [&](auto &modified_thunt) {
         thgame &thgame_data = modified_thunt.thgame_data;
@@ -415,7 +416,7 @@ ACTION coinicagames::thwithdraw(int id)
 
     _thunts.modify(itr, _self, [&](auto &modified_thunt) {
         thgame &thgame_data = modified_thunt.thgame_data;
-        thgame_data.prize = TH_DEFAULT;
+        thgame_data.prize = DEFAULT;
         thgame_data.status = TH_DONE;
         // std::string feedback = name{username}.to_string() + ": opened thtile " + std::to_string(index) + " -> " + (thgame_data.panel_set.at(index).iswin == 1 ? "Win" : "Lost");
         // eosio::print(feedback + "\n");
@@ -461,7 +462,7 @@ ACTION coinicagames::thautoplay(int id, vector<uint8_t> to_open_panel)
             thtile &thtile = thgame_data.panel_set[to_open_panel[i]];
 
             // check if panel is available if NO do nothing..
-            if (thtile.isopen == TH_IS_OPEN_PANEL)
+            if (thtile.isopen == DEFAULT)
             {
                 thtile.isopen = 1;
                 float available = TH_PANEL_SIZE - thgame_data.enemy_count - thgame_data.win_count;
@@ -475,9 +476,9 @@ ACTION coinicagames::thautoplay(int id, vector<uint8_t> to_open_panel)
                 else
                 {
                     thgame_data.status = TH_DONE;
-                    thgame_data.nextprize = TH_DEFAULT;
-                    thgame_data.prize = TH_DEFAULT;
-                    thgame_data.odds = TH_DEFAULT;
+                    thgame_data.nextprize = DEFAULT;
+                    thgame_data.prize = DEFAULT;
+                    thgame_data.odds = DEFAULT;
                     break;
                 }
                 thgame_data.unopentile--;
