@@ -66,26 +66,26 @@ string coinicagames::checksum256_to_string_hash()
     return hash_id;
 }
 
-void coinicagames::showremainingtile(thgame &thgame_data)
+void coinicagames::showremainingtile(thgamedata &game_data)
 {
-    check(thgame_data.status == TH_DONE, "Game hasn't ended yet.");
-    int available_tile = thgame_data.unopentile - thgame_data.enemy_count;
+    check(game_data.status == TH_DONE, "Game hasn't ended yet.");
+    int available_tile = game_data.unopentile - game_data.enemy_count;
     for (size_t i = 0; i < TH_PANEL_SIZE; i++) {
-        if (thgame_data.panel_set.at(i).isopen == 0) {
+        if (game_data.panel_set.at(i).isopen == 0) {
             int prime = 65537;
             int old_seed = 15;
             auto new_seed_value = (old_seed + current_time_point().elapsed.count()) % prime;
             old_seed = new_seed_value;
             if ((new_seed_value % TH_PANEL_SIZE) && available_tile > 0) {
-                thgame_data.panel_set.at(i).iswin = 1;
+                game_data.panel_set.at(i).iswin = 1;
                 available_tile --;
             }
-            thgame_data.panel_set.at(i).isopen = 1;
+            game_data.panel_set.at(i).isopen = 1;
         }
     }
 }
 
-double coinicagames::generateprize(thgame thgamedata)
+double coinicagames::generateprize(thgamedata thgamedata)
 {
     double game_prize = thgamedata.prize;
     double odds = calculateodds(thgamedata);
@@ -93,13 +93,13 @@ double coinicagames::generateprize(thgame thgamedata)
     return game_prize;
 }
 
-double coinicagames::calculateodds(thgame thgamedata)
+double coinicagames::calculateodds(thgamedata thgamedata)
 {
     double rem_panel = (double)thgamedata.unopentile - (double)thgamedata.enemy_count;
     return ((double)thgamedata.unopentile) / (double)rem_panel;
 }
 
-double coinicagames::maxprize(thgame thgamedata)
+double coinicagames::maxprize(thgamedata thgamedata)
 {
     double game_prize = thgamedata.prize;
     float rem_panel = thgamedata.panel_set.size() - thgamedata.enemy_count;
@@ -113,26 +113,26 @@ double coinicagames::maxprize(thgame thgamedata)
     return game_prize;
 }
 
-void coinicagames::gameupdate(thgame &thgame_data)
+void coinicagames::gameupdate(thgamedata &game_data)
 {
-    if (thgame_data.status == TH_ONGOING)
+    if (game_data.status == TH_ONGOING)
     {
-        if(thgame_data.win_count!=16-thgame_data.enemy_count)
+        if(game_data.win_count!=16-game_data.enemy_count)
         {
-            thgame_data.nextprize = generateprize(thgame_data);
-            thgame_data.odds = calculateodds(thgame_data);
+            game_data.nextprize = generateprize(game_data);
+            game_data.odds = calculateodds(game_data);
         }
         else
         {
-            thgame_data.nextprize = DEFAULT;
-            thgame_data.odds = DEFAULT;
+            game_data.nextprize = DEFAULT;
+            game_data.odds = DEFAULT;
         }
     }
-    if (thgame_data.status == TH_DONE) {
-        showremainingtile(thgame_data);
-        thgame_data.prize = DEFAULT;
-        thgame_data.nextprize = DEFAULT;
-        thgame_data.odds = DEFAULT;
-        thgame_data.unopentile = DEFAULT; // reset unopentile to empty
+    if (game_data.status == TH_DONE) {
+        showremainingtile(game_data);
+        game_data.prize = DEFAULT;
+        game_data.nextprize = DEFAULT;
+        game_data.odds = DEFAULT;
+        game_data.unopentile = DEFAULT; // reset unopentile to empty
     }
 }

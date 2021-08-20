@@ -230,7 +230,7 @@ private:
         {"Ubume", 107, 5, 5, 5, 5, 5, 5},  
         {"Ennma", 108, 5, 5, 5, 5, 5, 5}
     };
-    struct thgame
+    struct thgamedata
     {
         string game_id;
         vector<thtile> panel_set;
@@ -264,14 +264,14 @@ private:
         uint64_t last_match = DEFAULT;
         map<uint64_t, string> enemy_fought;
     };
-    struct gqgame
+    struct gqgamedata
     {
         map<string, character> characters;
     };
     struct [[eosio::table]] ghostquest
     {
         int id;
-        gqgame gqgame_data;
+        gqgamedata game_data;
         auto primary_key() const
         {
             return id;
@@ -281,7 +281,7 @@ private:
     {
         // string user_id;
         int id;
-        thgame thgame_data;
+        thgamedata game_data;
         auto primary_key() const
         {
             return id;
@@ -308,11 +308,11 @@ private:
     string checksum256_to_string_hash();
     void calculate_prize(map<string, character>::iterator & character);
     void eliminated_withdrawn(map<string, character>::iterator & character);
-    double calculateodds(thgame thgamedata);
-    double generateprize(thgame thgame_data);
-    double maxprize(thgame thgamedata);
-    void showremainingtile(thgame &thgame_data);
-    void gameupdate(thgame &thgame_data);
+    double calculateodds(thgamedata game_data);
+    double generateprize(thgamedata game_data);
+    double maxprize(thgamedata game_data);
+    void showremainingtile(thgamedata &game_data);
+    void gameupdate(thgamedata &game_data);
     
 
 public:
