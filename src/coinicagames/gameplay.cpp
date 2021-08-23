@@ -80,7 +80,7 @@ void coinicagames::showremainingtile(thgamedata &game_data)
 {
     check(game_data.status == TH_DONE, "Game hasn't ended yet.");
     int available_tile = game_data.unopentile - game_data.enemy_count;
-    int enemy = game_data.enemy_count;
+    int enemy = game_data.enemy_count -1;
     for (size_t i = 0; i < TH_PANEL_SIZE; i++) {
         if (game_data.panel_set.at(i).isopen == 0) {
             int num = random(100);
