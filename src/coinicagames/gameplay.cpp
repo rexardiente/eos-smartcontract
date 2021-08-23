@@ -85,7 +85,7 @@ void coinicagames::showremainingtile(thgamedata &game_data)
         if (game_data.panel_set.at(i).isopen == 0) {
             int prime = 65537;
             auto new_seed_value = (old_seed + current_time_point().elapsed.count()) % prime;
-            if ((new_seed_value % TH_PANEL_SIZE) && available_tile > 0) {
+            if ((new_seed_value % 2) && available_tile > 0) {
                 game_data.panel_set.at(i).iswin = 1;
                 available_tile --;
             }
