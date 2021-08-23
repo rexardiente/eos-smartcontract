@@ -70,17 +70,17 @@ void coinicagames::showremainingtile(thgamedata &game_data)
 {
     check(game_data.status == TH_DONE, "Game hasn't ended yet.");
     int available_tile = game_data.unopentile - game_data.enemy_count;
+    int old_seed = 15;
     for (size_t i = 0; i < TH_PANEL_SIZE; i++) {
         if (game_data.panel_set.at(i).isopen == 0) {
             int prime = 65537;
-            int old_seed = 15;
             auto new_seed_value = (old_seed + current_time_point().elapsed.count()) % prime;
-            old_seed = new_seed_value;
             if ((new_seed_value % TH_PANEL_SIZE) && available_tile > 0) {
                 game_data.panel_set.at(i).iswin = 1;
                 available_tile --;
             }
             game_data.panel_set.at(i).isopen = 1;
+            old_seed = new_seed_value;
         }
     }
 }
