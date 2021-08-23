@@ -304,7 +304,7 @@ private:
     thunts_table _thunts;
     seeds_table _seeds;
 
-    int rng(const int &range);
+    int random(const int range);
     string checksum256_to_string_hash();
     void calculate_prize(map<string, character>::iterator & character);
     void eliminated_withdrawn(map<string, character>::iterator & character);

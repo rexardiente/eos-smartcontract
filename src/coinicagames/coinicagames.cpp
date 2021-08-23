@@ -37,21 +37,16 @@ ACTION coinicagames::gqgenchar(int id, double quantity, int limit) // generate c
             new_ghost.battle_limit = limit;
             new_ghost.status = GQ_SUMMONED;
             new_ghost.character_life = 1;
-            // new_ghost.status = STANDBY;
-            base_stat tempstat = stat_deck[rng(stat_deck.size())];
+            base_stat tempstat = stat_deck[random(stat_deck.size())];
             new_ghost.ghost_name = tempstat.ghost_name;
             new_ghost.ghost_id = tempstat.ghost_id;
-            new_ghost.hitpoints = 101 + rng(7) + ((tempstat.hp-1)*8);
+            new_ghost.hitpoints = 101 + random(7) + ((tempstat.hp-1)*8);
             new_ghost.rarity = tempstat.rarity;
-            new_ghost.attack = 25 +rng(8) + ((tempstat.base_atk-1)*9);
-            new_ghost.defense = 25 +rng(8) + ((tempstat.base_def-1)*9);
-            new_ghost.speed = 25 +rng(8) + ((tempstat.base_spd-1)*9);
-            new_ghost.luck = 25 +rng(8) + ((tempstat.base_lck-1)*9);
+            new_ghost.attack = 25 + random(8) + ((tempstat.base_atk-1)*9);
+            new_ghost.defense = 25 + random(8) + ((tempstat.base_def-1)*9);
+            new_ghost.speed = 25 + random(8) + ((tempstat.base_spd-1)*9);
+            new_ghost.luck = 25 + random(8) + ((tempstat.base_lck-1)*9);
             new_ghost.created_at = current_time;
-            // status formula - 24 + [(1-1)*8) + rng(1*8)
-            // hitpoints formula - 100 + [(1-1)*8) + rng(1*8) 
-            // new_ghost.initial_hp = 100 + rng(50);
-            // gen_stat(new_ghost); // generate status for character
             game_data.characters.insert(game_data.characters.end(), pair<string, character>(key, new_ghost));
             current_time +=1;
         }
@@ -206,7 +201,7 @@ ACTION coinicagames::thopentile(int id, uint8_t index)
         thgamedata &game_data = modified_thunt.game_data;
         float available = TH_PANEL_SIZE - game_data.enemy_count - game_data.win_count;
         float chance = available / (TH_PANEL_SIZE - game_data.win_count) * 100;
-        if(chance < rng(100))
+        if(chance < random(100))
         {
             game_data.prize = generateprize(game_data);
             game_data.panel_set[index].iswin = 1;
@@ -261,7 +256,7 @@ ACTION coinicagames::thautoplay(int id, vector<uint8_t> to_open_panel)
                 thtile.isopen = 1;
                 float available = TH_PANEL_SIZE - game_data.enemy_count - game_data.win_count;
                 float chance = available / (TH_PANEL_SIZE - game_data.win_count) * 100;
-                if (rng(100) < chance)
+                if (random(100) < chance)
                 {
                     game_data.prize = generateprize(game_data);
                     game_data.win_count++; // count number of chest found
