@@ -199,9 +199,9 @@ ACTION coinicagames::thopentile(int id, uint8_t index)
 
     _thunts.modify(itr, _self, [&](auto &modified_thunt) {
         thgamedata &game_data = modified_thunt.game_data;
-        float available = TH_PANEL_SIZE - game_data.enemy_count - game_data.win_count;
-        float chance = available / (TH_PANEL_SIZE - game_data.win_count) * 100;
-        if(chance < random(100))
+        // float available = TH_PANEL_SIZE - game_data.enemy_count - game_data.win_count;
+        // float chance = available / (TH_PANEL_SIZE - game_data.win_count) * 100;
+        if(random(TH_PANEL_SIZE) % 2)
         {
             game_data.prize = generateprize(game_data);
             game_data.panel_set[index].iswin = 1;
