@@ -25,6 +25,8 @@
         "__string": "cpp",
         "__tree": "cpp",
         "string_view": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "__locale": "cpp",
+        "locale": "cpp"
     }
 }

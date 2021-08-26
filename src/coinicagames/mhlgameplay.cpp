@@ -1,38 +1,6 @@
 #include "coinicagames.hpp"
 #include <string>
 
-// void coinicagames::ondeposit(name from,
-//                             name to,
-//                             asset quantity,
-//                             string memo)
-// {
-//     if (from == _self)
-//     {
-//         if (memo.find(HAS_ON_SETTLE_PAY) != std::string::npos)
-//         {
-//             onsettledpay(to, quantity, memo);
-//         }
-
-//         // we're sending money, do nothing additional
-//         return;
-//     }
-//     check(to == _self, "Not to our contract");
-//     check(quantity.symbol.is_valid(), "Invalid quantity");
-//     check(quantity.amount > 0, "Only positive quantity allowed");
-//     check(quantity.symbol == coinicagames_symbol, "Invalid EOS Token");
-//     depositbet(from, quantity);
-//     // std::string str = memo.substr(9);
-//     // if (memo.find("ADD_LIFE") != std::string::npos)
-//     // {
-//     //     set_add_life(from, quantity, str);
-//     // }
-//     // else
-//     // {
-//     //     int limit = stoi(str);
-//     //     summon_ready(from, quantity, limit);
-//     // }
-// }
-
 double coinicagames::roundoff(double var)
 {
     // 37.66666 * 100 =3766.66
@@ -43,38 +11,16 @@ double coinicagames::roundoff(double var)
     return (float)value / 10;
 }
 
-// void coinicagames::depositbet(name username, asset quantity)
-// {
-//     require_auth(username);
-//     action(
-//         permission_level{_self, "active"_n},
-//         _self,
-//         "acceptbet"_n,
-//         std::make_tuple(username, quantity))
-//         .send();
-// }
-
-// void coinicagames::onsettledpay(name username, asset quantity, string memo)
-// {
-//     require_auth(_self);
-//     action(
-//         permission_level{_self, "active"_n},
-//         _self,
-//         "settledpay"_n,
-//         std::make_tuple(username, quantity, memo))
-//         .send();
-// }
-
-void coinicagames::gettile(mhlgame &gamedata)
+void coinicagames::gettile(mhlgamedata &gamedata)
 {
     uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
     // uint8_t deck_tile_idx = 1; //  Pick a random tile from the deck
     // uint8_t deck_tile_idx = 64;
-    gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the tile to the first empty slot in the hand
+    gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the mhltile to the first empty slot in the hand
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
     gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx); // Remove the tile from the deck
     // sorthand(gamedata.hand_player);
-    tile num = table_deck.at(gamedata.current_tile);
+    mhltile num = table_deck.at(gamedata.current_tile);
     gamedata.sumofvalue[num.value - 1] -= 1;
     gamedata.draw_count += 1;
     // if(sampctr%36<4)
@@ -89,7 +35,7 @@ void coinicagames::gettile(mhlgame &gamedata)
     // return gamedata.current_tile;
 }
 
-void coinicagames::get_odds(mhlgame &gamedata, int value)
+void coinicagames::get_odds(mhlgamedata &gamedata, int value)
 {
     // gamedata.sumofvalue[value - 1] -= 1;
     double sum, sum1, sum2, num1, num2, num3;
@@ -180,7 +126,7 @@ void coinicagames::get_odds(mhlgame &gamedata, int value)
     }
 }
 
-float coinicagames::hilo_step(mhlgame & gamedata, int prev_tile, int current_tile)
+float coinicagames::hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile)
 {
     // int option = gamedata.prediction;
     if (prev_tile > current_tile)
@@ -247,7 +193,7 @@ void coinicagames::sorteye(vector<uint8_t> &hand, int idx)
     hand.insert(hand.end(), temp += 1);
 }
 
-void coinicagames::sumscore(mhlgame &gamedata)
+void coinicagames::sumscore(mhlgamedata &gamedata)
 {
     int num = 0;
     sorthand(gamedata.score_check);
@@ -267,7 +213,7 @@ void coinicagames::sumscore(mhlgame &gamedata)
     gamedata.final_score = num;
 }
 
-// void coinicagames::four_pungs(mhlgame &gamedata, vector<tile> tiles)
+// void coinicagames::four_pungs(mhlgamedata &gamedata, vector<mhltile> tiles)
 // {
 //     for (int i = 0; i < tiles.size(); i++)
 //     {
@@ -275,9 +221,9 @@ void coinicagames::sumscore(mhlgame &gamedata)
 //     }
 // }
 
-void coinicagames::winhand_check(mhlgame &gamedata, vector<uint8_t> &hand)
+void coinicagames::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
 {
-    vector<tile> remtiles = {};
+    vector<mhltile> remtiles = {};
     sorthand(hand);
     for (int i = 0; i < gamedata.hand_player.size(); i++)
     {
@@ -309,7 +255,7 @@ void coinicagames::winhand_check(mhlgame &gamedata, vector<uint8_t> &hand)
     }
 }
 
-void coinicagames::transferhand(mhlgame &gamedata, int size)
+void coinicagames::transferhand(mhlgamedata &gamedata, int size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -322,7 +268,7 @@ void coinicagames::transferhand(mhlgame &gamedata, int size)
     sorthand(gamedata.winning_hand);
 }
 
-void coinicagames::pung_chow(mhlgame &gamedata, int check)
+void coinicagames::pung_chow(mhlgamedata &gamedata, int check)
 {
     if (check == 2)
     {
@@ -351,7 +297,7 @@ void coinicagames::pung_chow(mhlgame &gamedata, int check)
     }
 }
 
-int coinicagames::pair_pung_chow(tile tile1, tile tile2, tile tile3)
+int coinicagames::pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3)
 {
     if (tile1.suit == tile2.suit && tile1.value == tile2.value)
     {
@@ -411,7 +357,7 @@ int coinicagames::pair_pung_chow(tile tile1, tile tile2, tile tile3)
         return 0;
 }
 
-int coinicagames::pair_check(tile tile1, tile tile2) // !!!
+int coinicagames::pair_check(mhltile tile1, mhltile tile2) // !!!
 {
     // if (tile1.suit == tile2.suit && tile1.value == tile2.value)
     // {
@@ -455,7 +401,7 @@ int coinicagames::pair_check(tile tile1, tile tile2) // !!!
     }
 }
 
-int coinicagames::honors_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6, tile tile7) // !!!
+int coinicagames::honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7) // !!!
 {
     if (tile1.value == 10 && tile1.suit == 4)
     {
@@ -552,7 +498,7 @@ int coinicagames::honors_check(tile tile1, tile tile2, tile tile3, tile tile4, t
     }
 }
 
-int coinicagames::five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5) // !!!!!
+int coinicagames::five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5) // !!!!!
 {
     if ((pair_pung_chow(tile2, tile3, tile4)) == 2)
     {
@@ -601,7 +547,7 @@ int coinicagames::five_tile_check(tile tile1, tile tile2, tile tile3, tile tile4
     }
 }
 
-int coinicagames::six_tile_check(tile tile1, tile tile2, tile tile3, tile tile4, tile tile5, tile tile6) // !!!!!!!
+int coinicagames::six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6) // !!!!!!!
 {
     if ((pair_pung_chow(tile1, tile2, tile3)) == 2)
     {
@@ -661,7 +607,7 @@ int coinicagames::six_tile_check(tile tile1, tile tile2, tile tile3, tile tile4,
     }
 }
 
-void coinicagames::two_rem(mhlgame &gamedata, vector<tile> tiles)
+void coinicagames::two_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
 {
     if ((pair_check(tiles[0], tiles[1])) == 1)
     {
@@ -678,7 +624,7 @@ void coinicagames::two_rem(mhlgame &gamedata, vector<tile> tiles)
     }
 }
 
-void coinicagames::five_rem(mhlgame &gamedata, vector<tile> tiles) // AAAKK
+void coinicagames::five_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // AAAKK
 {
     int check1 = pair_pung_chow(tiles[0], tiles[1], tiles[2]);
     if (check1 == 2)
@@ -748,7 +694,7 @@ void coinicagames::five_rem(mhlgame &gamedata, vector<tile> tiles) // AAAKK
     }
 }
 
-void coinicagames::eight_rem(mhlgame &gamedata, vector<tile> tiles)
+void coinicagames::eight_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
 {
     int check1 = six_tile_check(tiles[0], tiles[1], tiles[2], tiles[3], tiles[4], tiles[5]);
     if (check1 > 3 && check1 < 9)
@@ -936,7 +882,7 @@ void coinicagames::eight_rem(mhlgame &gamedata, vector<tile> tiles)
     }
 }
 
-void coinicagames::eleven_rem(mhlgame &gamedata, vector<tile> tiles) // 11Rem2nd
+void coinicagames::eleven_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 11Rem2nd
 {
     int check1 = six_tile_check(tiles[0], tiles[1], tiles[2], tiles[3], tiles[4], tiles[5]);
     if (check1 > 3 && check1 < 9)
@@ -1520,7 +1466,7 @@ void coinicagames::eleven_rem(mhlgame &gamedata, vector<tile> tiles) // 11Rem2nd
     }
 }
 
-void coinicagames::fourteen_rem(mhlgame &gamedata, vector<tile> tiles) // 14Rem
+void coinicagames::fourteen_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 14Rem
 {
     int check1 = six_tile_check(tiles[0], tiles[1], tiles[2], tiles[3], tiles[4], tiles[5]);
     if (check1 == 9 || check1 == 10)
@@ -4345,9 +4291,9 @@ string coinicagames::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t
 }
 
 
-// void coinicagames::winhand_check(mhlgame &gamedata, vector<uint8_t> &hand)
+// void coinicagames::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
 // {
-//     vector<tile> remtiles = {};
+//     vector<mhltile> remtiles = {};
 //     sorthand(hand);
 
 // }
