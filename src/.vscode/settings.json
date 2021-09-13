@@ -28,5 +28,8 @@
         "unordered_map": "cpp",
         "__locale": "cpp",
         "locale": "cpp"
+    },
+    "files.watcherExclude": {
+        "**/target": true
     }
 }
