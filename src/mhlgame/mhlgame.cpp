@@ -318,26 +318,42 @@ ACTION mhlgame::mhldclrkong(int id, vector<int> idx)
         // const auto kongtile2 = table_deck.at(game_data.hand_player[idx[1]]);
         // const auto kongtile3 = table_deck.at(game_data.hand_player[idx[2]]);
         // const auto kongtile4 = table_deck.at(game_data.hand_player[idx[3]]);
-        int check1 = pair_check(kongtile[0], kongtile[1]);
-        int check2 = pair_check(kongtile[2], kongtile[3]);
-        check(check1 == 1 && check2 == 1, "Tiles are not of the same suit and value.");
-        if (pair_check(kongtile[0], kongtile[2]) == 1)
+        if(kongtile[0].value==kongtile[1].value && kongtile[0].suit==kongtile[1].suit)
         {
-            game_data.winnable = 0;
-            for (int i = 0; i < 4; i++)
+            if(kongtile[2].value==kongtile[3].value && kongtile[2].suit==kongtile[3].suit)
             {
-                game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
+                if(kongtile[2].value==kongtile[0].value && kongtile[2].suit==kongtile[0].suit)
+                {game_data.winnable = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
+                }
+                for (int i = 3; i >= 0; i--)
+                {
+                    game_data.hand_player.erase(game_data.hand_player.begin() + idx[i]);
+                }
+                game_data.kong_count += 1;}
             }
-            for (int i = 3; i >= 0; i--)
+            else
             {
-                game_data.hand_player.erase(game_data.hand_player.begin() + idx[i]);
+                print("Tiles are not of the same suit and value.");
             }
-            game_data.kong_count += 1;
         }
         else
         {
             print("Tiles are not of the same suit and value.");
         }
+        // int check1 = pair_check(kongtile[0], kongtile[1]);
+        // int check2 = pair_check(kongtile[2], kongtile[3]);
+        // check(check1 == 1 && check2 == 1, "Tiles are not of the same suit and value.");
+        // if (pair_check(kongtile[0], kongtile[2]) == 1)
+        // {
+            
+        // }
+        // else
+        // {
+        //     print("Tiles are not of the same suit and value.");
+        // }
         sorthand(game_data.reveal_kong);
     });
 }
@@ -351,10 +367,10 @@ ACTION mhlgame::mhldclrwnhnd(int id)
         mhlgamedata &game_data = modified_mjhilo.game_data;
         if (game_data.winnable == 1)
         {
-            transferhand(game_data, game_data.hand_player.size());
+            // transferhand(game_data, game_data.hand_player.size());
             vector<uint8_t> temp_hand = game_data.winning_hand;
             sorteye(temp_hand, game_data.eye_idx);
-            getscore(game_data, temp_hand);
+            // getscore(game_data, temp_hand);
             for (int i = 0; i < game_data.reveal_kong.size(); i++)
             {
                 game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
@@ -407,3 +423,14 @@ ACTION mhlgame::mhlend(int id)
     _mjhilos.erase(mjhilo);
 }
 
+ACTION mhlgame::mhlresetacc(int id)
+{
+    require_auth(_self);
+
+    auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
+    // check(mjhilo.game_data.hi_lo_result != 3, "Last hi-lo was a lost.");
+    _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo) {
+        mhlgamedata &game_data = modified_mjhilo.game_data;
+        game_data.status = 2;
+    });
+}

@@ -1,7 +1,43 @@
-#include "coinicagames.hpp"
+#include "mhl.hpp"
 #include <string>
 
-double coinicagames::roundoff(double var)
+int mhlgame::random(const int range) {
+  // Find the existing seed
+  auto seed_iterator = _seeds.begin();
+
+  // Initialize the seed with default value if it is not found
+  if (seed_iterator == _seeds.end()) {
+    seed_iterator = _seeds.emplace( _self, [&]( auto& seed ) { });
+  }
+
+  // Generate new seed value using the existing seed value
+  int prime = 65537;
+  auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
+  
+  // Store the updated seed value in the table
+  _seeds.modify( seed_iterator, _self, [&]( auto& s ) {
+    s.value = new_seed_value;
+  });
+  
+  // Get the random result in desired range
+  int random_result = new_seed_value % range;
+  return random_result;
+}
+
+string mhlgame::checksum256_to_string_hash()
+{   
+    auto size = transaction_size();
+    char buf[size];
+    check(size == read_transaction(buf, size), "read_transaction failed");
+    checksum256 sha = sha256(buf, size);
+    auto hbytes = sha.extract_as_byte_array();
+    std::string hash_id;
+    const char *to_hex = "0123456789abcdef";
+    for (uint32_t i = 0; i < hbytes.size(); ++i) { (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)]; }
+    return hash_id;
+}
+
+double mhlgame::roundoff(double var)
 {
     // 37.66666 * 100 =3766.66
     // 3766.66 + .5 =3767.16    for rounding off value
@@ -11,9 +47,9 @@ double coinicagames::roundoff(double var)
     return (float)value / 10;
 }
 
-void coinicagames::gettile(mhlgamedata &gamedata)
+void mhlgame::gettile(mhlgamedata &gamedata)
 {
-    uint8_t deck_tile_idx = rng(gamedata.deck_player.size()); // Pick a random tile from the deck
+    uint8_t deck_tile_idx = random(gamedata.deck_player.size()); // Pick a random tile from the deck
     // uint8_t deck_tile_idx = 1; //  Pick a random tile from the deck
     // uint8_t deck_tile_idx = 64;
     gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the mhltile to the first empty slot in the hand
@@ -35,7 +71,7 @@ void coinicagames::gettile(mhlgamedata &gamedata)
     // return gamedata.current_tile;
 }
 
-void coinicagames::get_odds(mhlgamedata &gamedata, int value)
+void mhlgame::get_odds(mhlgamedata &gamedata, int value)
 {
     // gamedata.sumofvalue[value - 1] -= 1;
     double sum, sum1, sum2, num1, num2, num3;
@@ -126,7 +162,7 @@ void coinicagames::get_odds(mhlgamedata &gamedata, int value)
     }
 }
 
-float coinicagames::hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile)
+float mhlgame::hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile)
 {
     // int option = gamedata.prediction;
     if (prev_tile > current_tile)
@@ -167,7 +203,7 @@ float coinicagames::hilo_step(mhlgamedata & gamedata, int prev_tile, int current
     }
 }
 
-void coinicagames::sorthand(vector<uint8_t> &hand)
+void mhlgame::sorthand(vector<uint8_t> &hand)
 {
     int n = hand.size(), i, j, temp;
     for (i = 0; i < (n - 1); i++)
@@ -184,7 +220,7 @@ void coinicagames::sorthand(vector<uint8_t> &hand)
     }
 }
 
-void coinicagames::sorteye(vector<uint8_t> &hand, int idx)
+void mhlgame::sorteye(vector<uint8_t> &hand, int idx)
 {
     int temp = hand[idx];
     hand.erase(hand.begin() + idx);
@@ -193,7 +229,7 @@ void coinicagames::sorteye(vector<uint8_t> &hand, int idx)
     hand.insert(hand.end(), temp += 1);
 }
 
-void coinicagames::sumscore(mhlgamedata &gamedata)
+void mhlgame::sumscore(mhlgamedata &gamedata)
 {
     int num = 0;
     sorthand(gamedata.score_check);
@@ -213,7 +249,7 @@ void coinicagames::sumscore(mhlgamedata &gamedata)
     gamedata.final_score = num;
 }
 
-// void coinicagames::four_pungs(mhlgamedata &gamedata, vector<mhltile> tiles)
+// void mhlgame::four_pungs(mhlgamedata &gamedata, vector<mhltile> tiles)
 // {
 //     for (int i = 0; i < tiles.size(); i++)
 //     {
@@ -221,7 +257,7 @@ void coinicagames::sumscore(mhlgamedata &gamedata)
 //     }
 // }
 
-void coinicagames::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
+void mhlgame::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
 {
     vector<mhltile> remtiles = {};
     sorthand(hand);
@@ -255,7 +291,8 @@ void coinicagames::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
     }
 }
 
-void coinicagames::transferhand(mhlgamedata &gamedata, int size)
+
+void mhlgame::transferhand(mhlgamedata &gamedata, int size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -268,7 +305,7 @@ void coinicagames::transferhand(mhlgamedata &gamedata, int size)
     sorthand(gamedata.winning_hand);
 }
 
-void coinicagames::pung_chow(mhlgamedata &gamedata, int check)
+void mhlgame::pung_chow(mhlgamedata &gamedata, int check)
 {
     if (check == 2)
     {
@@ -297,7 +334,7 @@ void coinicagames::pung_chow(mhlgamedata &gamedata, int check)
     }
 }
 
-int coinicagames::pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3)
+int mhlgame::pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3)
 {
     if (tile1.suit == tile2.suit && tile1.value == tile2.value)
     {
@@ -357,7 +394,7 @@ int coinicagames::pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3)
         return 0;
 }
 
-int coinicagames::pair_check(mhltile tile1, mhltile tile2) // !!!
+int mhlgame::pair_check(mhltile tile1, mhltile tile2) // !!!
 {
     // if (tile1.suit == tile2.suit && tile1.value == tile2.value)
     // {
@@ -401,7 +438,7 @@ int coinicagames::pair_check(mhltile tile1, mhltile tile2) // !!!
     }
 }
 
-int coinicagames::honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7) // !!!
+int mhlgame::honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7) // !!!
 {
     if (tile1.value == 10 && tile1.suit == 4)
     {
@@ -498,7 +535,7 @@ int coinicagames::honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhlt
     }
 }
 
-int coinicagames::five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5) // !!!!!
+int mhlgame::five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5) // !!!!!
 {
     if ((pair_pung_chow(tile2, tile3, tile4)) == 2)
     {
@@ -547,7 +584,7 @@ int coinicagames::five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, m
     }
 }
 
-int coinicagames::six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6) // !!!!!!!
+int mhlgame::six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6) // !!!!!!!
 {
     if ((pair_pung_chow(tile1, tile2, tile3)) == 2)
     {
@@ -607,7 +644,7 @@ int coinicagames::six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mh
     }
 }
 
-void coinicagames::two_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
+void mhlgame::two_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
 {
     if ((pair_check(tiles[0], tiles[1])) == 1)
     {
@@ -624,7 +661,7 @@ void coinicagames::two_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
     }
 }
 
-void coinicagames::five_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // AAAKK
+void mhlgame::five_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // AAAKK
 {
     int check1 = pair_pung_chow(tiles[0], tiles[1], tiles[2]);
     if (check1 == 2)
@@ -694,7 +731,7 @@ void coinicagames::five_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // AAA
     }
 }
 
-void coinicagames::eight_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
+void mhlgame::eight_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
 {
     int check1 = six_tile_check(tiles[0], tiles[1], tiles[2], tiles[3], tiles[4], tiles[5]);
     if (check1 > 3 && check1 < 9)
@@ -882,7 +919,7 @@ void coinicagames::eight_rem(mhlgamedata &gamedata, vector<mhltile> tiles)
     }
 }
 
-void coinicagames::eleven_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 11Rem2nd
+void mhlgame::eleven_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 11Rem2nd
 {
     int check1 = six_tile_check(tiles[0], tiles[1], tiles[2], tiles[3], tiles[4], tiles[5]);
     if (check1 > 3 && check1 < 9)
@@ -1466,7 +1503,7 @@ void coinicagames::eleven_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 1
     }
 }
 
-void coinicagames::fourteen_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 14Rem
+void mhlgame::fourteen_rem(mhlgamedata &gamedata, vector<mhltile> tiles) // 14Rem
 {
     int check1 = six_tile_check(tiles[0], tiles[1], tiles[2], tiles[3], tiles[4], tiles[5]);
     if (check1 == 9 || check1 == 10)
@@ -4254,108 +4291,3 @@ void coinicagames::fourteen_rem(mhlgamedata &gamedata, vector<mhltile> tiles) //
     }
 }
 
-int coinicagames::rng(const int &range)
-{
-    // Find the existing seed
-    auto seed_iterator = _seeds.begin();
-
-    // Initialize the seed with default value if it is not found
-    if (seed_iterator == _seeds.end())
-    {
-        seed_iterator = _seeds.emplace(_self, [&](auto &seed) {});
-    }
-
-    // Generate new seed value using the existing seed value
-    int prime = 65537;
-    auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
-
-    // Store the updated seed value in the table
-    _seeds.modify(seed_iterator, _self, [&](auto &s) {
-        s.value = new_seed_value;
-    });
-
-    // Get the random result in desired range
-    int random_result = new_seed_value % range;
-    return random_result;
-}
-
-string coinicagames::checksum256_to_string(std::array<uint8_t, 32UL> arr, size_t size)
-{
-    std::string r;
-    const char *to_hex = "0123456789abcdef";
-    for (uint32_t i = 0; i < arr.size(); ++i)
-    {
-        (r += to_hex[(arr[i] >> 4)]) += to_hex[(arr[i] & 0x0f)];
-    }
-    return r;
-}
-
-
-// void coinicagames::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
-// {
-//     vector<mhltile> remtiles = {};
-//     sorthand(hand);
-
-// }
-
-// 111 123
-// 111 234
-
-// 123 334455
-
-    // if ((pair_pung_chow(tile1, tile2, tile3)) == 2) -> 111
-    // {
-    //     if ((pair_pung_chow(tile4, tile5, tile6)) == 2) -> 111 222
-    //     {
-    //         return 4;
-    //     }
-    //     else if ((pair_pung_chow(tile4, tile5, tile6)) == 3) -> 111 234
-    //     {
-    //         return 5;
-    //     }
-    //     else
-    //     {
-    //         return 0;
-    //     }
-    // }
-    // else if ((pair_pung_chow(tile1, tile2, tile3)) == 3)
-    // {
-    //     if ((pair_pung_chow(tile4, tile5, tile6)) == 2)
-    //     {
-    //         return 6;
-    //     }
-    //     else if ((pair_pung_chow(tile4, tile5, tile6)) == 3)
-    //     {
-    //         return 7;
-    //     }
-    //     else
-    //     {
-    //         return 0;
-    //     }
-    // }
-    // else if ((pair_pung_chow(tile1, tile2, tile3)) == 1)
-    // {
-    //     if ((pair_check(tile3, tile4)) == 1 && (pair_check(tile5, tile6)) == 1)
-    //     {
-    //         if ((pair_pung_chow(tile1, tile3, tile5)) == 3)
-    //         {
-    //             return 8;
-    //         }
-    //         else if (pair_check(tile3, tile5) == 2)
-    //         {
-    //             return 9;
-    //         }
-    //         else
-    //         {
-    //             return 10;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         return 0;
-    //     }
-    // }
-    // else
-    // {
-    //     return 0;
-    // }

@@ -47,7 +47,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 {
     # Get Table Info
     echo "${EXECUTE} Fetching ${PROJECT_NAME} Tables"
-    for TBL in "cleos get table mahjonghilo mahjonghilo users"
+    for TBL in "cleos get table coinicagames coinicagames mjhilos"
     do
         echo "> ${TBL}"
         ${TBL}
@@ -169,9 +169,9 @@ GET_CURRENCY()
 # UNLOCK_WALLET
 # CREATE_ACCOUNT_WALLET
 # SET_PERMISSION
-COMPILE_CONTRACT
-DEPLOY_CONTRACT
-# INITIALIZE_GAME
+# COMPILE_CONTRACT
+# DEPLOY_CONTRACT
+INITIALIZE_GAME
 # ADD_BET
 # START_BET
 # PLAYHILO

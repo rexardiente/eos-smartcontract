@@ -267,6 +267,7 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
         int kong_count;
         int draw_count;
         vector<uint8_t> hand_player = {};
+        vector<mhltile> hand_tiles = {};
         vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
@@ -299,7 +300,7 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
     using mjhilos_table = eosio::multi_index<"mjhilos"_n, mjhilo>;
     using seeds_table = eosio::multi_index<"seeds"_n, seed>;
 
-    mhlgames_table _mhlgames;
+    mjhilos_table _mjhilos;
     seeds_table _seeds;
 
 
@@ -309,25 +310,25 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
     void gettile(mhlgamedata & gamedata);
     void sorthand(vector<uint8_t> & hand);
     void sorteye(vector<uint8_t> & hand, int idx);
-    void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
+    // void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
     void sumscore(mhlgamedata & gamedata);
-    void two_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void fourteen_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void two_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void fourteen_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
     void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
-    void transferhand(mhlgamedata & gamedata, int size);
-    void pung_chow(mhlgamedata & gamedata, int check);
+    // void transferhand(mhlgamedata & gamedata, int size);
+    // void pung_chow(mhlgamedata & gamedata, int check);
     void get_odds(mhlgamedata & gamedata, int value);
     float hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile);
-    int pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3);
-    int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
-    int pair_check(mhltile tile1, mhltile tile2);
-    int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
-    int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
-    int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
-    int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
+    // int pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3);
+    // int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
+    // int pair_check(mhltile tile1, mhltile tile2);
+    // int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
+    // int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
+    // int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
+    // int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
 
 
     public:
@@ -335,13 +336,14 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
 
     mhlgame(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
                                                                          eosio_token(MAIN_CONTRACT),
-                                                                         mhlgame_symbol(MAIN_TOKEN, PRECISION),
+                                                                         mhl_symbol(MAIN_TOKEN, PRECISION),
                                                                          _mjhilos(receiver, receiver.value),
                                                                          _seeds(receiver, receiver.value) {}
 
 
     ACTION mhlinitialze(int id);
     ACTION mhlresetbet(int id);
+    ACTION mhlresetacc(int id);
     ACTION mhladdbet(int id, double quantity);
     ACTION mhlplayhilo(int id, int option);
     ACTION mhldscrdtile(int id, int idx);
@@ -354,4 +356,4 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
     ACTION mhlend(int id);
     // ACTION mhldel(int size);
     
-}
+};

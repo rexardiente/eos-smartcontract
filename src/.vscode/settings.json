@@ -27,7 +27,11 @@
         "string_view": "cpp",
         "unordered_map": "cpp",
         "__locale": "cpp",
-        "locale": "cpp"
+        "locale": "cpp",
+        "typeinfo": "cpp",
+        "__split_buffer": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp"
     },
     "files.watcherExclude": {
         "**/target": true
