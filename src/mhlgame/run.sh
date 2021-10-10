@@ -47,7 +47,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 {
     # Get Table Info
     echo "${EXECUTE} Fetching ${PROJECT_NAME} Tables"
-    for TBL in "cleos get table coinicagames coinicagames mjhilos"
+    for TBL in "cleos get table mhlgame mhlgame mjhilos"
     do
         echo "> ${TBL}"
         ${TBL}
@@ -58,7 +58,7 @@ SHOW_EOSIO_CONTRACT_TABLE()
 INITIALIZE_GAME()
 {
     echo "${EXECUTE} Creating new account for \"user1\"..."
-    cleos push action coinicagames mhlinitialze '["1"]' -p coinicagames@active
+    cleos push action mhlgame mhlinitialze '["1"]' -p mhlgame@active
     # cleos push action mhlgame mhlinitialze '["2"]' -p mhlgame@active #for user2
     
 }
@@ -66,7 +66,7 @@ INITIALIZE_GAME()
 END_GAME()
 {
     echo "${EXECUTE} Creating new account for \"user1\"..."
-    cleos push action coinicagames mhlend '["7"]' -p coinicagames@active
+    cleos push action mhlgame mhlend '["7"]' -p mhlgame@active
     # cleos push action mhlgame initialize '["user2"]' -p user2@active #for user2
     
 }
@@ -74,7 +74,7 @@ END_GAME()
 NEW_GAME()
 {
     echo "${EXECUTE} Creating new account for \"user1\"..."
-    cleos push action coinicagames mhlresetacc '["1"]' -p coinicagames@active
+    cleos push action mhlgame mhlresetacc '["1"]' -p mhlgame@active
 }
 
 # RESET_GAME()
