@@ -35,6 +35,8 @@ ACTION mhlgame::mhlinitialze(int id)
         game_data.game_id = checksum256_to_string_hash().substr(0, 30);
         game_data.status = MHL_ONGOING;
         game_data.bet_status = 1;
+        if(game_data.deck_player.size()<136)
+        {
         game_data.deck_player = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136};
         game_data.sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         game_data.hi_lo_stake = 0.0000;
@@ -45,12 +47,35 @@ ACTION mhlgame::mhlinitialze(int id)
         game_data.draw_odds = DEFAULT;
         game_data.high_odds = DEFAULT;
         game_data.winnable = DEFAULT;
-        game_data.hand_player = {};
-        game_data.discarded_tiles = {};
-        game_data.reveal_kong = {};
-        game_data.winning_hand = {};
-        game_data.score_check = {};
-        game_data.score_type = {};
+        while(game_data.hand_player.size()!=0)
+        {
+            game_data.hand_player.erase(game_data.hand_player.begin());
+        }
+        while(game_data.discarded_tiles.size()!=0)
+        {
+            game_data.discarded_tiles.erase(game_data.discarded_tiles.begin());
+        }
+        while(game_data.reveal_kong.size()!=0)
+        {
+            game_data.reveal_kong.erase(game_data.reveal_kong.begin());
+        }
+        while(game_data.winning_hand.size()!=0)
+        {
+            game_data.winning_hand.erase(game_data.winning_hand.begin());
+        }
+        while(game_data.score_check.size()!=0)
+        {
+            game_data.score_check.erase(game_data.score_check.begin());
+        }
+        while(game_data.score_type.size()!=0)
+        {
+            game_data.score_type.erase(game_data.score_type.begin());
+        }
+        // game_data.discarded_tiles = {};
+        // game_data.reveal_kong = {};
+        // game_data.winning_hand = {};
+        // game_data.score_check = {};
+        // game_data.score_type = {};
         game_data.pair_count = DEFAULT;
         game_data.pung_count = DEFAULT;
         game_data.chow_count = DEFAULT;
@@ -59,6 +84,7 @@ ACTION mhlgame::mhlinitialze(int id)
         game_data.final_score = DEFAULT;
         game_data.current_tile = DEFAULT;
         game_data.standard_tile = DEFAULT;
+        }
         if(game_data.hi_lo_stake>0)
         {
             game_data.hi_lo_balance += game_data.hi_lo_stake;
