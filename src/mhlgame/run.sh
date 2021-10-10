@@ -66,7 +66,7 @@ INITIALIZE_GAME()
 END_GAME()
 {
     echo "${EXECUTE} Creating new account for \"user1\"..."
-    cleos push action coinicagames mhlend '["1"]' -p coinicagames@active
+    cleos push action coinicagames mhlend '["7"]' -p coinicagames@active
     # cleos push action mhlgame initialize '["user2"]' -p user2@active #for user2
     
 }

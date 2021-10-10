@@ -1,5 +1,6 @@
 
 eosio-cpp -o coinicagames.wasm coinicagames.cpp
+  
 cleos set contract coinicagames ./ -p coinicagames@active
 
 PW5KNqqcca9vDQ1UBDYwejsY78GwLay3RP7qWG9EaabsjvdCozFWF -- DonutFactory1 MacBook
