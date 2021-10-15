@@ -7,7 +7,7 @@ using namespace eosio;
 
 class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
 {
-    private:
+private:
     const symbol mhl_symbol;
     const name eosio_token;
 
@@ -22,7 +22,9 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
         //SKIP = 0,        //for Hi-Lo
         MHL_LOW = 1,  //for Hi-Lo
         MHL_DRAW = 2, //for Hi-Lo
-        MHL_HIGH = 3,  //for Hi-Lo --> for mahjong
+        MHL_HIGH = 3, //for Hi-Lo --> for mahjong
+        MHL_ISRIICHI = 1,
+        MHL_RIICHILOCK = 2
     };
 
     enum tile_suit : int64_t
@@ -54,15 +56,15 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
 
     const vector<mhlscore> score_deck = {
         {"No Score", 0},
-        {"Big Four Winds", 26},            
-        {"Big Three Dragons", 13},         
-        {"Four Kongs", 13},                
-        {"All Green", 13},                 
-        {"Nine Gates", 13},                
-        {"Thirteen Orphans", 13},          
-        {"Little Four Winds", 13},         
-        {"All Honors", 13},               
-        {"Four Concealed Pungs", 13},     
+        {"Big Four Winds", 26},
+        {"Big Three Dragons", 13},
+        {"Four Kongs", 13},
+        {"All Green", 13},
+        {"Nine Gates", 13},
+        {"Thirteen Orphans", 13},
+        {"Little Four Winds", 13},
+        {"All Honors", 13},
+        {"Four Concealed Pungs", 13},
         {"All Terminals", 13},
         {"Full Flush", 6},
         {"All terminal and honor discards", 5},
@@ -91,8 +93,7 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
         {"All simples", 1},
         {"One-shot Win", 1},
         {"Reach", 1},
-        {"Self drawn", 1}
-    };
+        {"Self drawn", 1}};
 
     const vector<mhltile> table_deck = {
         {0, 0},
@@ -231,8 +232,7 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
         {10, 11},
         {10, 11},
         {10, 11},
-        {10, 11}
-    };
+        {10, 11}};
 
     struct mhlgamedata
     {
@@ -251,28 +251,28 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
         double high_odds = DEFAULT;
         int bet_status = DEFAULT;
         int option_status = DEFAULT;
+        int riichi_status = DEFAULT;
         vector<int> sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         int prevalent_wind;
         int seat_wind;
         int current_tile;
         int standard_tile;
-        int eye_idx;
-        int winnable = DEFAULT;
+        // int eye_idx;
         // int highest;
         // int suit_count;
         // int type_count;
-        int pair_count;
-        int pung_count;
-        int chow_count;
+        // int pair_count;
+        // int pung_count;
+        // int chow_count;
         int kong_count;
         int draw_count;
         vector<uint8_t> hand_player = {};
-        vector<mhltile> hand_tiles = {};
         vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
         vector<mhlscore> score_type = {};
+        map<uint8_t, vector<mhltile> > wintiles = {};
         int final_score;
     };
 
@@ -287,7 +287,7 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
         };
     };
 
-        struct [[eosio::table]] seed
+    struct [[eosio::table]] seed
     {
         uint64_t key = 1;   // default key '1'
         uint32_t value = 1; // default value of 1
@@ -296,50 +296,50 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
             return key;
         }
     };
-    
+
     using mjhilos_table = eosio::multi_index<"mjhilos"_n, mjhilo>;
     using seeds_table = eosio::multi_index<"seeds"_n, seed>;
 
     mjhilos_table _mjhilos;
     seeds_table _seeds;
 
-
     int random(const int range);
     string checksum256_to_string_hash();
     double roundoff(double var);
     void gettile(mhlgamedata & gamedata);
     void sorthand(vector<uint8_t> & hand);
-    void sorteye(vector<uint8_t> & hand, int idx);
-    // void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
+    void tile_insert(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
+    void riichi_check(mhlgamedata & gamedata, vector<uint8_t> hand);
     void sumscore(mhlgamedata & gamedata);
-    // void two_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    // void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    // void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    // void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    // void fourteen_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
-    // void transferhand(mhlgamedata & gamedata, int size);
-    // void pung_chow(mhlgamedata & gamedata, int check);
     void get_odds(mhlgamedata & gamedata, int value);
     float hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile);
-    // int pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3);
-    // int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
-    // int pair_check(mhltile tile1, mhltile tile2);
-    // int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
-    // int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
-    // int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
-    // int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
+    int meld_check(mhltile tile1, mhltile tile2, mhltile tile3);
+    int pair_check(mhltile tile1, mhltile tile2);
+    // void four_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
+    // void seven_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
+    // void ten_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
+    void thirteen_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
+    int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
+        // void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
+        // void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
+        // void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+        // void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+        // void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+        // void transferhand(mhlgamedata & gamedata, int size);
+        // void pung_chow(mhlgamedata & gamedata, int check);
+        // int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
+        // int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
+        // int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
+        // int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
+        // int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
 
-
-    public:
-    using contract::contract;
+        public : using contract::contract;
 
     mhlgame(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
-                                                                         eosio_token(MAIN_CONTRACT),
-                                                                         mhl_symbol(MAIN_TOKEN, PRECISION),
-                                                                         _mjhilos(receiver, receiver.value),
-                                                                         _seeds(receiver, receiver.value) {}
-
+                                                                     eosio_token(MAIN_CONTRACT),
+                                                                     mhl_symbol(MAIN_TOKEN, PRECISION),
+                                                                     _mjhilos(receiver, receiver.value),
+                                                                     _seeds(receiver, receiver.value) {}
 
     ACTION mhlinitialze(int id);
     ACTION mhlresetbet(int id);
@@ -352,8 +352,8 @@ class [[eosio::contract("mhlgame")]] mhlgame : public eosio::contract
     ACTION mhldclrkong(int id, vector<int> idx);
     ACTION mhldclrwnhnd(int id);
     ACTION mhlwithdraw(int id);
-    // ACTION mhlendgame(int id);
     ACTION mhlend(int id);
+    ACTION mhlrchilock(int id);
+    // ACTION mhlendgame(int id);
     // ACTION mhldel(int size);
-    
 };

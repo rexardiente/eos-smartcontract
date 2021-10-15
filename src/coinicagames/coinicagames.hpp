@@ -35,6 +35,8 @@ private:
         MHL_LOW = 1,  //for Hi-Lo
         MHL_DRAW = 2, //for Hi-Lo
         MHL_HIGH = 3,  //for Hi-Lo --> for mahjong
+        MHL_ISRIICHI = 1,
+        MHL_RIICHILOCK = 2
     };
 
     enum tile_suit : int64_t
@@ -511,13 +513,14 @@ private:
         double high_odds = DEFAULT;
         int bet_status = DEFAULT;
         int option_status = DEFAULT;
+        int riichi_status = DEFAULT;
         vector<int> sumofvalue = {12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12};
         int prevalent_wind;
         int seat_wind;
         int current_tile;
         int standard_tile;
         int eye_idx;
-        int winnable = DEFAULT;
+        // int winnable = DEFAULT;
         // int highest;
         // int suit_count;
         // int type_count;
@@ -532,6 +535,7 @@ private:
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
         vector<mhlscore> score_type = {};
+        map<uint8_t, vector<mhltile> > wintiles = {};
         int final_score;
     };
 
@@ -601,24 +605,28 @@ private:
     void sorthand(vector<uint8_t> & hand);
     void sorteye(vector<uint8_t> & hand, int idx);
     void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
-    void sumscore(mhlgamedata & gamedata);
-    void two_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void fourteen_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-    void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
+    // void sumscore(mhlgamedata & gamedata);
+    // void two_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void fourteen_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
     void transferhand(mhlgamedata & gamedata, int size);
     void pung_chow(mhlgamedata & gamedata, int check);
     void get_odds(mhlgamedata & gamedata, int value);
     float hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile);
-    int pair_pung_chow(mhltile tile1, mhltile tile2, mhltile tile3);
-    int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
+    int meld_check(mhltile tile1, mhltile tile2, mhltile tile3);
     int pair_check(mhltile tile1, mhltile tile2);
-    int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
+    void thirteen_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
     int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
-    int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
-    int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
+    void tile_insert(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
+    void riichi_check(mhlgamedata & gamedata, vector<uint8_t> hand);
+    // int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
+    // int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
+    // int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
+    // int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
+    // int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
 
 public:
     using contract::contract;
@@ -654,6 +662,7 @@ public:
     ACTION mhldclrwnhnd(int id);
     ACTION mhlwithdraw(int id);
     // ACTION mhlendgame(int id);
+    ACTION mhlrchilock(int id);
     ACTION mhlend(int id);
     // ACTION mhldel(int size);
 };

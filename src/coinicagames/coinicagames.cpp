@@ -324,7 +324,7 @@ ACTION coinicagames::mhlinitialze(int id)
         game_data.low_odds = DEFAULT;
         game_data.draw_odds = DEFAULT;
         game_data.high_odds = DEFAULT;
-        game_data.winnable = DEFAULT;
+        game_data.riichi_status = DEFAULT;
         while(game_data.hand_player.size()!=0)
         {
             game_data.hand_player.erase(game_data.hand_player.begin());
@@ -478,8 +478,8 @@ ACTION coinicagames::mhlplayhilo(int id, int option)
         if (game_data.hand_player.size() == (14 + mjhilo.game_data.kong_count - mjhilo.game_data.reveal_kong.size()))
         {
             // sorthand(game_data.hand_player);
-            winhand_check(game_data, game_data.hand_player);
-            if (game_data.winnable == 1)
+            riichi_check(game_data, game_data.hand_player);
+            if (game_data.riichi_status != 0)
             {
                 print("You have a winning hand.");
             }
@@ -530,7 +530,7 @@ ACTION coinicagames::mhldscrdtile(int id, int idx)
     check(mjhilo.game_data.hand_player.size() == (14 + mjhilo.game_data.kong_count - mjhilo.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo) {
         mhlgamedata &game_data = modified_mjhilo.game_data;
-        game_data.winnable = 0;
+        game_data.riichi_status = 0;
         game_data.pung_count = DEFAULT;
         game_data.pair_count = DEFAULT;
         game_data.chow_count = DEFAULT;
@@ -627,7 +627,7 @@ ACTION coinicagames::mhldclrkong(int id, vector<int> idx)
         check(check1 == 1 && check2 == 1, "Tiles are not of the same suit and value.");
         if (pair_check(kongtile[0], kongtile[2]) == 1)
         {
-            game_data.winnable = 0;
+            game_data.riichi_status = 0;
             for (int i = 0; i < 4; i++)
             {
                 game_data.reveal_kong.insert(game_data.reveal_kong.begin(), game_data.hand_player[idx[i]]);
@@ -651,32 +651,33 @@ ACTION coinicagames::mhldclrwnhnd(int id)
     require_auth(_self);
     auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
     check(mjhilo.game_data.status == MHL_ONGOING, "Game already ended.");
-    _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo) {
-        mhlgamedata &game_data = modified_mjhilo.game_data;
-        if (game_data.winnable == 1)
-        {
-            transferhand(game_data, game_data.hand_player.size());
-            vector<uint8_t> temp_hand = game_data.winning_hand;
-            sorteye(temp_hand, game_data.eye_idx);
-            getscore(game_data, temp_hand);
-            for (int i = 0; i < game_data.reveal_kong.size(); i++)
-            {
-                game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
-            }
-            for (int i = 0; i < game_data.reveal_kong.size(); i++)
-            {
-                game_data.reveal_kong.erase(game_data.reveal_kong.begin());
-            }
-            game_data.status = MHL_WIN;
-            // sorteye(temp_hand, game_data.eye_idx);
-            // getscore(game_data, temp_hand);
-            print("Well played!");
-        }
-        else
-        {
-            print("Your hand didn't win..");
-        }
-    });
+    _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
+                    {
+                        mhlgamedata &game_data = modified_mjhilo.game_data;
+                        if (game_data.riichi_status != 0)
+                        {
+                            // transferhand(game_data, game_data.hand_player.size());
+                            vector<uint8_t> temp_hand = game_data.winning_hand;
+                            // sorteye(temp_hand, game_data.eye_idx);
+                            // getscore(game_data, temp_hand);
+                            for (int i = 0; i < game_data.reveal_kong.size(); i++)
+                            {
+                                game_data.winning_hand.insert(game_data.winning_hand.end(), game_data.reveal_kong[i]);
+                            }
+                            for (int i = 0; i < game_data.reveal_kong.size(); i++)
+                            {
+                                game_data.reveal_kong.erase(game_data.reveal_kong.begin());
+                            }
+                            game_data.status = MHL_WIN;
+                            // sorteye(temp_hand, game_data.eye_idx);
+                            // getscore(game_data, temp_hand);
+                            print("Well played!");
+                        }
+                        else
+                        {
+                            print("Your hand didn't win..");
+                        }
+                    });
 }
 
 ACTION coinicagames::mhlwithdraw(int id)
@@ -709,4 +710,17 @@ ACTION coinicagames::mhlend(int id)
     auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
     check(mjhilo.game_data.hi_lo_balance == 0.0000 && mjhilo.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
     _mjhilos.erase(mjhilo);
+}
+
+ACTION coinicagames::mhlrchilock(int id)
+{
+    require_auth(_self);
+
+    auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
+    check(mjhilo.game_data.riichi_status == 1, "Hand not reach.");
+    _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
+                    {
+                        mhlgamedata &game_data = modified_mjhilo.game_data;
+                        game_data.riichi_status = 2;
+                    });
 }

@@ -1,31 +1,32 @@
 #include "mhl.hpp"
 #include <eosio/transaction.hpp>
 
-int mhlgame::random(const int range) {
-  // Find the existing seed
-  auto seed_iterator = _seeds.begin();
+int mhlgame::random(const int range)
+{
+    // Find the existing seed
+    auto seed_iterator = _seeds.begin();
 
-  // Initialize the seed with default value if it is not found
-  if (seed_iterator == _seeds.end()) {
-    seed_iterator = _seeds.emplace( _self, [&]( auto& seed ) { });
-  }
+    // Initialize the seed with default value if it is not found
+    if (seed_iterator == _seeds.end())
+    {
+        seed_iterator = _seeds.emplace(_self, [&](auto &seed) {});
+    }
 
-  // Generate new seed value using the existing seed value
-  int prime = 65537;
-  auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
-  
-  // Store the updated seed value in the table
-  _seeds.modify( seed_iterator, _self, [&]( auto& s ) {
-    s.value = new_seed_value;
-  });
-  
-  // Get the random result in desired range
-  int random_result = new_seed_value % range;
-  return random_result;
+    // Generate new seed value using the existing seed value
+    int prime = 65537;
+    auto new_seed_value = (seed_iterator->value + current_time_point().elapsed.count()) % prime;
+
+    // Store the updated seed value in the table
+    _seeds.modify(seed_iterator, _self, [&](auto &s)
+                  { s.value = new_seed_value; });
+
+    // Get the random result in desired range
+    int random_result = new_seed_value % range;
+    return random_result;
 }
 
 string mhlgame::checksum256_to_string_hash()
-{   
+{
     auto size = transaction_size();
     char buf[size];
     check(size == read_transaction(buf, size), "read_transaction failed");
@@ -33,7 +34,10 @@ string mhlgame::checksum256_to_string_hash()
     auto hbytes = sha.extract_as_byte_array();
     std::string hash_id;
     const char *to_hex = "0123456789abcdef";
-    for (uint32_t i = 0; i < hbytes.size(); ++i) { (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)]; }
+    for (uint32_t i = 0; i < hbytes.size(); ++i)
+    {
+        (hash_id += to_hex[(hbytes[i] >> 4)]) += to_hex[(hbytes[i] & 0x0f)];
+    }
     return hash_id;
 }
 
@@ -80,7 +84,7 @@ void mhlgame::get_odds(mhlgamedata &gamedata, int value)
         sum += gamedata.sumofvalue[i];
     }
     // var = (y < 10) ? 30 : 40;
-    num2 = sum> 0 ? (sum / gamedata.sumofvalue[value - 1]) * 0.9 : 0;
+    num2 = sum > 0 ? (sum / gamedata.sumofvalue[value - 1]) * 0.9 : 0;
     if (value == 1)
     {
         num1 = 0;
@@ -141,7 +145,7 @@ void mhlgame::get_odds(mhlgamedata &gamedata, int value)
     }
     else
     {
-            gamedata.draw_odds = 1.0000;
+        gamedata.draw_odds = 1.0000;
     }
 
     if (num3 > 1.0000)
@@ -162,25 +166,28 @@ void mhlgame::get_odds(mhlgamedata &gamedata, int value)
     }
 }
 
-float mhlgame::hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile)
+float mhlgame::hilo_step(mhlgamedata &gamedata, int prev_tile, int current_tile)
 {
     // int option = gamedata.prediction;
     if (prev_tile > current_tile)
     {
         gamedata.hi_lo_outcome = 1;
-        if(gamedata.prediction == 1)
-        {return gamedata.low_odds;}
+        if (gamedata.prediction == 1)
+        {
+            return gamedata.low_odds;
+        }
         else
         {
             return 0;
         }
-        
     }
     else if (prev_tile == current_tile)
     {
         gamedata.hi_lo_outcome = 2;
-        if(gamedata.prediction == 2)
-        {return gamedata.draw_odds;}
+        if (gamedata.prediction == 2)
+        {
+            return gamedata.draw_odds;
+        }
         else
         {
             return 0;
@@ -189,13 +196,14 @@ float mhlgame::hilo_step(mhlgamedata & gamedata, int prev_tile, int current_tile
     else if (prev_tile < current_tile)
     {
         gamedata.hi_lo_outcome = 3;
-        if(gamedata.prediction == 3)
-        {return gamedata.high_odds;}
+        if (gamedata.prediction == 3)
+        {
+            return gamedata.high_odds;
+        }
         else
         {
             return 0;
         }
-        
     }
     else
     {
@@ -220,14 +228,14 @@ void mhlgame::sorthand(vector<uint8_t> &hand)
     }
 }
 
-void mhlgame::sorteye(vector<uint8_t> &hand, int idx)
-{
-    int temp = hand[idx];
-    hand.erase(hand.begin() + idx);
-    hand.erase(hand.begin() + idx);
-    hand.insert(hand.end(), temp);
-    hand.insert(hand.end(), temp += 1);
-}
+// void mhlgame::sorteye(vector<uint8_t> &hand, int idx)
+// {
+//     int temp = hand[idx];
+//     hand.erase(hand.begin() + idx);
+//     hand.erase(hand.begin() + idx);
+//     hand.insert(hand.end(), temp);
+//     hand.insert(hand.end(), temp += 1);
+// }
 
 void mhlgame::sumscore(mhlgamedata &gamedata)
 {
@@ -249,36 +257,62 @@ void mhlgame::sumscore(mhlgamedata &gamedata)
     gamedata.final_score = num;
 }
 
-void mhlgame::winhand_check(mhlgamedata &gamedata, vector<uint8_t> &hand)
+void mhlgame::riichi_check(mhlgamedata &gamedata, vector<uint8_t> hand)
 {
     vector<mhltile> remtiles = {};
     sorthand(hand);
-    // for (int i = 0; i < gamedata.hand_player.size(); i++)
-    // {
-    //     remtiles.insert(remtiles.end(), table_deck.at(hand[i]));
-    // }
-    // if (remtiles.size() == 2)
-    // {
-    //     two_rem(gamedata, remtiles);
-    // }
+    for (int i = 0; i < gamedata.hand_player.size(); i++)
+    {
+        remtiles.insert(remtiles.end(), table_deck.at(hand[i]));
+    }
+    if (remtiles.size() == 2)
+    {
+        for (int i = 0; i < remtiles.size(); i++)
+        {
+            vector<mhltile> temptiles = remtiles;
+            temptiles.erase(temptiles.begin() + i);
+            gamedata.riichi_status = 1;
+            gamedata.wintiles.insert(gamedata.wintiles.end(), pair<uint8_t, vector<mhltile> >(i, temptiles));
+        }
+    }
     // else if (remtiles.size() == 5)
     // {
-    //     five_rem(gamedata, remtiles);
+
+    //     for (int i = 0; i < remtiles.size(); i++)
+    //     {
+    //         vector<mhltile> temptiles = remtiles;
+    //         temptiles.erase(temptiles.begin() + i);
+    //         four_check(gamedata, temptiles, i);
+    //     }
     // }
     // else if (remtiles.size() == 8)
     // {
-    //     eight_rem(gamedata, remtiles);
+
+    //     for (int i = 0; i < remtiles.size(); i++)
+    //     {
+    //         vector<mhltile> temptiles = remtiles;
+    //         temptiles.erase(temptiles.begin() + i);
+    //         seven_check(gamedata, temptiles, i);
+    //     }
     // }
     // else if (remtiles.size() == 11)
     // {
-    //     eleven_rem(gamedata, remtiles);
+
+    //     for (int i = 0; i < remtiles.size(); i++)
+    //     {
+    //         vector<mhltile> temptiles = remtiles;
+    //         temptiles.erase(temptiles.begin() + i);
+    //         ten_check(gamedata, temptiles, i);
+    //     }
     // }
-    // else if (remtiles.size() == 14)
-    // {
-    //     fourteen_rem(gamedata, remtiles);
-    // }
-    // else
-    // {
-    //     print("Tiles in your hand can not be formed into a winning hand.");
-    // }
+    else
+    {
+
+        for (int i = 0; i < remtiles.size(); i++)
+        {
+            vector<mhltile> temptiles = remtiles;
+            temptiles.erase(temptiles.begin() + i);
+            thirteen_check(gamedata, temptiles, i);
+        }
+    }
 }
