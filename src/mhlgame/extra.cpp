@@ -131,7 +131,13 @@ int mhlgame::five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltil
 
 void mhlgame::tile_insert(mhlgamedata &gamedata, vector<mhltile> tiles, uint8_t idx)
 {
-    gamedata.wintiles.insert(gamedata.wintiles.end(), pair<uint8_t, vector<mhltile> >(idx, tiles));
+    // vector<mhltile> temptiles = remtiles;
+    // temptiles.erase(temptiles.begin() + i);
+    // gamedata.riichi_status = 1;
+    winnables tempwin;
+    tempwin.index = idx;
+    tempwin.tileswin = tiles;
+    gamedata.wintiles.insert(gamedata.wintiles.end(), tempwin);
     gamedata.riichi_status = 1;
 }
 

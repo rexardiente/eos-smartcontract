@@ -85,6 +85,12 @@ private:
         int value;
     };
 
+    struct winnables
+    {
+        int index;
+        vector<mhltile> tileswin;
+    };
+
     const vector<base_stat> stat_deck = {
         {"KoTengu", 1, 1, 1, 1, 1, 2, 1},
         {"FoxGhost", 2, 1, 1, 2, 1, 1, 1},
@@ -535,7 +541,8 @@ private:
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
         vector<mhlscore> score_type = {};
-        map<uint8_t, vector<mhltile> > wintiles = {};
+        vector<winnables> wintiles = {};
+        // map<uint8_t, vector<mhltile> > wintiles = {};
         int final_score;
     };
 

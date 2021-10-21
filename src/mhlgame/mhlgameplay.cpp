@@ -272,7 +272,15 @@ void mhlgame::riichi_check(mhlgamedata &gamedata, vector<uint8_t> hand)
             vector<mhltile> temptiles = remtiles;
             temptiles.erase(temptiles.begin() + i);
             gamedata.riichi_status = 1;
-            gamedata.wintiles.insert(gamedata.wintiles.end(), pair<uint8_t, vector<mhltile> >(i, temptiles));
+            winnables tempwin;
+            tempwin.index = i;
+            tempwin.tileswin = temptiles;
+            // for(int i=0; i++;i<temptiles.size())
+            // {
+            //     tempwin.tileswin.insert(temptiles[i]);
+            // }
+            gamedata.wintiles.insert(gamedata.wintiles.end(), tempwin);
+            // gamedata.wintiles;
         }
     }
     // else if (remtiles.size() == 5)

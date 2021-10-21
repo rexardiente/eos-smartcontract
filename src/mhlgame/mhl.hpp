@@ -48,6 +48,13 @@ private:
         int value;
     };
 
+    struct winnables
+    {
+        int index;
+        vector<mhltile> tileswin;
+    };
+    
+
     struct mhlscore
     {
         string score_name;
@@ -272,7 +279,7 @@ private:
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
         vector<mhlscore> score_type = {};
-        map<uint8_t, vector<mhltile> > wintiles = {};
+        vector<winnables> wintiles = {};
         int final_score;
     };
 

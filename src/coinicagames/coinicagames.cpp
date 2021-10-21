@@ -349,6 +349,10 @@ ACTION coinicagames::mhlinitialze(int id)
         {
             game_data.score_type.erase(game_data.score_type.begin());
         }
+        while(game_data.wintiles.size()!=0)
+        {
+            game_data.wintiles.erase(game_data.wintiles.begin());
+        }
         // game_data.discarded_tiles = {};
         // game_data.reveal_kong = {};
         // game_data.winning_hand = {};
