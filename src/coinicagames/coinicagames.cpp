@@ -523,7 +523,7 @@ ACTION coinicagames::mhlplayhilo(int id, int option)
                             winnables tempwin;
                             tempwin.index = 5;
                             vector<mhltile> tiles;
-                            tiles.insert(tiles.begin(), table_deck.at(20))));
+                            tiles.insert(tiles.begin(), table_deck.at(random(game_data.deck_player.size())));
                             tempwin.tileswin = tiles;
                             game_data.wintiles.insert(game_data.wintiles.end(), tempwin);
                         }
