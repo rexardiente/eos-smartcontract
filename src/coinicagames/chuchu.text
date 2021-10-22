@@ -4,3 +4,27 @@ eosio-cpp -o coinicagames.wasm coinicagames.cpp
 cleos set contract coinicagames ./ -p coinicagames@active
 
 PW5KNqqcca9vDQ1UBDYwejsY78GwLay3RP7qWG9EaabsjvdCozFWF -- DonutFactory1 MacBook
+
+table ->
+cleos get table coinicagames coinicagames mjhilos
+
+initialize ->
+cleos push action coinicagames mhlinitialze '["1"]' -p coinicagames@active
+
+addbet ->
+cleos push action coinicagames mhladdbet '["1", "1"]' -p coinicagames@active
+
+startbet ->
+cleos push action coinicagames mhlstartbet '[ "1"]' -p coinicagames@active
+
+playhilo ->
+cleos push action coinicagames mhlplayhilo '["1", 3]' -p coinicagames@active
+
+withdraw ->
+cleos push action coinicagames mhlwithdraw '[ "1"]' -p coinicagames@active
+
+transferwin ->
+cleos push action coinicagames mhlwintrnsfr '[ "1"]' -p coinicagames@active
+
+end game ->
+cleos push action coinicagames mhlend '["6"]' -p coinicagames@active

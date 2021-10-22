@@ -669,7 +669,7 @@ public:
     ACTION mhldclrwnhnd(int id);
     ACTION mhlwithdraw(int id);
     // ACTION mhlendgame(int id);
-    ACTION mhlrchilock(int id);
+    ACTION mhlreachlock(int id);
     ACTION mhlend(int id);
-    // ACTION mhldel(int size);
+    ACTION mhldel(int size);
 };
