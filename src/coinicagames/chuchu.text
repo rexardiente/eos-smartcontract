@@ -31,3 +31,6 @@ cleos push action coinicagames mhlend '["6"]' -p coinicagames@active
 
 delete ->
 cleos push action coinicagames mhldel '["6"]' -p coinicagames@active
+
+
+
