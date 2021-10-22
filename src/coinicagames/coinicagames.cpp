@@ -389,7 +389,7 @@ ACTION coinicagames::mhlinitialze(int id)
                         }
                         else
                         {
-                            game_data.hi_lo_balance += game_data.balance;
+                            game_data.hi_lo_balance += game_data.hi_lo_balance;
                         }
                         int num1 = game_count % 16;
                         int num2 = game_count % 4;
@@ -525,7 +525,7 @@ ACTION coinicagames::mhlplayhilo(int id, int option)
                             vector<mhltile> tiles;
                             tiles.insert(tiles.begin(), table_deck.at(random(game_data.deck_player.size())));
                             tempwin.tileswin = tiles;
-                            game_data.wintiles.insert(gamedata.wintiles.end(), tempwin);
+                            game_data.wintiles.insert(game_data.wintiles.end(), tempwin);
                         }
                         // game_data.hi_lo_bet = 0;
                         game_data.bet_status = 1;
