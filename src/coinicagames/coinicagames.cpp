@@ -387,6 +387,10 @@ ACTION coinicagames::mhlinitialze(int id)
                         {
                             game_data.hi_lo_balance += game_data.hi_lo_stake;
                         }
+                        else
+                        {
+                            game_data.hi_lo_balance += game_data.balance;
+                        }
                         int num1 = game_count % 16;
                         int num2 = game_count % 4;
                         if (num1 > 0 && num1 < 5)
@@ -521,7 +525,7 @@ ACTION coinicagames::mhlplayhilo(int id, int option)
                             vector<mhltile> tiles;
                             tiles.insert(tiles.begin(), table_deck.at(random(game_data.deck_player.size())));
                             tempwin.tileswin = tiles;
-                            game_data.wintiles.insert(game_data.wintiles.end(), tempwin);
+                            game_data.wintiles.insert(gamedata.wintiles.end(), tempwin);
                         }
                         // game_data.hi_lo_bet = 0;
                         game_data.bet_status = 1;
@@ -739,8 +743,11 @@ ACTION coinicagames::mhlend(int id)
     // check(has_auth(_self) || has_auth(id), "Unauthorized user");
     auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
     // check(mjhilo.game_data.hi_lo_balance == 0.0000 && mjhilo.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
-    check(mjhilo.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
-    _mjhilos.erase(mjhilo);
+    _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
+                    {
+                        mhlgamedata &game_data = modified_mjhilo.game_data;
+                        game_data.status = 3;
+                    });
 }
 
 ACTION coinicagames::mhlreachlock(int id)
