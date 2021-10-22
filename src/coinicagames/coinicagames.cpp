@@ -453,6 +453,7 @@ ACTION coinicagames::mhlplayhilo(int id, int option)
     }
     // check(, "Max number of draws reached.");
     check(mjhilo.game_data.hand_player.size() < (14 + mjhilo.game_data.kong_count - mjhilo.game_data.reveal_kong.size()), "Discard a tile to draw a new one.");
+    check(mjhilo.game_data.hi_lo_balance >= 1 || mjhilo.game_data.hi_lo_stake != 0, "Not sufficient balance on account..");
     check(mjhilo.game_data.draw_count < 34, " Draw limit reached..");
     check(mjhilo.game_data.status == 1, "No ongoing game.");
     check(mjhilo.game_data.option_status == 1, "No bet yet.");
