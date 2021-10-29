@@ -169,7 +169,7 @@ GET_CURRENCY()
     # cleos get currency balance eosio.token user2 EOS
 }
 
-# cleos set account permission mhlgame active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "mhlgame","permission":"eosio.code"},"weight":1}]}'
+# cleos set account permission coinicagames active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "coinicagames","permission":"eosio.code"},"weight":1}]}'
 
 # ERASE_ALL
 # UNLOCK_WALLET

@@ -747,6 +747,8 @@ ACTION coinicagames::mhlend(int id)
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
                     {
                         mhlgamedata &game_data = modified_mjhilo.game_data;
+                        game_data.hi_lo_stake = DEFAULT;
+                        game_data.hi_lo_bet = DEFAULT;
                         game_data.status = 3;
                     });
 }
