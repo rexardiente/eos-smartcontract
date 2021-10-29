@@ -328,14 +328,6 @@ ACTION coinicagames::mhlinitialze(int id)
                         // game_data.hi_lo_balance += quantity;
                         game_data.game_id = checksum256_to_string_hash().substr(0, 30);
                         game_data.status = MHL_ONGOING;
-                        if (game_data.hi_lo_stake > 0)
-                        {
-                            game_data.hi_lo_balance += game_data.hi_lo_stake;
-                        }
-                        else
-                        {
-                            game_data.hi_lo_balance = game_data.hi_lo_balance;
-                        }
                         game_data.bet_status = 1;
                         if (game_data.deck_player.size() < 136)
                         {
@@ -747,6 +739,10 @@ ACTION coinicagames::mhlend(int id)
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
                     {
                         mhlgamedata &game_data = modified_mjhilo.game_data;
+                        if (game_data.hi_lo_stake > 0)
+                        {
+                            game_data.hi_lo_balance += game_data.hi_lo_stake;
+                        }
                         game_data.hi_lo_stake = DEFAULT;
                         game_data.hi_lo_bet = DEFAULT;
                         game_data.status = 3;

@@ -33,5 +33,8 @@ cleos push action coinicagames mhlend '["7"]' -p coinicagames@active
 delete ->
 cleos push action coinicagames mhldel '["6"]' -p coinicagames@active
 
+ssh root@37.44.244.221
+@@i20fjjf2if0H
+
 EGS Server Wallet New PW
 PW5KY4yz31t6LPrVUN7urbE4jKMSLgvZkChkF6pcnLz3pxsE1CQ8V
