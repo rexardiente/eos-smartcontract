@@ -19,6 +19,10 @@ int mhlgame::meld_check(mhltile tile1, mhltile tile2, mhltile tile3)
         {
             return 3;
         }
+        else if ((tile1.value + 1) == tile2.value && (tile2.value + 1) != tile3.value) // 124
+        {
+            return 5;
+        }
         else if ((tile1.value + 3) == tile2.value && (tile2.value + 3) == tile3.value) // 147
         {
             return 4;
@@ -29,7 +33,20 @@ int mhlgame::meld_check(mhltile tile1, mhltile tile2, mhltile tile3)
         }
     }
     else
-        return 0;
+    {
+        if (pair_check(tile2, tile3) == 1) // 1 44
+        {
+            return 6;
+        }
+        else if (pair_check(tile2, tile3) == 1) // 1 34
+        {
+            return 7;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }
 
 int mhlgame::pair_check(mhltile tile1, mhltile tile2) // !!!
@@ -143,118 +160,147 @@ void mhlgame::tile_insert(mhlgamedata &gamedata, vector<mhltile> tiles, uint8_t 
 
 void mhlgame::thirteen_check(mhlgamedata &gamedata, vector<mhltile> tiles, uint8_t idx)
 {
-    vector<mhltile> wintile = {};
-    int check1 = meld_check(tiles[0], tiles[1], tiles[2]); // 123meld
-    if (check1 == 2 || check1 == 3)
+    int handcheck = 0;
+    do
     {
-        int check2 = meld_check(tiles[3], tiles[4], tiles[5]); // 1-6meld
-        if (check2 == 2 || check1 == 3)
+        int checking = meld_check(tiles[0], tiles[1], tiles[2]);
+        if (checking == 2 || check == 3)
         {
-            int check3 = meld_check(tiles[6], tiles[7], tiles[8]); // 1-9meld
-            if (check3 == 2 || check1 == 3)
+            for (int i = 0; i < 3; i++)
             {
-                int check4 = pair_check(tiles[9], tiles[10]); // 1-9meld 11
-                if (check4 == 1)
-                {
-                    if (pair_check(tiles[11], tiles[12]) == 1) // 1-9meld 11 22
-                    {
-                        wintile.insert(wintile.begin(), tiles[9]);
-                        wintile.insert(wintile.begin(), tiles[11]);
-                        tile_insert(gamedata, wintile, idx);
-                    }
-                    else if (pair_check(tiles[11], tiles[12]) == 2) // 1-9meld 11 23
-                    {
-                        if (tiles[10].value == tiles[11].value && tiles[10].suit == tiles[11].suit)
-                        {
-                            mhltile tile1 = tiles[10];
-                            mhltile tile2 = tiles[12];
-                            mhltile tile3 = tiles[12];
-                            tile1.value -= 1;
-                            tile2.value += 1;
-                            if (tile1.value >= 1)
-                            {
-                                wintile.insert(wintile.begin(), tile1);
-                            }
-                            if (tile2.value <= 9)
-                            {
-                                wintile.insert(wintile.begin(), tile2);
-                            }
-                            if (tile3.value <= 9)
-                            {
-                                wintile.insert(wintile.begin(), tile3);
-                            }
-                            tile_insert(gamedata, wintile, idx);
-                        }
-                        else
-                        {
-                            mhltile tile1 = tiles[11];
-                            mhltile tile2 = tiles[12];
-                            tile1.value -= 1;
-                            tile2.value += 1;
-                            if (tile1.value >= 1)
-                            {
-                                wintile.insert(wintile.begin(), tile1);
-                            }
-                            if (tile2.value <= 9)
-                            {
-                                wintile.insert(wintile.begin(), tile2);
-                            }
-                            tile_insert(gamedata, wintile, idx);
-                        }
-                    }
-                    else if (pair_check(tiles[11], tiles[12]) == 3)
-                    {
-                        mhltile tile1 = tiles[11];
-                        tile1.value += 1;
-                        wintile.insert(wintile.begin(), tile1);
-                        tile_insert(gamedata, wintile, idx);
-                    }
-                    else
-                    {
-                        print("Hand not reach.. (1)");
-                    }
-                }
-                else if (check4 == 2) // 1-9 meld 12
-                {
-                    if (pair_check(tiles[11], tiles[12]) == 1)
-                    {
-                        mhltile tile1 = tiles[9];
-                        mhltile tile2 = tiles[10];
-                        tile1.value -= 1;
-                        tile2.value += 1;
-                        if (tile1.value >= 1)
-                        {
-                            wintile.insert(wintile.begin(), tile1);
-                        }
-                        if (tile2.value <= 9)
-                        {
-                            wintile.insert(wintile.begin(), tile2);
-                        }
-                        tile_insert(gamedata, wintile, idx);
-                    }
-                }
-                else
-                {
-                    print("Hand not reach.. (1)");
-                }
+                gamedata.hand_melds.insert(gamedata.hand_melds.end(), tiles[i]);
             }
-            else
+            for (int i = 0; i < 3; i++)
             {
-                print("Hand not reach.. (1)");
+                gamedata.hand_player.erase(gamedata.hand_player.begin());
             }
+            handcheck = 1;
+        }
+        else if (checking == 1)
+        {
+            handcheck = 1;
         }
         else
         {
-            print("Hand not reach.. (1)");
+            check = 0;
         }
-    }
-    else
-    {
-        print("Hand not reach.. (1)");
-    }
-    // gamedata.riichi_status = 1;
-    // gamedata.wintiles.insert(gamedata.wintiles.end(), pair<uint8_t, vector<mhltile>>(idx, temptiles));
+    } while (handcheck == 1);
 }
+
+// void mhlgame::thirteen_check(mhlgamedata &gamedata, vector<mhltile> tiles, uint8_t idx)
+// {
+//     vector<mhltile> wintile = {};
+//     int check1 = meld_check(tiles[0], tiles[1], tiles[2]); // 123meld
+//     if (check1 == 2 || check1 == 3)
+//     {
+//         int check2 = meld_check(tiles[3], tiles[4], tiles[5]); // 1-6meld
+//         if (check2 == 2 || check1 == 3)
+//         {
+//             int check3 = meld_check(tiles[6], tiles[7], tiles[8]); // 1-9meld
+//             if (check3 == 2 || check1 == 3)
+//             {
+//                 int check4 = pair_check(tiles[9], tiles[10]); // 1-9meld 11
+//                 if (check4 == 1)
+//                 {
+//                     if (pair_check(tiles[11], tiles[12]) == 1) // 1-9meld 11 22
+//                     {
+//                         wintile.insert(wintile.begin(), tiles[9]);
+//                         wintile.insert(wintile.begin(), tiles[11]);
+//                         tile_insert(gamedata, wintile, idx);
+//                     }
+//                     else if (pair_check(tiles[11], tiles[12]) == 2) // 1-9meld 11 23
+//                     {
+//                         if (tiles[10].value == tiles[11].value && tiles[10].suit == tiles[11].suit)
+//                         {
+//                             mhltile tile1 = tiles[10];
+//                             mhltile tile2 = tiles[12];
+//                             mhltile tile3 = tiles[12];
+//                             tile1.value -= 1;
+//                             tile2.value += 1;
+//                             if (tile1.value >= 1)
+//                             {
+//                                 wintile.insert(wintile.begin(), tile1);
+//                             }
+//                             if (tile2.value <= 9)
+//                             {
+//                                 wintile.insert(wintile.begin(), tile2);
+//                             }
+//                             if (tile3.value <= 9)
+//                             {
+//                                 wintile.insert(wintile.begin(), tile3);
+//                             }
+//                             tile_insert(gamedata, wintile, idx);
+//                         }
+//                         else
+//                         {
+//                             mhltile tile1 = tiles[11];
+//                             mhltile tile2 = tiles[12];
+//                             tile1.value -= 1;
+//                             tile2.value += 1;
+//                             if (tile1.value >= 1)
+//                             {
+//                                 wintile.insert(wintile.begin(), tile1);
+//                             }
+//                             if (tile2.value <= 9)
+//                             {
+//                                 wintile.insert(wintile.begin(), tile2);
+//                             }
+//                             tile_insert(gamedata, wintile, idx);
+//                         }
+//                     }
+//                     else if (pair_check(tiles[11], tiles[12]) == 3)
+//                     {
+//                         mhltile tile1 = tiles[11];
+//                         tile1.value += 1;
+//                         wintile.insert(wintile.begin(), tile1);
+//                         tile_insert(gamedata, wintile, idx);
+//                     }
+//                     else
+//                     {
+//                         print("Hand not reach.. (1)");
+//                     }
+//                 }
+//                 else if (check4 == 2) // 1-9 meld 12
+//                 {
+//                     if (pair_check(tiles[11], tiles[12]) == 1)
+//                     {
+//                         mhltile tile1 = tiles[9];
+//                         mhltile tile2 = tiles[10];
+//                         tile1.value -= 1;
+//                         tile2.value += 1;
+//                         if (tile1.value >= 1)
+//                         {
+//                             wintile.insert(wintile.begin(), tile1);
+//                         }
+//                         if (tile2.value <= 9)
+//                         {
+//                             wintile.insert(wintile.begin(), tile2);
+//                         }
+//                         tile_insert(gamedata, wintile, idx);
+//                     }
+//                 }
+//                 else
+//                 {
+//                     print("Hand not reach.. (1)");
+//                 }
+//             }
+//             else
+//             {
+//                 print("Hand not reach.. (1)");
+//             }
+//         }
+//         else
+//         {
+//             print("Hand not reach.. (1)");
+//         }
+//     }
+//     else
+//     {
+//         print("Hand not reach.. (1)");
+//     }
+//     // gamedata.riichi_status = 1;
+//     // gamedata.wintiles.insert(gamedata.wintiles.end(), pair<uint8_t, vector<mhltile>>(idx, temptiles));
+// }
 
 // void mhlgame::transferhand(mhlgamedata &gamedata, int size)
 // {

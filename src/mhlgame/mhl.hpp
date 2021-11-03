@@ -53,7 +53,6 @@ private:
         int index;
         vector<mhltile> tileswin;
     };
-    
 
     struct mhlscore
     {
@@ -274,6 +273,9 @@ private:
         int kong_count;
         int draw_count;
         vector<uint8_t> hand_player = {};
+        vector<uint8_t> hand_melds = {};
+        vector<uint8_t> hand_wait = {};
+        vector<uint8_t> hand_eye = {};
         vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
         vector<uint8_t> winning_hand = {};
@@ -327,20 +329,21 @@ private:
     // void ten_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
     void thirteen_check(mhlgamedata & gamedata, vector<mhltile> tiles, uint8_t idx);
     int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
-        // void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
-        // void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
-        // void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-        // void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-        // void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
-        // void transferhand(mhlgamedata & gamedata, int size);
-        // void pung_chow(mhlgamedata & gamedata, int check);
-        // int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
-        // int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
-        // int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
-        // int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
-        // int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
+    // void winhand_check(mhlgamedata & gamedata, vector<uint8_t> & hand);
+    // void getscore(mhlgamedata & gamedata, vector<uint8_t> & hand);
+    // void five_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void eight_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void eleven_rem(mhlgamedata & gamedata, vector<mhltile> tiles);
+    // void transferhand(mhlgamedata & gamedata, int size);
+    // void pung_chow(mhlgamedata & gamedata, int check);
+    // int pung_check(mhltile tile1, mhltile tile2, mhltile tile3);
+    // int wind_check(mhlgamedata gamedata, mhltile tile1, int check1);
+    // int five_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5);
+    // int six_tile_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6);
+    // int honors_check(mhltile tile1, mhltile tile2, mhltile tile3, mhltile tile4, mhltile tile5, mhltile tile6, mhltile tile7);
 
-        public : using contract::contract;
+public:
+    using contract::contract;
 
     mhlgame(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
                                                                      eosio_token(MAIN_CONTRACT),
