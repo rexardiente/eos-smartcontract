@@ -31,7 +31,11 @@
         "typeinfo": "cpp",
         "__split_buffer": "cpp",
         "array": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "set": "cpp",
+        "filesystem": "cpp"
     },
     "files.watcherExclude": {
         "**/target": true

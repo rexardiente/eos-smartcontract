@@ -273,11 +273,11 @@ private:
         int kong_count;
         int draw_count;
         vector<uint8_t> hand_player = {};
-        vector<uint8_t> hand_melds = {};
-        vector<uint8_t> hand_wait = {};
-        vector<uint8_t> hand_eye = {};
         vector<uint8_t> discarded_tiles = {};
         vector<uint8_t> reveal_kong = {};
+        vector<uint8_t> hand_meld = {};
+        vector<uint8_t> hand_wait = {};
+        vector<uint8_t> hand_eye = {};
         vector<uint8_t> winning_hand = {};
         vector<uint8_t> score_check = {};
         vector<mhlscore> score_type = {};

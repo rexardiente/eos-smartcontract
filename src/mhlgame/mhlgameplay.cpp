@@ -57,6 +57,7 @@ void mhlgame::gettile(mhlgamedata &gamedata)
     // uint8_t deck_tile_idx = 1; //  Pick a random tile from the deck
     // uint8_t deck_tile_idx = 64;
     gamedata.hand_player.insert(gamedata.hand_player.end(), gamedata.deck_player[deck_tile_idx]); // Assign the mhltile to the first empty slot in the hand
+    // gamedata.hand_meld.insert(gamedata.hand_meld.end(), gamedata.deck_player[deck_tile_idx]);
     gamedata.current_tile = gamedata.deck_player[deck_tile_idx];
     gamedata.deck_player.erase(gamedata.deck_player.begin() + deck_tile_idx); // Remove the tile from the deck
     // sorthand(gamedata.hand_player);
