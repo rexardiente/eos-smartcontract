@@ -1,3 +1,5 @@
+cleos create account eosio coinicagames EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV -p eosio@active
+
 
 eosio-cpp -o coinicagames.wasm coinicagames.cpp
   
@@ -32,3 +34,7 @@ cleos push action coinicagames mhlend '["7"]' -p coinicagames@active
 
 delete ->
 cleos push action coinicagames mhldel '["6"]' -p coinicagames@active
+
+
+
+cleos set account permission coinicagames active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission":{"actor": "coinicagames","permission":"eosio.code"},"weight":1}]}'
