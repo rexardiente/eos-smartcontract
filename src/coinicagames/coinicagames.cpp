@@ -757,7 +757,7 @@ ACTION coinicagames::mhlend(int id)
     require_auth(_self);
     // check(has_auth(_self) || has_auth(id), "Unauthorized user");
     auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
-    check(mjhilo.game_data.hi_lo_bet == 0 && mjhilo.game_data.hi_lo_staket == 0, "Bet in place.");
+    check(mjhilo.game_data.hi_lo_bet == 0 && mjhilo.game_data.hi_lo_stake == 0, "Bet in place.");
     // check(mjhilo.game_data.hi_lo_balance == 0.0000 && mjhilo.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
                     {
