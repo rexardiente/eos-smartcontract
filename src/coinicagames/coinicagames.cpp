@@ -328,10 +328,10 @@ ACTION coinicagames::mhlinitialze(int id)
                         // game_data.hi_lo_balance += quantity;
                         game_data.game_id = checksum256_to_string_hash().substr(0, 30);
                         game_data.status = MHL_ONGOING;
-                        if (game_data.hi_lo_stake > 0)
-                        {
-                            game_data.hi_lo_balance += game_data.hi_lo_stake;
-                        }
+                        // if (game_data.hi_lo_stake > 0)
+                        // {
+                        //     game_data.hi_lo_balance += game_data.hi_lo_stake;
+                        // }
                         game_data.hi_lo_stake = DEFAULT;
                         game_data.hi_lo_bet = DEFAULT;
                         game_data.bet_status = 1;
@@ -757,17 +757,18 @@ ACTION coinicagames::mhlend(int id)
     require_auth(_self);
     // check(has_auth(_self) || has_auth(id), "Unauthorized user");
     auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
-    check(mjhilo.game_data.hi_lo_bet == 0 && mjhilo.game_data.hi_lo_stake == 0, "Bet in place.");
+    check(mjhilo.game_data.option_status == 0, "Bet in place..");
+    // check(mjhilo.game_data.hi_lo_bet == 0 && mjhilo.game_data.hi_lo_stake == 0, "Bet in place.");
     // check(mjhilo.game_data.hi_lo_balance == 0.0000 && mjhilo.game_data.hi_lo_stake == 0.0000, "Withdraw your balance before you can end.");
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
                     {
                         mhlgamedata &game_data = modified_mjhilo.game_data;
-                        // if (game_data.hi_lo_stake > 0)
-                        // {
-                        //     game_data.hi_lo_balance += game_data.hi_lo_stake;
-                        // }
-                        // game_data.hi_lo_stake = DEFAULT;
-                        // game_data.hi_lo_bet = DEFAULT;
+                        if (game_data.hi_lo_stake > 0)
+                        {
+                            game_data.hi_lo_balance += game_data.hi_lo_stake;
+                        }
+                        game_data.hi_lo_stake = DEFAULT;
+                        game_data.hi_lo_bet = DEFAULT;
                         game_data.status = 3;
                     });
 }
