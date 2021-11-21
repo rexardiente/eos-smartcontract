@@ -610,7 +610,7 @@ ACTION coinicagames::mhlrchidscrd(int id)
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
                     {
                         mhlgamedata &game_data = modified_mjhilo.game_data;
-                        game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
+                        game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[13]);
                         game_data.hand_player.erase(game_data.hand_player.end()); // Remove the card from the hand
                     });
 }
