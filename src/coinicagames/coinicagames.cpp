@@ -526,6 +526,17 @@ ACTION coinicagames::mhlplayhilo(int id, int option)
                             tempwin.tileswin = tiles;
                             game_data.wintiles.insert(game_data.wintiles.end(), tempwin);
                         }
+                        if (game_data.draw_count >= 33)
+                        {
+                            game_data.hi_lo_balance += game_data.hi_lo_stake;
+                            game_data.hi_lo_stake = 0.0000;
+                            game_data.status = MHL_LOSE;
+                            print("Draw limits reached.");
+                        }
+                        else
+                        {
+                            print("Keep playing and try again..");
+                        }
                         // game_data.hi_lo_bet = 0;
                         game_data.bet_status = 1;
                         game_data.option_status = 0;
@@ -555,33 +566,52 @@ ACTION coinicagames::mhldscrdtile(int id, int idx)
     // check(idx <= 13, "Index should be below 14.");
     check(mjhilo.game_data.status == MHL_ONGOING, "Game already ended.");
     check(mjhilo.game_data.draw_count < 34, "Your hand is for declaration(win/lose).");
+    check(mjhilo.game_data.riichi_status != MHL_RIICHILOCK, "Must use riihi discard.");
     check(mjhilo.game_data.hand_player.size() == (14 + mjhilo.game_data.kong_count - mjhilo.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
     _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
                     {
                         mhlgamedata &game_data = modified_mjhilo.game_data;
                         // game_data.riichi_status = 0;
-                        if (game_data.riichi_status == 2)
+                        // if (game_data.riichi_status == 2)
+                        // {
+                        //     game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
+                        //     game_data.hand_player.erase(game_data.hand_player.end()); // Remove the card from the hand
+                        // }
+                        // else
+                        // {
+                        game_data.pung_count = DEFAULT;
+                        game_data.pair_count = DEFAULT;
+                        game_data.chow_count = DEFAULT;
+                        for (int i = 0; i < game_data.wintiles.size(); i++)
                         {
-                            game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
-                            game_data.hand_player.erase(game_data.hand_player.end()); // Remove the card from the hand
+                            game_data.wintiles.erase(game_data.wintiles.begin());
                         }
-                        else
+                        if (game_data.riichi_status == 1)
                         {
-                            game_data.pung_count = DEFAULT;
-                            game_data.pair_count = DEFAULT;
-                            game_data.chow_count = DEFAULT;
-                            for (int i = 0; i < game_data.wintiles.size(); i++)
-                            {
-                                game_data.wintiles.erase(game_data.wintiles.begin());
-                            }
-                            if (game_data.riichi_status == 1)
-                            {
-                                game_data.riichi_status = 0;
-                            }
-                            game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
-                            game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
-                            sorthand(game_data.hand_player);
+                            game_data.riichi_status = 0;
                         }
+                        game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
+                        game_data.hand_player.erase(game_data.hand_player.begin() + idx); // Remove the card from the hand
+                        sorthand(game_data.hand_player);
+                        // }
+                    });
+}
+
+ACTION coinicagames::mhlrchidscrd(int id)
+{
+    require_auth(_self);
+
+    auto &mjhilo = _mjhilos.get(id, "User doesn't exist");
+    // check(idx <= 13, "Index should be below 14.");
+    check(mjhilo.game_data.status == MHL_ONGOING, "Game already ended.");
+    check(mjhilo.game_data.draw_count < 34, "Your hand is for declaration(win/lose).");
+    check(mjhilo.game_data.riichi_status == MHL_RIICHILOCK, "Must use riihi discard.");
+    check(mjhilo.game_data.hand_player.size() == (14 + mjhilo.game_data.kong_count - mjhilo.game_data.reveal_kong.size()), "Have a complete hand before discarding a tile.");
+    _mjhilos.modify(mjhilo, _self, [&](auto &modified_mjhilo)
+                    {
+                        mhlgamedata &game_data = modified_mjhilo.game_data;
+                        game_data.discarded_tiles.insert(game_data.discarded_tiles.begin(), game_data.hand_player[idx]);
+                        game_data.hand_player.erase(game_data.hand_player.end()); // Remove the card from the hand
                     });
 }
 

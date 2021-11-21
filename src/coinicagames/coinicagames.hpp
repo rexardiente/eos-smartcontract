@@ -663,6 +663,7 @@ public:
     ACTION mhladdbet(int id, double quantity);
     ACTION mhlplayhilo(int id, int option);
     ACTION mhldscrdtile(int id, int idx);
+    ACTION mhlrchidscrd(int id);
     ACTION mhlstartbet(int id);
     ACTION mhlwintrnsfr(int id);
     ACTION mhldclrkong(int id, vector<int> idx);
